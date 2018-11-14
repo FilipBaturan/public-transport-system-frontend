@@ -10,6 +10,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatButtonModule, MatCheckboxModule, MatMenuModule,  MatIconModule} from '@angular/material';
 import {MatTooltipModule, MatToolbarModule, MatCardModule, MatSidenavModule, MatFormFieldModule,
   MatInputModule, MatListModule} from '@angular/material';
+import { ScheduleComponent } from './components/schedule/schedule.component';
+import { AuthComponent } from './components/auth/auth.component';
 
 @NgModule({
   
@@ -19,6 +21,8 @@ import {MatTooltipModule, MatToolbarModule, MatCardModule, MatSidenavModule, Mat
     TransportLineComponent,
     TransportLineListComponent,
     WelcomeComponent,
+    ScheduleComponent,
+    AuthComponent,
     
   ],
   imports: [
