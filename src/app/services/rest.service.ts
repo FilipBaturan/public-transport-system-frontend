@@ -16,6 +16,7 @@ export abstract class RestService<T> {
     private toastr: ToastrService) { }
 
   findAll(...queryParams: any[]): Observable<T[]> {
+    console.log(this.url() + " " + queryParams); 
     return this.http.get<T[]>(this.url(queryParams)).pipe(
       catchError(this.handleError<T[]>())
     );
