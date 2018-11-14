@@ -6,6 +6,10 @@ import { TransportLineListComponent } from './components/transport-line-list/tra
 import { RouterModule } from '@angular/router';
 import { WelcomeComponent } from './components/welcome/welcome.component';
 import { HttpClientModule } from '@angular/common/http';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {MatButtonModule, MatCheckboxModule, MatMenuModule,  MatIconModule} from '@angular/material';
+import {MatTooltipModule, MatToolbarModule, MatCardModule, MatSidenavModule, MatFormFieldModule,
+  MatInputModule, MatListModule} from '@angular/material';
 
 @NgModule({
   
@@ -20,6 +24,23 @@ import { HttpClientModule } from '@angular/common/http';
   imports: [
     BrowserModule,
     HttpClientModule,
+    BrowserAnimationsModule,
+    MatButtonModule,
+    MatCheckboxModule,
+    MatMenuModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatMenuModule,
+    MatIconModule,
+    MatCardModule,
+    MatSidenavModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatTooltipModule,
+    MatToolbarModule,
+    MatListModule,
     RouterModule.forRoot([
 
       { path: 'transportLineList', component: TransportLineListComponent},
