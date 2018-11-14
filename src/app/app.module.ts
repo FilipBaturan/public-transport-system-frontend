@@ -13,6 +13,7 @@ import {MatTooltipModule, MatToolbarModule, MatCardModule, MatSidenavModule, Mat
 import { ScheduleComponent } from './components/schedule/schedule.component';
 import { AuthComponent } from './components/auth/auth.component';
 import { MapComponent } from './components/map/map.component';
+import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 
 @NgModule({
   
@@ -51,8 +52,10 @@ import { MapComponent } from './components/map/map.component';
 
       { path: 'transportLineList', component: TransportLineListComponent},
       { path: 'transportLine', component: TransportLineComponent},
+      { path: 'editRoutes', component: MapComponent},
       { path: '**', component: WelcomeComponent, pathMatch : 'full'}
-    ])
+    ]),
+    LeafletModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]

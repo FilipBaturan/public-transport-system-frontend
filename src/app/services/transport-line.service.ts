@@ -8,8 +8,8 @@ import { ITransportLine } from '../model/ITransportLine';
 })
 export class TransportLineService {
 
-  transportLineUrl : string = '/transportLine/get/1';
-  allTransportLinesUrl : string = '/transportLine/all';
+  transportLineUrl : string = '/server/transportLine/get/1';
+  allTransportLinesUrl : string = '/server/transportLine/all';
 
   constructor(private http: HttpClient) { }
 

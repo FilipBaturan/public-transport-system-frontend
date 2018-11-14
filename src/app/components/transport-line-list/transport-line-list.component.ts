@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { TransportLineService } from '../../services/transport-line.service';
-import { Observable } from 'rxjs';
 import { ITransportLine } from '../../model/ITransportLine';
 
 
