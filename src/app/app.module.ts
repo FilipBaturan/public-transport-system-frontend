@@ -6,6 +6,8 @@ import { TransportLineListComponent } from './components/transport-line-list/tra
 import { RouterModule } from '@angular/router';
 import { WelcomeComponent } from './components/welcome/welcome.component';
 import { HttpClientModule } from '@angular/common/http';
+import { ScheduleComponent } from './components/schedule/schedule.component';
+import { AuthComponent } from './components/auth/auth.component';
 
 @NgModule({
   
@@ -15,6 +17,8 @@ import { HttpClientModule } from '@angular/common/http';
     TransportLineComponent,
     TransportLineListComponent,
     WelcomeComponent,
+    ScheduleComponent,
+    AuthComponent,
     
   ],
   imports: [
