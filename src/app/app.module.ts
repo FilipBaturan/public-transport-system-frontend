@@ -12,6 +12,7 @@ import {MatTooltipModule, MatToolbarModule, MatCardModule, MatSidenavModule, Mat
   MatInputModule, MatListModule} from '@angular/material';
 import { ScheduleComponent } from './components/schedule/schedule.component';
 import { AuthComponent } from './components/auth/auth.component';
+import { MapComponent } from './components/map/map.component';
 
 @NgModule({
   
@@ -23,6 +24,7 @@ import { AuthComponent } from './components/auth/auth.component';
     WelcomeComponent,
     ScheduleComponent,
     AuthComponent,
+    MapComponent,
     
   ],
   imports: [
