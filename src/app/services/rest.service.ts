@@ -12,7 +12,7 @@ import { PagedData } from '../model/page/paged-data.model';
 export abstract class RestService<T> {
 
   constructor(protected http: HttpClient,
-    protected queryParts: string[], // E.g. ['/api/buildings', 'malfunctions']
+    protected queryParts: string[], // E.g. ['/user', 'schedule']
     private toastr: ToastrService) { }
 
   findAll(...queryParams: any[]): Observable<T[]> {
@@ -56,8 +56,8 @@ export abstract class RestService<T> {
   /**
    * Concatenates elements of queryParts and queryParams in alternative order
    * in order to construct an API URL. For example, the arrays
-   * queryParts = ['/api/buildings', 'malfunctions'] and queryParams = [2, 10]
-   * would result in '/api/buildings/2/malfunctions/10'.
+   * queryParts = ['/user', 'schedule'] and queryParams = [2, 10]
+   * would result in '/user/2/schedule/10'.
    * @param queryParams URL query parameters
    */
   protected url(queryParams: any[] = []): string {
