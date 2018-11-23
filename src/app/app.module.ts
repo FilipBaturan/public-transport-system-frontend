@@ -8,6 +8,8 @@ import { WelcomeComponent } from './components/welcome/welcome.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ScheduleComponent } from './components/schedule/schedule.component';
 import { AuthComponent } from './components/auth/auth.component';
+import { MapComponent } from './components/map/map.component';
+import { SignupComponent } from './components/signup/signup.component';
 
 @NgModule({
   
@@ -19,13 +21,15 @@ import { AuthComponent } from './components/auth/auth.component';
     WelcomeComponent,
     ScheduleComponent,
     AuthComponent,
+    MapComponent,
+    SignupComponent,
     
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     RouterModule.forRoot([
-
+      { path: 'signup', component: SignupComponent},
       { path: 'transportLineList', component: TransportLineListComponent},
       { path: 'transportLine', component: TransportLineComponent},
       { path: '**', component: WelcomeComponent, pathMatch : 'full'}

@@ -4,8 +4,8 @@ import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { RestService } from './rest.service';
-import { User } from '../model/IUser';
-import { Authentication } from '../model/IAuthentication';
+import { User } from '../model/user.model';
+import { Authentication } from '../model/authentication.model';
 import { TokenUtilsService } from '../util/token-utils.service';
 
 const authenticatedUserKey = 'authenticatedUser';
@@ -16,7 +16,7 @@ const authenticatedUserKey = 'authenticatedUser';
 export class UserService extends RestService<User> {
 
   constructor(http: HttpClient, toastr: ToastrService, private tokenUtils: TokenUtilsService) {
-    super(http, ['/user'], toastr);
+    super(http, ['/api/user'], toastr);
   }
 
   authenticate(body: User): Observable<Authentication> {
