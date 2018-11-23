@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { interval } from 'rxjs';
-import * as _ from 'underscore.deepclone'
+import { TransportRoute } from '../../model/transportRoute';
+import { Station } from 'src/app/model/station.model';
 
 declare var MapBBCode: any;
 declare var L: any;
@@ -27,11 +28,10 @@ export class MapComponent implements OnInit {
   private mapViewStations: object;
   private mapEditorStations: object;
   private stationCounter: number;
+  transportRoutes: TransportRoute[];
 
   constructor() {
-    this.bbCode = `[map]45.24166,19.84264(S6); 45.23876,19.83273(S5); 45.24395,19.82509(S4);
-    45.24948,19.83839(S7); 45.25833,19.83341(S8); 45.26389,19.82882(S1); 
-    45.26021,19.822(S2); 45.2529,19.82431(S3); 
+    this.bbCode = `[map]
     45.26377,19.82895 45.26407,19.82122 45.26274,19.81878 45.26015,19.82195 
     45.25761,19.82431 45.2529,19.82431 45.24867,19.82466 45.24398,19.82504 
     45.23972,19.82552 45.23712,19.82655 45.23879,19.83264 45.24166,19.84268 
@@ -48,6 +48,7 @@ export class MapComponent implements OnInit {
     [45.26377,19.82891]];
     this.mapViewStations = {};
     this.stationCounter = 5;
+    this.transportRoutes = [];
     this.busIcon = L.icon({
       iconUrl: this.imagePath + "bus.png",
       shadowUrl: this.imagePath + "marker-shadow.png",
@@ -105,8 +106,10 @@ export class MapComponent implements OnInit {
     this.mapBB.editor("edit", this.bbCode, this.mapEditorStations, this.stationCounter , function(res) {
         original.style.display = "block";
         if( res !== null ){
-            tempMap.updateBBCode(res);
-            tempThis.placeStations();
+          tempThis.bbCode = tempThis.placetransportRoutes(res);
+          tempMap.updateBBCode(tempThis.bbCode);
+          tempThis.placeStations();
+            
         }       
     });
   }
@@ -137,6 +140,51 @@ export class MapComponent implements OnInit {
     }
   }
 
+  private placetransportRoutes(code: string): string{
+    this.transportRoutes = [];
+    let index: number;
+    while (true) {
+      index = code.indexOf(";", index + 1);
+      if (index === -1) {
+        break;
+      }else {
+        if (code[index - 1] != ")"){
+          code = code.slice(0,index).concat("(blue|gener@ted" + index + ");" + code.substr(index+1));
+        }else{
+          let i: number = 0;
+          while (true) {
+            if(code[index - 1 - i] == "("){
+              break;
+            }
+            ++i;
+          }
+          let data: string = code.slice(index - i, index - 1);
+          let color: string; 
+          let name: string;
+
+          if (data.indexOf("|") === -1){
+            color = "blue",
+            name = data;
+          }else{
+            color = data.split("|")[0];
+            name = data.split("|")[1];
+          }
+          this.transportRoutes.push(new TransportRoute(this.transportRoutes.length,
+            name, new Array<Station>(), new Array<number>(), true, "BUS", 1, color,true
+          ));
+        }
+      }
+    }
+    index = code.lastIndexOf("[");
+    if (code[index - 1] != ")"){
+      code = code.slice(0,index).concat("(blue|gener@ted" + index + ")[" + code.substr(index+1));
+      this.transportRoutes.push(new TransportRoute(this.transportRoutes.length,
+        "gener@ted" + index, new Array<Station>(), new Array<number>(), true, "BUS", 1, "blue", true
+      ));
+    }  
+    return code;
+  }
+
   private deepCopyStations(original) : any{
     var clone = {};
     for (const key in original) {
@@ -153,5 +201,30 @@ export class MapComponent implements OnInit {
       }
     }
     return clone;
+  }
+
+  toogleShowRoute(id: number): void{
+    this.transportRoutes[id].active = false;
+    let nameIndex: number = this.bbCode.indexOf(this.transportRoutes[id].name);
+    let beginTerminalSymbloIndex: number = nameIndex;
+    let endTerminalSymbolIndex: number = this.bbCode.indexOf(";", nameIndex);
+    if (endTerminalSymbolIndex === -1) {
+      endTerminalSymbolIndex = this.bbCode.indexOf("[", nameIndex);
+    }
+    let i: number = 0
+    while (true) {
+      if (this.bbCode[nameIndex - i] == ";") {
+        break;
+      }else if (this.bbCode[nameIndex - i] == "]"){
+        beginTerminalSymbloIndex += 2;
+        endTerminalSymbolIndex += 2;
+        break;
+      }
+      ++i; --beginTerminalSymbloIndex;
+    }
+    
+    this.bbCode = this.bbCode.slice(0,beginTerminalSymbloIndex - 1)
+    .concat(this.bbCode.slice(endTerminalSymbolIndex - 1));
+    this.mapViewer.updateBBCode(this.bbCode);
   }
 }
