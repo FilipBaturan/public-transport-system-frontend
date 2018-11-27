@@ -126,8 +126,8 @@ window.MapBBCode = L.Class.extend({
 		return LL.tileLayer('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 			name: 'OpenStreetMap',
 			attribution: 'Map &copy; <a href="http://openstreetmap.org">OpenStreetMap</a>',
-			minZoom: 2,
-			maxZoom: 18
+			minZoom: 12,
+			maxZoom: 17
 		});
 	},
 

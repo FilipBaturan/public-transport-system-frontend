@@ -36,9 +36,9 @@ export abstract class RestService<T> {
     );
   }
 
-  create<D>(body: T | D, ...queryParams: any[]): Observable<number> {
-    return this.http.post<number>(this.url(queryParams), body).pipe(
-      catchError(this.handleError<number>())
+  create<D>(body: T | D, ...queryParams: any[]): Observable<any> {
+    return this.http.post<any>(this.url(queryParams), body).pipe(
+      catchError(this.handleError<any>())
     );
   }
 

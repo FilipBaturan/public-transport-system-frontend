@@ -10,6 +10,7 @@ import { ScheduleComponent } from './components/schedule/schedule.component';
 import { AuthComponent } from './components/auth/auth.component';
 import { MapComponent } from './components/map/map.component';
 import { SignupComponent } from './components/signup/signup.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   
@@ -26,12 +27,14 @@ import { SignupComponent } from './components/signup/signup.component';
     
   ],
   imports: [
+    FormsModule,
     BrowserModule,
     HttpClientModule,
     RouterModule.forRoot([
       { path: 'signup', component: SignupComponent},
       { path: 'transportLineList', component: TransportLineListComponent},
       { path: 'transportLine', component: TransportLineComponent},
+      { path: '', redirectTo: '/welcome', pathMatch: 'full' },
       { path: '**', component: WelcomeComponent, pathMatch : 'full'}
     ])
   ],
