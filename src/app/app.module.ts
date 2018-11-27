@@ -9,6 +9,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { ScheduleComponent } from './components/schedule/schedule.component';
 import { AuthComponent } from './components/auth/auth.component';
 import { MapComponent } from './components/map/map.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   
@@ -31,7 +33,9 @@ import { MapComponent } from './components/map/map.component';
       { path: 'transportLineList', component: TransportLineListComponent},
       { path: 'transportLine', component: TransportLineComponent},
       { path: '**', component: WelcomeComponent, pathMatch : 'full'}
-    ])
+    ]),
+    BrowserAnimationsModule,
+    ToastrModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]

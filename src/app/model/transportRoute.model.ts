@@ -1,22 +1,15 @@
 import { TransportLine } from "src/app/model/transport-line.model";
-import { Station } from "src/app/model/station.model";
-import { Coordinates } from "./coordinates.model";
+import { TransportLinePosition } from "./position.model";
+import { Schedule } from "./schedule.model";
 
 export class TransportRoute extends TransportLine {
     
-    color: string;
     visible: boolean;
-    positions: Coordinates[];
-    width: string;
 
-    constructor(id: number, name: string, stations: Station[], schedule: number[],
-        active: boolean, type: string,zone: number, color: string, visible: boolean,
-        positions: Coordinates[], width: string){
-            super(id, name, stations, schedule, active, type,zone);
-            this.color = color;
+    constructor(id: number, name: string, positions: TransportLinePosition[], schedule: Schedule[],
+        active: boolean, type: string, zone: number, color: string, width: string, visible: boolean){
+            super(id, name, positions, schedule, active, type, zone, color, width);
             this.visible = visible;
-            this.positions = positions;
-            this.width = width;
         }
 
     toBBCode(): string { 

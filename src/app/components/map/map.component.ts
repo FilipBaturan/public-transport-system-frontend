@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { interval } from 'rxjs';
-import { TransportRoute } from '../../model/transportRoute';
+import { TransportRoute } from '../../model/transportRoute.model';
 import { Station } from 'src/app/model/station.model';
-import { Coordinates } from 'src/app/model/coordinates.model';
+import { Position, StationPosition, TransportLinePosition } from 'src/app/model/position.model';
+import { Schedule } from 'src/app/model/schedule.model';
+import { StationService } from 'src/app/services/station.service';
 
 declare var MapBBCode: any;
 declare var L: any;
@@ -31,7 +33,7 @@ export class MapComponent implements OnInit {
   private stationCounter: number;
   transportRoutes: object;
 
-  constructor() {
+  constructor(private stationService: StationService) {
     this.bbCode = `[map]
     45.26377,19.82895 45.26407,19.82122 45.26274,19.81878 45.26015,19.82195 
     45.25761,19.82431 45.2529,19.82431 45.24867,19.82466 45.24398,19.82504 
@@ -80,6 +82,12 @@ export class MapComponent implements OnInit {
   }
 
   ngOnInit() {
+    var temp = [];
+    this.stationService.findAll().subscribe(
+      response => {temp = response; console.log(temp);}
+    )
+    
+
     this.mapBB = new MapBBCode({
       defaultPosition: [45.2519, 19.837],
       defaultZoom: 15,
@@ -153,25 +161,25 @@ export class MapComponent implements OnInit {
         if (code[index - 1] != ")") {
           code = code.slice(0, index).concat("(blue|gener@ted" + index + ");" + code.substr(index + 1));
         } else {
-          let positions: Array<Coordinates> = this.parsePositions(code, index);
+          let positions: Array<StationPosition> = this.parsePositions(code, index);
           let color: string;
           let name: string;
           let width: string;
           ({ code, color, name, width, index } = this.parseNameColorWidth(code, index, true));
           this.transportRoutes[Object.keys(this.transportRoutes).length] =
             new TransportRoute(Object.keys(this.transportRoutes).length,
-              name, new Array<Station>(), new Array<number>(), true, "BUS", 1, color, true, positions, width);
+              name, new Array<TransportLinePosition>(), new Array<Schedule>(), true, "BUS", 1, color, width, true);
         }
       }
     }
     index = code.lastIndexOf("[");
-    let positions: Array<Coordinates> = this.parsePositions(code, index);
+    let positions: Array<StationPosition> = this.parsePositions(code, index);
     if (code[index - 1] != ")") {
       code = code.slice(0, index).concat("(blue|gener@ted" + index + ")[" + code.substr(index + 1));
       this.transportRoutes[Object.keys(this.transportRoutes).length] =
         new TransportRoute(Object.keys(this.transportRoutes).length,
-          "gener@ted" + index, new Array<Station>(), new Array<number>(), true, "BUS", 1, "blue", true, positions, ""
-        );
+          "gener@ted" + index, new Array<TransportLinePosition>(), new Array<Schedule>(), true, "BUS", 1, "blue",
+          "", true);
     } else {
       let color: string;
       let name: string;
@@ -179,9 +187,7 @@ export class MapComponent implements OnInit {
       ({ code, color, name, width, index } = this.parseNameColorWidth(code, index, false));
       this.transportRoutes[Object.keys(this.transportRoutes).length] =
         new TransportRoute(Object.keys(this.transportRoutes).length,
-          name, new Array<Station>(), new Array<number>(), true, "BUS", 1, color, true, positions, width
-        );
-
+          name, new Array<TransportLinePosition>(), new Array<Schedule>(), true, "BUS", 1, color, width, true);
     }
     return code;
   }
@@ -224,8 +230,8 @@ export class MapComponent implements OnInit {
     return new ParsedData(code, color, name, width, index);
   }
 
-  private parsePositions(code: string, index: number): Coordinates[] {
-    let result: Coordinates[] = new Array<Coordinates>();
+  private parsePositions(code: string, index: number): StationPosition[] {
+    let result: StationPosition[] = new Array<StationPosition>();
     let beginTerminalIndex: number = index;
     let i: number = 1;
     let tokens: string[];
@@ -246,7 +252,7 @@ export class MapComponent implements OnInit {
       let longLangTokens: string[] = position.split(",");
       let latitude: number = Number(longLangTokens[0]);
       let longitude: number = Number(longLangTokens[1]);
-      result.push(new Coordinates(null, latitude, longitude));
+      result.push(new StationPosition(null, latitude, longitude));
     });
     return result;
   }
