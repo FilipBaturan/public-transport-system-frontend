@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TransportLineService } from '../../services/transport-line.service';
-import { ITransportLine } from '../../model/ITransportLine';
+import { Observable } from 'rxjs';
+import { TransportLine } from '../../model/transport-line.model';
 
 
 @Component({
@@ -10,7 +11,7 @@ import { ITransportLine } from '../../model/ITransportLine';
 })
 export class TransportLineListComponent implements OnInit {
 
-  transportLines : ITransportLine[];
+  transportLines : TransportLine[];
   
   constructor(private transportLineService: TransportLineService) { }
 
@@ -18,7 +19,7 @@ export class TransportLineListComponent implements OnInit {
     
     this.transportLines = [];
 
-    this.transportLineService.getTransportLines().subscribe(
+    this.transportLineService.findAll().subscribe(
 
       response=> this.transportLines = response,
       (err) => console.error(err) 

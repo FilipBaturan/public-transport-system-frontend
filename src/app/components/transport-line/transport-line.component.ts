@@ -10,6 +10,7 @@ export class TransportLineComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+    
   }
 
 }
