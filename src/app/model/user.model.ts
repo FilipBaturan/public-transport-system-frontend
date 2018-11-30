@@ -3,20 +3,20 @@ export class User {
     id: number;
     username: string;
     password: string;
-    name: string;
+    firstName: string;
     lastName: string;
     email: string;
-    phoneNumber: string;
+    active: boolean;
 
     constructor(id: number, username: string, password: string, name: string,
-        lastName: string, email: string, phoneNumber: string){
+        lastName: string, email: string, isActive: boolean){
             this.id = id;
             this.username = username;
             this.password = password;
-            this.name = name;
+            this.firstName = name;
             this.lastName = lastName;
             this.email = email;
-            this.phoneNumber = phoneNumber;
+            this.active = isActive;
         }
 
 }

@@ -1,23 +1,29 @@
-import { Station } from "./station.model";
+import { TransportLinePosition } from "./position.model";
+import { Schedule } from "./schedule.model";
 
 export class TransportLine {
     
     id: number;
     name: string;
-    stations: Station[];
-    schedule: number[];
+    positions: TransportLinePosition[];
+    schedule: Schedule[];
     active: boolean;
     type : string;
     zone: number;
+    color: string;
+    width: string;
 
-    constructor(id: number, name: string, stations: Station[], schedule: number[],
-        active: boolean, type: string,zone: number){
+    constructor(id: number, name: string, positions: TransportLinePosition[], schedule: Schedule[],
+        active: boolean, type: string,zone: number, color: string, width: string){
             this.id = id;
             this.name = name;
-            this.stations = stations;
+            this.positions = positions;
             this.schedule = schedule;
             this.active = active;
             this.type = type;
             this.zone = zone;
+            this.color = color;
+            this.width = width;
         }  
+    
 }

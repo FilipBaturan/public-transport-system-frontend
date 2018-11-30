@@ -1,0 +1,10 @@
+<h3 *ngIf="noUsers">There are no unconfirmed users</h3>
+<div *ngFor = "let user of unconfirmedUsers">
+  <div>
+      <p> {{user.firstName}}</p> <a [routerLink] = "['/userProfile']">check documents</a>
+       <button (click) = "acceptUser(user)">Accept</button>
+       <button (click) = "denyUser(user)">Deny</button>
+  </div>
+  
+
+</div>
