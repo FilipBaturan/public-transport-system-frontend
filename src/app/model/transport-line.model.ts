@@ -5,12 +5,12 @@ export class TransportLine {
     
     id: number;
     name: string;
-    positions: TransportLinePosition;
     schedule: Schedule;
+    positions: TransportLinePosition;
     active: boolean;
     type : string;
     zone: number;
-   
+
     constructor(id: number, name: string, positions: TransportLinePosition, schedule: Schedule,
         active: boolean, type: string,zone: number){
             this.id = id;
@@ -21,5 +21,5 @@ export class TransportLine {
             this.type = type;
             this.zone = zone;
         }  
-    
+        
 }
