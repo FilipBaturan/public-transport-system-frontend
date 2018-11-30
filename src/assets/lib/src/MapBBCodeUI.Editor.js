@@ -142,7 +142,7 @@ window.MapBBCode.include({
 	},
 
 	// Show editor in element. BBcode can be textarea element. Callback is always called, null parameter means cancel
-	editor: function( element, bbcode, markers, markerCounter, callback, context) {
+	editor: function( element, bbcode, markers, markerCounter, icons, callback, context) {
 		var mapDiv = this._createMapPanel(element, true);
 		if( !mapDiv ) return;
 
@@ -302,36 +302,34 @@ window.MapBBCode.include({
 		if( this.options.confirmFormSubmit ){
 			this._addSubmitHandler(map, drawn);
 		}
-			
 		
 		window.mapEditor = map;
 		window.mapStationOperations = {
-			addStation: function(coordinates, color, type){
+			addStation: function(coordinates, type){
 				let name =  document.getElementById("stationName").value;
 				markers[markerCounter] =  L.marker(coordinates, 
-				{ icon: L.letterIcon(name, { radius: 14, color: color }), clickable: true, draggable: true })
+				{ icon: icons[type], clickable: true, draggable: true, title: type + "-" + name })
 				.addTo(mapEditor)
 				.bindPopup('<label>Name: </label><input type="text" style="width: 90px;" id="' + type + markerCounter + 
 				'" value="' + name + '"><br /><br /> <input type="button" value="Delete" onclick="mapStationOperations.removeStation('+ 
 				markerCounter + ')"/>' + '<input type="button" value="Rename" onclick="mapStationOperations.renameStation(' + 
-				markerCounter + ',\'' + type + markerCounter + '\')"/>');
+				markerCounter + ',\'' + type + markerCounter + '\',\'' + type + '\')"/>');
 				markerCounter++;
 			},
 			removeStation: function(markerId){
 				mapEditor.removeLayer(markers[markerId]);
 				delete markers[markerId];
 			},
-			renameStation: function(markerId, inputId){
-				let color = markers[markerId].options.icon.options.color,
-				coordinates = markers[markerId].getLatLng();
-				name = document.getElementById(inputId).value;
+			renameStation: function(markerId, inputId, type){
+				let coordinates = markers[markerId].getLatLng();
+				let name = document.getElementById(inputId).value;
 				mapStationOperations.removeStation(markerId);
 				markers[markerId] =  L.marker(coordinates, 
-					{ icon: L.letterIcon(name, { radius: 14, color: color }), clickable: true, draggable: true })
+					{ icon: icons[type], clickable: true, draggable: true, title: type + "-" + name })
 					.addTo(mapEditor)
 					.bindPopup('<label>Name: </label><input type="text" style="width: 90px;" id="' + inputId + '" value="' + name + 
 					'"><br /><br /> <input type="button" value="Delete" onclick="mapStationOperations.removeStation('+ markerId + ')"/>' +
-					'<input type="button" value="Rename" onclick="mapStationOperations.renameStation(' + markerId +',\'' + inputId + '\')"/>');
+					'<input type="button" value="Rename" onclick="mapStationOperations.renameStation(' + markerId +',\'' + inputId + '\',\'' + type + '\')"/>');
 			}
 			
 		};
@@ -346,9 +344,9 @@ window.MapBBCode.include({
 				.setLatLng(e.latlng)
 				.setContent('<p>Please insert station name<br />and select station type.</p> <br /> ' + 
 							'<input type=text id="stationName"/> <br />' +
-							'<input type="button" value="BUS" onclick="mapStationOperations.addStation([' + e.latlng.lat + ',' + e.latlng.lng + '], \'black\', \'bus\')"/>' +
-							'<input type="button" value="METRO" onclick="mapStationOperations.addStation([' + e.latlng.lat + ',' + e.latlng.lng + '], \'red\', \'metro\')"/>' +
-							'<input type="button" value="TRAM" onclick="mapStationOperations.addStation([' + e.latlng.lat + ',' + e.latlng.lng + '], \'blue\', \'tram\')"/>')
+							'<input type="button" value="BUS" onclick="mapStationOperations.addStation([' + e.latlng.lat + ',' + e.latlng.lng + '], \'bus\')"/>' +
+							'<input type="button" value="METRO" onclick="mapStationOperations.addStation([' + e.latlng.lat + ',' + e.latlng.lng + '], \'metro\')"/>' +
+							'<input type="button" value="TRAM" onclick="mapStationOperations.addStation([' + e.latlng.lat + ',' + e.latlng.lng + '], \'tram\')"/>')
 				.addTo(map)
 				.openOn(map);
 			});
