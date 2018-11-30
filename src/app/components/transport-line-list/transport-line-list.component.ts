@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { TransportLineService } from '../../services/transport-line.service';
+import { TransportLineService } from '../../services/transportLine.service';
 import { Observable } from 'rxjs';
-import { TransportLine } from '../../model/transport-line.model';
+import { TransportLine } from '../../model/transportLine.model';
 
 
 @Component({

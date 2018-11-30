@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { TransportLineService } from './transport-line.service';
+import { TransportLineService } from './transportLine.service';
 
 describe('TransportLineService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));

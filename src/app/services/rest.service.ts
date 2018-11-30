@@ -14,7 +14,7 @@ export abstract class RestService<T> {
 
   constructor(protected http: HttpClient,
     protected queryParts: string[], // E.g. ['/user', 'schedule']
-    private toastr: ToastrService) { }
+    protected toastr: ToastrService) { }
 
   findAll(...queryParams: any[]): Observable<T[]> {
     console.log(this.url() + " " + queryParams); 
