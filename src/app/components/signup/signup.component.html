@@ -4,6 +4,6 @@
     <input class="input" [class.incorrect]="usernameInvalid" type="text" placeholder="Username" [(ngModel)]='user.username' /><br>
     <input class="input" [class.incorrect]="passwordInvalid" type="password" placeholder="Password" [(ngModel)]='user.password' /><br>
     <input class="input" [class.incorrect]="emailInvalid" type="text" placeholder="Email" [(ngModel)]='user.email' /><br>
-    <input class="input" [class.incorrect]="phoneInvalid" type="text" placeholder="Telephone" [(ngModel)]='user.phoneNumber' /><br>
+    <input class="input" [class.incorrect]="phoneInvalid" type="text" placeholder="Telephone" [(ngModel)]='user.telephone' /><br>
     <button class="btn btn-info" (click)='tryRegister()'>Sign Up</button>
 </div>

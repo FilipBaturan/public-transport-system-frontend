@@ -50,13 +50,16 @@ export class SignupComponent implements OnInit {
       this.emailInvalid = true;
       this.dataFlag = true;
     }
-    if(this.user.phoneNumber == ""){
+    if(this.user.telephone == ""){
       this.phoneInvalid = true;
       this.dataFlag = true;
     }
     if(!this.dataFlag){
-      this.userService.create(this.user);
-      this.router.navigate(['/welcome']);
+      this.userService.create(this.user, "add").subscribe(
+        response => {
+          this.router.navigate(['/welcome']);
+        }
+      );
     }
   }
 

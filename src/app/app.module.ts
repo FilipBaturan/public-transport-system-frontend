@@ -11,6 +11,8 @@ import { AuthComponent } from './components/auth/auth.component';
 import { MapComponent } from './components/map/map.component';
 import { SignupComponent } from './components/signup/signup.component';
 import { FormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   
@@ -36,7 +38,9 @@ import { FormsModule } from '@angular/forms';
       { path: 'transportLine', component: TransportLineComponent},
       { path: '', redirectTo: '/welcome', pathMatch: 'full' },
       { path: '**', component: WelcomeComponent, pathMatch : 'full'}
-    ])
+    ]),
+    BrowserAnimationsModule,
+    ToastrModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]

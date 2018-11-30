@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 
 import { Page } from '../model/page/page.model';
 import { PagedData } from '../model/page/paged-data.model';
@@ -84,7 +85,6 @@ export abstract class RestService<T> {
 
   protected handleError<E>(operation = 'operation', result?: E) {
     return (response: any): Observable<E> => {
-      console.error(response);
       // Get error object from response and its error message
       if (response.error) {
         if (response.error.error) {
@@ -95,7 +95,7 @@ export abstract class RestService<T> {
       } else {
         this.toastr.error('Client side error!');
       }
-      return Observable.throw(result as E);
+      return throwError(result as E || response.statusText);
     };
   }
 }

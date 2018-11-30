@@ -1,16 +1,16 @@
-import { Coordinates } from "./coordinates.model";
+import { StationPosition } from "./position.model";
 
 export class Station{
 
     id: number;
     name: string; 
-    coordinates: Coordinates;
+    position: StationPosition;
     acitve: boolean;
 
-    constructor(id: number, name: string, coordinates: Coordinates, active: boolean) {
+    constructor(id: number, name: string, position: StationPosition, active: boolean) {
         this.id = id;
         this.name = name;
-        this.coordinates = coordinates;
+        this.position = position;
         this.acitve = this.acitve;
     }
 }

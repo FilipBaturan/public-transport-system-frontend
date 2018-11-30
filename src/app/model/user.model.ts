@@ -6,7 +6,7 @@ export class User {
     name: string;
     lastName: string;
     email: string;
-    phoneNumber: string;
+    telephone: string;
 
     constructor(id: number, username: string, password: string, name: string,
         lastName: string, email: string, phoneNumber: string){
@@ -16,7 +16,7 @@ export class User {
             this.name = name;
             this.lastName = lastName;
             this.email = email;
-            this.phoneNumber = phoneNumber;
+            this.telephone = phoneNumber;
         }
 
 }
