@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { Page } from '../model/page/page.model';
@@ -12,8 +12,8 @@ import { PagedData } from '../model/page/paged-data.model';
 export abstract class RestService<T> {
 
   constructor(protected http: HttpClient,
-    protected queryParts: string[], // E.g. ['/user', 'schedule']
-    private toastr: ToastrService) { }
+    protected queryParts: string[], // E.g. ['/transportLine', 'schedule']
+    protected toastr: ToastrService) { }
 
   findAll(...queryParams: any[]): Observable<T[]> {
     console.log(this.url() + " " + queryParams); 
@@ -57,8 +57,8 @@ export abstract class RestService<T> {
   /**
    * Concatenates elements of queryParts and queryParams in alternative order
    * in order to construct an API URL. For example, the arrays
-   * queryParts = ['/user', 'schedule'] and queryParams = [2, 10]
-   * would result in '/user/2/schedule/10'.
+   * queryParts = ['/transportLine', 'schedule'] and queryParams = [2, 10]
+   * would result in '/transportLine/2/schedule/10'.
    * @param queryParams URL query parameters
    */
   protected url(queryParams: any[] = []): string {
@@ -84,7 +84,6 @@ export abstract class RestService<T> {
 
   protected handleError<E>(operation = 'operation', result?: E) {
     return (response: any): Observable<E> => {
-      console.error(response);
       // Get error object from response and its error message
       if (response.error) {
         if (response.error.error) {
@@ -95,7 +94,7 @@ export abstract class RestService<T> {
       } else {
         this.toastr.error('Client side error!');
       }
-      return Observable.throw(result as E);
+      return throwError(result as E || response.statusText);
     };
   }
 }

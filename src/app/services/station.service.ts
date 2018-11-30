@@ -1,25 +1,24 @@
 import { Injectable } from '@angular/core';
+import { RestService } from './rest.service';
+import { Station, StationCollection } from '../model/station.model';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { ToastrService } from 'ngx-toastr';
 import { Observable, throwError } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
-import { TransportLine } from '../model/transport-line.model';
-import { RestService } from './rest.service';
-import { ToastrService } from 'ngx-toastr';
-import { TransportLineCollection } from '../model/transportRoute.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class TransportLineService extends RestService<TransportLine>  {
+export class StationService extends RestService<Station> {
 
-  private transportLineURL = "/api/transportLine";
+  private stationURL: string = "/api/station"
 
   constructor(http: HttpClient, toastr: ToastrService) {
-    super(http, ['/api/transportLine'], toastr);
+    super(http, ['/api/station'], toastr);
   }
-  
-  replacetransportLines(transportLines: TransportLineCollection): Observable<TransportLine[]> {
-    return this.http.post<TransportLine[]>(this.transportLineURL + "/replace", transportLines).pipe(
+
+  replaceStations(stations: StationCollection): Observable<Station[]> {
+    return this.http.post<Station[]>(this.stationURL + "/replace", stations).pipe(
       tap(data => console.log("All stations: " + JSON.stringify(data))),
        catchError(this.handleException)
     );
@@ -31,5 +30,3 @@ export class TransportLineService extends RestService<TransportLine>  {
   }
 
 }
-
-
