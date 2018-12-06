@@ -1,5 +1,5 @@
 export enum DayOfWeek {
-    WORKKDAY,
+    WORKDAY,
     SATURDAY,
     SUNDAY
 }
