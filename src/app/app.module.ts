@@ -17,6 +17,7 @@ import { SignupComponent } from './components/signup/signup.component';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NavBarComponent } from './components/shared/nav-bar/nav-bar.component';
+import { TicketsComponent } from './components/tickets/tickets.component';
 
 @NgModule({
   
@@ -31,6 +32,7 @@ import { NavBarComponent } from './components/shared/nav-bar/nav-bar.component';
     MapComponent,
     SignupComponent,
     NavBarComponent,
+    TicketsComponent,
     
   ],
   imports: [

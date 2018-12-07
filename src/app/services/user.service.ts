@@ -7,6 +7,7 @@ import { RestService } from './rest.service';
 import { User } from '../model/user.model';
 import { Authentication } from '../model/authentication.model';
 import { TokenUtilsService } from '../util/token-utils.service';
+import { LogIn } from '../model/login.model';
 
 const authenticatedUserKey = 'authenticatedUser';
 
@@ -30,6 +31,10 @@ export class UserService extends RestService<User> {
       }),
       catchError(this.handleError<Authentication>())
     );
+  }
+
+  login(user: LogIn): Observable<any> {
+    return this.http.post<any>(this.url(['auth']), user);
   }
 
   signout(): void {
@@ -72,5 +77,7 @@ export class UserService extends RestService<User> {
       && authenticatedUser.roles
       && authenticatedUser.roles.indexOf('ADMIN') > -1;
   }
+
+  
 
 }

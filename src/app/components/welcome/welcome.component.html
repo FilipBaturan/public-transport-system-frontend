@@ -1,7 +1,14 @@
 <div class="card">
+    <div>
+        <p>Log In</p><br>
+        <input type="text" [class.incorrect]="usernameInvalid" placeholder="Username" [(ngModel)]="login.username" /><br>
+        <input type="password" [class.incorrect]="passwordInvalid" placeholder="Password" [(ngModel)]="login.password" /><br>
+        <button (click)="tryLogin()">Log In</button>
+    </div>
     <div class="card-header">
         {{pageTitle}}
     </div>
+
     <div class="card-body">
         <div class="container-fluid">
             <div class="text-center">
@@ -9,10 +16,10 @@
                 />
             </div>
 
-            <div class="text-center">Developed by:</div>
-            <div class="text-center">
+            <div class=" text-center ">Developed by:</div>
+            <div class="text-center ">
                 <h3>Filip Baturan</h3>
-                <button [routerLink]="['/signup']">Sign up</button>
+                <button [routerLink]="[ '/signup'] ">Sign up</button>
             </div>
             <app-map></app-map>
 
