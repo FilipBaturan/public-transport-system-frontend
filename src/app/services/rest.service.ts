@@ -16,7 +16,6 @@ export abstract class RestService<T> {
     protected toastr: ToastrService) { }
 
   findAll(...queryParams: any[]): Observable<T[]> {
-    console.log(this.url() + " " + queryParams); 
     return this.http.get<T[]>(this.url(queryParams)).pipe(
       catchError(this.handleError<T[]>())
     );
@@ -84,6 +83,7 @@ export abstract class RestService<T> {
 
   protected handleError<E>(operation = 'operation', result?: E) {
     return (response: any): Observable<E> => {
+      console.log(response);
       // Get error object from response and its error message
       if (response.error) {
         if (response.error.error) {

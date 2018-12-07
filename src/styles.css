@@ -1,3 +1,16 @@
 /* You can add global styles to this file, and also import other style files */
 /* @import "../node_modules/bootstrap/dist/css/bootstrap.min.css"; */
 @import "~bootstrap/dist/css/bootstrap.css";
+
+.dropdown angular2-multiselect{
+    max-width: 200px !important;
+  }
+
+  angular2-multiselect{
+    max-width: 200px !important;
+  }
+
+
+  .dropdown.transportline-select{
+    max-width: 200px !important;
+  }
