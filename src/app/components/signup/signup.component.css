@@ -1,0 +1,15 @@
+.signupForm {
+    position: absolute;
+    top: 15%;
+    left: 45%
+}
+
+.input {
+    border-radius: 5pt;
+    margin-bottom: 10px;
+    padding: 4px 8px 4px 8px;
+}
+
+.incorrect {
+    border: 2px solid red;
+}

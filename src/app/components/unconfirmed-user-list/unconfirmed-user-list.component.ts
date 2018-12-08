@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../services/user.service';
-import { User } from '../../model/user.model';
+import { User } from '../../model/users/user.model';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({

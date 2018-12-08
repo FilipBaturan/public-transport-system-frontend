@@ -1,0 +1,10 @@
+<h3 *ngIf="tickets.length == 0">There are no ticket for this user</h3>
+<div *ngFor = "let ticket of tickets">
+  <div>
+      <p> {{ticket.puracheDate}}</p> <p>{{ticket.expiryDate}}</p>
+       <button (click) = "denyTicket(ticket)">Deny ticket</button>
+
+  </div>
+
+
+</div>

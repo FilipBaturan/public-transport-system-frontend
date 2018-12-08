@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../services/user.service';
-import { User } from '../../model/user.model';
+import { User } from '../../model/users/user.model';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -10,7 +10,7 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class ValidatorListComponent implements OnInit {
 
-  validators: User[];
+  validators: User[] = [];
   noUsers: boolean;
   //Ruganje gore (mock up)
   newUser: User;
@@ -24,7 +24,7 @@ export class ValidatorListComponent implements OnInit {
 
     //ruganje gore
     this.newUser = new User(null, "newUserName", "newPass", "newName", "newLastName", "newEmail", 
-                    true);
+                    true, "123123");
 
 
     this.changeFormShowed = false;

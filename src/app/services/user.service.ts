@@ -4,7 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { RestService } from './rest.service';
-import { User } from '../model/user.model';
+import { User } from '../model/users/user.model';
 import { Authentication } from '../model/authentication.model';
 import { TokenUtilsService } from '../util/token-utils.service';
 
@@ -74,7 +74,7 @@ export class UserService extends RestService<User> {
   }
 
   getUnconfirmedUsers() {
-    return this.http.get<User[]>(this.url(['UnvalidatedUsers'])).pipe(
+    return this.http.get<User[]>(this.url(['unvalidatedUsers'])).pipe(
       catchError(this.handleError<User[]>())
     );
   }
@@ -106,6 +106,12 @@ export class UserService extends RestService<User> {
   addValidator(user: User){
     return this.http.post<User>(this.url(['addValidator']), user).pipe(
       catchError(this.handleError<boolean>())
+    );
+  }
+
+  getRegUsers(){
+    return this.http.get<User[]>(this.url(['registeredUsers'])).pipe(
+      catchError(this.handleError<User[]>())
     );
   }
 

@@ -1,8 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { throwError } from 'rxjs';
 
 import { Page } from '../model/page/page.model';
 import { PagedData } from '../model/page/paged-data.model';
@@ -13,8 +12,8 @@ import { PagedData } from '../model/page/paged-data.model';
 export abstract class RestService<T> {
 
   constructor(protected http: HttpClient,
-    protected queryParts: string[], // E.g. ['/user', 'schedule']
-    private toastr: ToastrService) { }
+    protected queryParts: string[], // E.g. ['/transportLine', 'schedule']
+    protected toastr: ToastrService) { }
 
   findAll(...queryParams: any[]): Observable<T[]> {
     console.log(this.url() + " " + queryParams); 
@@ -37,9 +36,9 @@ export abstract class RestService<T> {
     );
   }
 
-  create<D>(body: T | D, ...queryParams: any[]): Observable<number> {
-    return this.http.post<number>(this.url(queryParams), body).pipe(
-      catchError(this.handleError<number>())
+  create<D>(body: T | D, ...queryParams: any[]): Observable<any> {
+    return this.http.post<any>(this.url(queryParams), body).pipe(
+      catchError(this.handleError<any>())
     );
   }
 
@@ -58,8 +57,8 @@ export abstract class RestService<T> {
   /**
    * Concatenates elements of queryParts and queryParams in alternative order
    * in order to construct an API URL. For example, the arrays
-   * queryParts = ['/user', 'schedule'] and queryParams = [2, 10]
-   * would result in '/user/2/schedule/10'.
+   * queryParts = ['/transportLine', 'schedule'] and queryParams = [2, 10]
+   * would result in '/transportLine/2/schedule/10'.
    * @param queryParams URL query parameters
    */
   protected url(queryParams: any[] = []): string {

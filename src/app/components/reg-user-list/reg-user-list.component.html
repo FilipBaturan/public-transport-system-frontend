@@ -1,0 +1,9 @@
+<h3 *ngIf="1 == 0">There are no registered users</h3>
+<div *ngFor = "let user of registeredUsers">
+  <div>
+      <p> {{user.firstName}}</p>
+      <p> {{user.lastName}}</p>
+      <a [routerLink] = "['/userTickets', user.id]">tickets</a>
+  </div>
+  
+</div>

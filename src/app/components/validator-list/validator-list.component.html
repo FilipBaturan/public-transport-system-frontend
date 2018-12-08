@@ -1,15 +1,13 @@
-<h3 *ngIf="noUsers">There are no unconfirmed users</h3>
+<h3 *ngIf="validators.length == 0">There are no unconfirmed users</h3>
+
 <div *ngFor = "let user of validators">
   <div>
       <p> {{user.firstName}}</p> <a [routerLink] = "['/userProfile']">check documents</a>
        <button (click) = "showChangeForm(user)">Change</button>
        <button (click) = "blockValidator(user)">Block</button>
   </div>
+</div>
 
-
-  <div>
-    <button (click) = "addValidator()">Add new Validator</button>
-  </div>
-  
-
+<div>
+  <button (click) = "addValidator()">Add new Validator</button>
 </div>

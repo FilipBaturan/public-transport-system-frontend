@@ -1,16 +1,12 @@
-import { Days } from "./enums/days.enum";
+import { TransportLine } from "./transport-line.model";
+import { DayOfWeek } from "./enums/day-of-week.model";
 
 export class Schedule {
 
     id: number;
-    startTime: string;
+    departures: string[];
+    transportLine: TransportLine;
     transportRoute: number;
-    day: Days;
+    dayOfWeek: DayOfWeek;
 
-    constructor(id: number, startTime: string, transportRoute: number, day: Days){
-        this.id = id;
-        this.startTime = startTime;
-        this.transportRoute = transportRoute;
-        this.day = day;
-    }
 }
