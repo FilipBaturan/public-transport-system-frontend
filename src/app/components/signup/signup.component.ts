@@ -19,7 +19,6 @@ export class SignupComponent implements OnInit {
   phoneInvalid : boolean;
   dataFlag : boolean;
   
-
   constructor(private router: Router,
               private userService: UserService) { }
 
