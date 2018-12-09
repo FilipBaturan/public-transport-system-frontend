@@ -10,6 +10,7 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class UnconfirmedUserListComponent implements OnInit {
 
+  displayedColumns: string[] = ['firstName', 'lastName', 'userName', 'email','docs', 'accept', 'deny']
   unconfirmedUsers: User[];
   noUsers: boolean;
 

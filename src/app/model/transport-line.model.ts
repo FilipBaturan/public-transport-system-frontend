@@ -1,5 +1,6 @@
 import { TransportLinePosition } from "./position.model";
 import { Schedule } from "./schedule.model";
+import { Zone } from "./zone.model"
 
 export class TransportLine {
     

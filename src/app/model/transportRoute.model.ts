@@ -1,6 +1,7 @@
 import { TransportLine } from "src/app/model/transport-line.model";
 import { TransportLinePosition } from "./position.model";
 import { Schedule } from "./schedule.model";
+import { Zone } from "./zone.model";
 
 export class TransportRoute extends TransportLine {
     

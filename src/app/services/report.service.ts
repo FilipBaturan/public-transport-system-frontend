@@ -5,25 +5,19 @@ import { catchError } from 'rxjs/operators';
 import { RestService } from './rest.service';
 import { Ticket } from '../model/ticket/ticket';
 
-
 @Injectable({
   providedIn: 'root'
 })
-export class TicketService extends RestService<Ticket> {
+export class ReportService extends RestService<any>  {
 
   constructor(http: HttpClient, toastr: ToastrService) {
     super(http, ['/api/ticket'], toastr);
   }
 
-  getTicketsForUser(userId: number){
-    return this.http.get<any>(this.url(['getTicketsForUser/' +  userId])).pipe(
+  getReport(startDate: Date, endDate: Date){
+    return this.http.get<any>(this.url(['reprot/' + startDate + '/' +
+      endDate])).pipe(
       catchError(this.handleError<any>())
-    );
-  }
-
-  denyTicket(t: Ticket){
-    return this.http.put<boolean>(this.url(['updateTicket']), t).pipe(
-      catchError(this.handleError<boolean>())
     );
   }
 

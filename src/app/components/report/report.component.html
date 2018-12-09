@@ -10,17 +10,19 @@
 
           <div class="form-group" style="display: inline-block; margin-left: 20px">
               <label style="display: block">Select first day</label>
-              <input type="date" ng-model="date1" class="form-control" style="width: 200px;"/>
+              <input type="date" [ngModel]="startDate | date:'yyyy-MM-dd'" 
+              class="form-control" style="width: 200px;" (ngModelChange)="startDate = $event"/>
           </div>
               
       
               
           <div class="form-group" style="display: inline-block; margin-left: 20px">
               <label style="display: block">Select last day</label>
-              <input type="date" ng-model="date2" class="form-control" style="width: 200px;"/>
+              <input type="date" [ngModel]="endDate | date:'yyyy-MM-dd'" class="form-control"
+               style="width: 200px;" (ngModelChange)="endDate = $event"/>
           </div>
 
-          <button ng-show="showEarningsButton" ng-click="getPricePerPeriod()">Show price report</button>
+          <button ng-show="showEarningsButton" (click)="getPricePerPeriod()">Show price report</button>
   
           <div ng-show = "Earnings">
               <p>Earnings between {{date1}} and {{date2}}</p>

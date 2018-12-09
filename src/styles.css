@@ -3,3 +3,17 @@
 /* @import "~bootstrap/dist/css/bootstrap.css"; */
 
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
+@import "~bootstrap/dist/css/bootstrap.css";
+
+.dropdown angular2-multiselect{
+    max-width: 200px !important;
+  }
+
+  angular2-multiselect{
+    max-width: 200px !important;
+  }
+
+
+  .dropdown.transportline-select{
+    max-width: 200px !important;
+  }

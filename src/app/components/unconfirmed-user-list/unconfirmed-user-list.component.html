@@ -1,10 +1,66 @@
-<h3 *ngIf="noUsers">There are no unconfirmed users</h3>
-<div *ngFor = "let user of unconfirmedUsers">
+<h3 *ngIf="unconfirmedUsers.length == 0">There are no unconfirmed users</h3>
+
+<div class="example-container mat-elevation-z8">
+
+    <table *ngIf="unconfirmedUsers.length != 0" mat-table [dataSource]="unconfirmedUsers">
+  
+      <!--- Note that these columns can be defined in any order.
+            The actual rendered columns are set as a property on the row definition" -->
+  
+      <!-- Position Column -->
+      <ng-container matColumnDef="firstName">
+        <th mat-header-cell *matHeaderCellDef>First Name </th>
+        <td mat-cell *matCellDef="let element"> {{element.firstName}} </td>
+      </ng-container>
+  
+      <!-- Name Column -->
+      <ng-container matColumnDef="lastName">
+        <th mat-header-cell *matHeaderCellDef> Last Name </th>
+        <td mat-cell *matCellDef="let element"> {{element.last}} </td>
+      </ng-container>
+  
+      <!-- Weight Column -->
+      <ng-container matColumnDef="userName">
+        <th mat-header-cell *matHeaderCellDef> Username </th>
+        <td mat-cell *matCellDef="let element"> {{element.username}} </td>
+      </ng-container>
+  
+      <!-- Symbol Column -->
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef> Email </th>
+        <td mat-cell *matCellDef="let element"> {{element.email}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="docs">
+        <th mat-header-cell *matHeaderCellDef> Validate </th>
+        <td mat-cell *matCellDef="let element" (click)="$event.stopPropagation()">
+          <a [routerLink] = "['/userProfile']">Check documents</a>
+        </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="accept">
+        <th mat-header-cell *matHeaderCellDef> Accept </th>
+        <td mat-cell *matCellDef="let element" (click)="$event.stopPropagation()">
+          <button (click) = "acceptUser(element)">Accept</button>
+        </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="deny">
+        <th mat-header-cell *matHeaderCellDef> Deny </th>
+        <td mat-cell *matCellDef="let element" (click)="$event.stopPropagation()">
+          <button (click) = "denyUser(element)">Deny</button>
+        </td>
+      </ng-container>
+  
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+
+<!-- <div *ngFor = "let user of unconfirmedUsers">
   <div>
       <p> {{user.firstName}}</p> <a [routerLink] = "['/userProfile']">check documents</a>
-       <button (click) = "acceptUser(user)">Accept</button>
-       <button (click) = "denyUser(user)">Deny</button>
   </div>
   
 
-</div>
+</div> -->

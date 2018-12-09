@@ -11,6 +11,8 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class UserTicketsComponent implements OnInit {
 
+  displayedColumns: string[] = ['purchaseDate', 'expiryDate', 'deny'];
+
   tickets: Ticket[] = [];
 
   constructor(private route: ActivatedRoute, private ticketService: TicketService, 

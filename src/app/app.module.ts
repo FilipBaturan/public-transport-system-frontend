@@ -4,6 +4,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import {MatButtonModule, MatCheckboxModule, MatCardModule, MatProgressSpinnerModule, MatMenuModule,
      MatIconModule, MatToolbarModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatSortModule, MatTableModule} from '@angular/material';
+import { AngularMultiSelectModule } from 'angular2-multiselect-dropdown';
 
 import { AppComponent } from './app.component';
 import { TransportLineComponent } from './components/transport-line/transport-line.component';
@@ -63,6 +64,8 @@ import { ReportComponent } from './components/report/report.component';
     MatSelectModule,
     MatSortModule,
     MatTableModule,
+    AngularMultiSelectModule,
+    FormsModule,
     RouterModule.forRoot([
       { path: 'userTickets/:id', component: UserTicketsComponent},
       { path: 'signup', component: SignupComponent},

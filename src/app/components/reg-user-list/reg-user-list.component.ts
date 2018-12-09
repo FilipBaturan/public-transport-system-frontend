@@ -9,6 +9,8 @@ import { UserService } from '../../services/user.service';
 })
 export class RegUserListComponent implements OnInit {
 
+  displayedColumns: string[] = ['firstName', 'lastName', 'userName', 'email', 'tickets']
+
   registeredUsers: User[];
   noUsers: boolean = true;
 
