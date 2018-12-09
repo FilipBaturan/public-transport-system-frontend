@@ -54,6 +54,7 @@ import { NavBarComponent } from './components/shared/nav-bar/nav-bar.component';
     AngularMultiSelectModule,
     FormsModule,
     RouterModule.forRoot([
+      { path: 'signin', component: AuthComponent},
       { path: 'signup', component: SignupComponent},
       { path: 'schedule', component: ScheduleComponent},
       { path: 'transportLineList', component: TransportLineListComponent},
