@@ -25,12 +25,13 @@ export class SignupComponent implements OnInit {
 
   ngOnInit() {
     this.user = new User(0, "", "", "", "", "", true, "");
+    //this.user = new User();
     this.resetFlags();
   }
 
   tryRegister(): void {
     this.resetFlags();
-    if(this.user.firstName == ""){
+    if(this.user.name == ""){
       this.nameInvalid = true;
       this.dataFlag = true;
     }
@@ -54,6 +55,9 @@ export class SignupComponent implements OnInit {
       this.phoneInvalid = true;
       this.dataFlag = true;
     }
+
+    this.user.active = true;
+    
     if(!this.dataFlag){
       this.userService.create(this.user, "add").subscribe(
         response => {

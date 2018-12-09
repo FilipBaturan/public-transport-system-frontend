@@ -68,6 +68,7 @@ import { ReportComponent } from './components/report/report.component';
     FormsModule,
     RouterModule.forRoot([
       { path: 'userTickets/:id', component: UserTicketsComponent},
+      { path: 'signin', component: AuthComponent},
       { path: 'signup', component: SignupComponent},
       { path: 'schedule', component: ScheduleComponent},
       { path: 'transportLineList', component: TransportLineListComponent},
