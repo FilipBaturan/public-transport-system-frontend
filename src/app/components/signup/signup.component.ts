@@ -23,7 +23,7 @@ export class SignupComponent implements OnInit {
               private userService: UserService) { }
 
   ngOnInit() {
-    this.user = new User(0, '', '', '', '', '', '');
+    this.user = new User();
     this.resetFlags();
   }
 

@@ -32,7 +32,7 @@ export class ScheduleComponent implements OnInit {
 
   transportLineDropdown = [];
   selectedItems = [];
-  TransportLineDropdownSettings = {};
+  transportLineDropdownSettings = {};
 
   dayOfWeekDropdown = [];
   selectedItem = [];
@@ -77,12 +77,13 @@ export class ScheduleComponent implements OnInit {
   }
 
   setupTransportLineSelect(){
-    this.TransportLineDropdownSettings = { 
+    this.transportLineDropdownSettings = { 
       singleSelection: false, 
       text:"Select Transport Lines",
       enableSearchFilter: true,
       enableCheckAll: false,
       maxHeight: 150,
+      disabled: false,
       classes:"dropdown transportline-select"
     };
 
@@ -142,17 +143,23 @@ export class ScheduleComponent implements OnInit {
       //this.columnsToDisplay.push(item.itemName);
       let dow = this.getDayOfWeekEnum(this.selectedItem[0].itemName);
       this.filterSchedules(item.itemName, dow);
+    } else{
+      this.selectedItems = [];
     }
   }
 
   onItemDeSelect(item:any){
       let index = this.columnsToDisplay.findIndex(d => d === item.itemName);
       this.columnsToDisplay.splice(index, 1);
+      //this.transportLineDropdownSettings["disabled"] = true;
+      console.log(this.transportLineDropdownSettings);
   }
 
   onDayOfWeekSelect(item){
     let dow = this.getDayOfWeekEnum(item.itemName);
     this.selectedItems = [];
+    //this.transportLineDropdownSettings["disabled"] = false;
+    console.log(this.transportLineDropdownSettings);
   }
 
   onDayOfWeekDeSelect(item:any){

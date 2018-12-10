@@ -56,10 +56,12 @@ import { TicketsComponent } from './components/tickets/tickets.component';
     AngularMultiSelectModule,
     FormsModule,
     RouterModule.forRoot([
+      { path: 'signin', component: AuthComponent},
       { path: 'signup', component: SignupComponent},
       { path: 'schedule', component: ScheduleComponent},
       { path: 'transportLineList', component: TransportLineListComponent},
       { path: 'transportLine', component: TransportLineComponent},
+      { path: 'tickets', component: TicketsComponent},
       { path: '', redirectTo: '/welcome', pathMatch: 'full' },
       { path: '**', component: WelcomeComponent, pathMatch : 'full'}
     ]),
