@@ -44,7 +44,7 @@ export class AuthService extends RestService<User> {
   }
 
   getCurrentUser() {
-    return this.http.get<User>(this.url(['me'])).pipe(
+    return this.http.get<User>(this.url(['currentUser'])).pipe(
       catchError(this.handleError<User>())
     );
   }
