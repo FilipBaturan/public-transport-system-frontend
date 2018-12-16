@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { User } from 'src/app/model/user.model';
+import { User } from 'src/app/model/users/user.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -11,7 +11,7 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class AuthComponent implements OnInit {
 
-  user: User = new User();
+  user: User = new User(0, "", "", "", "", "", true, "");
 
 
   constructor(private authService: AuthService,
