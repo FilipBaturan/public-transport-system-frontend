@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { interval } from 'rxjs';
-import { TransportRoute, TransportLineCollection } from '../../model/transportRoute.model';
+import { TransportRoute, TransportLineCollection } from '../../model/transport-line.model';
 import { Station, StationCollection } from 'src/app/model/station.model';
-import { Position, StationPosition, TransportLinePosition } from 'src/app/model/position.model';
+import { StationPosition, TransportLinePosition } from 'src/app/model/position.model';
 import { Schedule } from 'src/app/model/schedule.model';
 import { StationService } from 'src/app/services/station.service';
-import { VehicleType } from 'src/app/model/enums/vehicle.enum';
+import { VehicleType } from 'src/app/model/enums/vehicle-type.model';
 import { TransportLineService } from 'src/app/services/transport-line.service';
 import { TransportLine } from 'src/app/model/transport-line.model';
+import { UserService } from 'src/app/services/user.service';
 
 declare var MapBBCode: any;
 declare var L: any;
@@ -43,7 +44,8 @@ export class MapComponent implements OnInit {
   private tempTransportLines: TransportLine[];
 
   constructor(private stationService: StationService, 
-    private transportLineService: TransportLineService) {
+    private transportLineService: TransportLineService,
+    private userService: UserService) {
     this.bbCode = `[map][/map]`;
     this.imagePath = "assets/lib/dist/lib/images/";
     this.bus1PositionIndex = 0;
@@ -155,7 +157,6 @@ export class MapComponent implements OnInit {
 
   edit(): void {
     var tempThis = this;          // temploral reference to this object
-    var tempMap = this.mapViewer; // temploral reference to this.mapViewer object
     var original = document.getElementById("original");
     original.style.display = "none";
     this.mapEditorStations = this.deepCopyStations(this.mapViewStations);
@@ -248,7 +249,7 @@ export class MapComponent implements OnInit {
           ({ code, name, index } = this.generateNameToContent(code, index, true));
           this.tempTransportLines.push(new TransportLine(null, name,
              new TransportLinePosition(null, this.parsePositions(code, index), true),
-                 new Schedule(), true, "BUS", 1));
+             this.findScheduleItems(name), true, "BUS", 1));
         }
       }
     }
@@ -257,15 +258,28 @@ export class MapComponent implements OnInit {
       code = code.slice(0, index).concat("(blue|gener@ted" + index + ")[" + code.substr(index + 1));
       this.tempTransportLines.push(new TransportLine(null, "gener@ted" + index,
        new TransportLinePosition(null, this.parsePositions(code, code.lastIndexOf("[")), true),
-        new Schedule(), true, "BUS", 1));
+       new Array<number>(), true, "BUS", 1));
     } else {
       let name: string;
       ({ code, name, index } = this.generateNameToContent(code, index, false));
       this.tempTransportLines.push(new TransportLine(null, name,
        new TransportLinePosition(null, this.parsePositions(code, code.lastIndexOf("[")), true),
-        new Schedule(), true, "BUS", 1));
+       this.findScheduleItems(name), true, "BUS", 1));
+       /*
+                  DODAJ DA PORED SCHEDULE TREBA DA NADJE I ZONU KOME JE PRIPADAO
+       
+       */ 
     }
     return code;
+  }
+
+  private findScheduleItems(transportLineName:string): Array<number> {
+      for (const transportLine of this.transportLines) {
+        if (transportLine.name == transportLineName){
+          return transportLine.schedule;
+        }
+      }
+      return new Array<number>();
   }
 
   private generateNameToContent(code: string, index: number, skip: boolean): ParsedData {

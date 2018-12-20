@@ -5,7 +5,7 @@ import { tap, catchError } from 'rxjs/operators';
 import { TransportLine } from '../model/transport-line.model';
 import { RestService } from './rest.service';
 import { ToastrService } from 'ngx-toastr';
-import { TransportLineCollection } from '../model/transportRoute.model';
+import { TransportLineCollection } from '../model/transport-line.model';
 
 @Injectable({
   providedIn: 'root'
