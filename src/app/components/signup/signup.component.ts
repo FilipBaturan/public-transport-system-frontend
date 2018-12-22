@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { User } from 'src/app/model/user.model';
+import { User } from 'src/app/model/users/user.model';
 import { Router } from '@angular/router';
 import { UserService } from 'src/app/services/user.service';
 
@@ -24,7 +24,8 @@ export class SignupComponent implements OnInit {
               private userService: UserService) { }
 
   ngOnInit() {
-    this.user = new User(0, '', '', '', '', '', '');
+    this.user = new User(0, "", "", "", "", "", true, "");
+    //this.user = new User();
     this.resetFlags();
   }
 
@@ -54,6 +55,9 @@ export class SignupComponent implements OnInit {
       this.phoneInvalid = true;
       this.dataFlag = true;
     }
+
+    this.user.active = true;
+    
     if(!this.dataFlag){
       this.userService.create(this.user, "add").subscribe(
         response => {

@@ -25,7 +25,7 @@ pageTitle: string = "DOBRO DOSO KORISNIKU!!1!1"
   ngOnInit() {
   }
 
-  onFileSelected(event){
+  onFileSelected(event: { target: { files: File[]; }; }){
     this.selectedFile = event.target.files[0] as File;
   }
 

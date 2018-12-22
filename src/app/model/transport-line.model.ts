@@ -11,7 +11,7 @@ export class TransportLine {
     zone: number;
 
     constructor(id: number, name: string, positions: TransportLinePosition, schedule: number[],
-        active: boolean, type: string,zone: number){
+        active: boolean, type: string, zone: number){
             this.id = id;
             this.name = name;
             this.positions = positions;
@@ -23,7 +23,7 @@ export class TransportLine {
         
 }
 
-export class TransportRoute extends TransportLine {
+export class TransportLineViewer extends TransportLine {
     
     visible: boolean;
 

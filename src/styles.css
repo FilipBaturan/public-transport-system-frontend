@@ -1,3 +1,30 @@
 /* You can add global styles to this file, and also import other style files */
 /* @import "../node_modules/bootstrap/dist/css/bootstrap.min.css"; */
-@import "~bootstrap/dist/css/bootstrap.css";
+/* @import "~bootstrap/dist/css/bootstrap.css"; */
+
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+/*@import "~bootstrap/dist/css/bootstrap.css";*/
+
+.dropdown angular2-multiselect{
+    max-width: 200px !important;
+  }
+
+  angular2-multiselect{
+    max-width: 200px !important;
+  }
+
+
+  .dropdown.transportline-select{
+    max-width: 200px !important;
+  }
+
+  .form .form-control {
+    position: relative;
+    box-sizing: border-box;
+    padding: 8px;
+    font-size: 16px;
+}
+
+.form-control:focus {
+    z-index: 2;
+}

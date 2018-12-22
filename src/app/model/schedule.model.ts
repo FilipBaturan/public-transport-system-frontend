@@ -6,7 +6,7 @@ export class Schedule {
     id: number;
     departures: string[];
     transportLine: TransportLine;
-    transportRoute: number;
     dayOfWeek: DayOfWeek;
-
+    active: boolean;
+    
 }

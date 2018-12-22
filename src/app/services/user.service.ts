@@ -4,7 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { RestService } from './rest.service';
-import { User } from '../model/user.model';
+import { User } from '../model/users/user.model';
 import { Authentication } from '../model/authentication.model';
 import { TokenUtilsService } from '../util/token-utils.service';
 
@@ -71,6 +71,48 @@ export class UserService extends RestService<User> {
     return authenticatedUser
       && authenticatedUser.roles
       && authenticatedUser.roles.indexOf('ADMIN') > -1;
+  }
+
+  getUnconfirmedUsers() {
+    return this.http.get<User[]>(this.url(['unvalidatedUsers'])).pipe(
+      catchError(this.handleError<User[]>())
+    );
+  }
+
+  acceptUser(user: User){
+    return this.http.put<User>(this.url(['approveUser']), user).pipe(
+      catchError(this.handleError<boolean>())
+    );
+  }
+
+  denyUser(user: User){
+    return this.http.put<User>(this.url(['denyUser']), user).pipe(
+      catchError(this.handleError<boolean>())
+    );
+  }
+
+  getValidators(){
+    return this.http.get<User[]>(this.url(['getValidators'])).pipe(
+      catchError(this.handleError<User[]>())
+    );
+  }
+
+  blockValidator(user: User){
+    return this.http.put<User>(this.url(['updateValidator']), user).pipe(
+      catchError(this.handleError<boolean>())
+    );
+  }
+
+  addValidator(user: User){
+    return this.http.post<User>(this.url(['addValidator']), user).pipe(
+      catchError(this.handleError<boolean>())
+    );
+  }
+
+  getRegUsers(){
+    return this.http.get<User[]>(this.url(['registeredUsers'])).pipe(
+      catchError(this.handleError<User[]>())
+    );
   }
 
 }

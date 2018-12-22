@@ -1,0 +1,43 @@
+
+.example-container {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center !important;
+    width: 50% !important;
+  }
+
+.mat-table{
+    align-self: center;
+}
+
+.mat-table__wrapper .mat-table {
+    min-width: auto;
+    width: 100% ;
+}
+
+.mat-header-row {
+    width: 100%;
+}
+
+.mat-row {
+    width: 100%;
+}
+
+.mat-column-purchaseDate{
+    flex: 0 0 25% !important;
+    min-width: 104px !important;
+}
+
+.mat-column-expiryDate {
+    flex: 0 0 25% !important;
+    min-width: 104px !important;
+}
+
+.mat-column-deny {
+    flex: 0 0 25% !important;
+    min-width: 104px !important;
+}
+
+.mat-app-background{
+    text-align: center;
+}

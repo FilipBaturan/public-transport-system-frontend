@@ -12,24 +12,20 @@ import { TransportLineCollection } from '../model/transport-line.model';
 })
 export class TransportLineService extends RestService<TransportLine>  {
 
-  transportLineUrl : string = '/transportLine/get/1';
-  allTransportLinesUrl : string = '/transportLine/all';
-  private transportLineURL = "/api/transportLine";
+  private transportLineURL: string = "/api/transportLine";
 
   constructor(http: HttpClient, toastr: ToastrService) {
-    super(http, ['/api/transportLine'], toastr);
+    super(http, ["/api/transportLine"], toastr);
   }
   
-  replacetransportLines(transportLines: TransportLineCollection): Observable<TransportLine[]> {
+  replaceTransportLines(transportLines: TransportLineCollection): Observable<TransportLine[]> {
     return this.http.post<TransportLine[]>(this.transportLineURL + "/replace", transportLines).pipe(
-      tap(data => console.log("All stations: " + JSON.stringify(data))),
        catchError(this.handleException)
     );
   }
 
   private handleException(err: HttpErrorResponse) {
-    this.toastr.error(`Status: ${err.status}, message: ${err.message}`);
-    return throwError(err.message);
+    return throwError(err.message || "Server error");
   }
 
 }

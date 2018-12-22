@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { User } from 'src/app/model/users/user.model';
+import { AuthService } from 'src/app/services/auth.service';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-auth',
@@ -7,9 +11,23 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AuthComponent implements OnInit {
 
-  constructor() { }
+  user: User = new User(0, "", "", "", "", "", true, "");
+
+
+  constructor(private authService: AuthService,
+    private router: Router,
+    private toastr: ToastrService) { }
 
   ngOnInit() {}
+
+  signin(): void {
+    this.authService.authenticate(this.user).subscribe(
+      response => {
+        this.toastr.success(`Welcome ${this.user.username}`);
+        this.router.navigate(['home']);
+      },
+      err => { });
+  }
   
 
 }
