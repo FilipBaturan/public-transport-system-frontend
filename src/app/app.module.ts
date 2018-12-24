@@ -20,11 +20,12 @@ import { UnconfirmedUserListComponent } from './components/unconfirmed-user-list
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
 import { ValidatorListComponent } from './components/validator-list/validator-list.component';
 import { SignupComponent } from './components/signup/signup.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NavBarComponent } from './components/shared/nav-bar/nav-bar.component';
 import { RegUserListComponent } from './components/reg-user-list/reg-user-list.component';
 import { UserTicketsComponent } from './components/user-tickets/user-tickets.component';
 import { ReportComponent } from './components/report/report.component';
+import { VehicleComponent } from './components/vehicle/vehicle.component';
 
 @NgModule({
   
@@ -45,10 +46,12 @@ import { ReportComponent } from './components/report/report.component';
     RegUserListComponent,
     UserTicketsComponent,
     ReportComponent,
+    VehicleComponent,
     
   ],
   imports: [
     FormsModule,
+    ReactiveFormsModule,
     BrowserModule,
     HttpClientModule,
     NgxDatatableModule,
@@ -79,6 +82,7 @@ import { ReportComponent } from './components/report/report.component';
       { path: 'registeredUsers', component: RegUserListComponent},
       { path: 'editRoutes', component: MapComponent},
       { path: 'reports', component: ReportComponent},
+      { path: 'vehicles', component: VehicleComponent},
       { path: '', redirectTo: '/welcome', pathMatch: 'full' },
       { path: '**', component: WelcomeComponent, pathMatch : 'full'}
     ]),

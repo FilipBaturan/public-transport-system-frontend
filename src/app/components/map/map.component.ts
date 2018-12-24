@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { interval } from 'rxjs';
-import { TransportRoute, TransportLineCollection } from '../../model/transportRoute.model';
+import { TransportLineViewer, TransportLineCollection } from '../../model/transport-line.model';
 import { Station, StationCollection } from 'src/app/model/station.model';
-import { Position, StationPosition, TransportLinePosition } from 'src/app/model/position.model';
-import { Schedule } from 'src/app/model/schedule.model';
+import { StationPosition, TransportLinePosition } from 'src/app/model/position.model';
 import { StationService } from 'src/app/services/station.service';
-import { VehicleType } from 'src/app/model/enums/vehicle.enum';
+import { VehicleType } from 'src/app/model/enums/vehicle-type.model';
 import { TransportLineService } from 'src/app/services/transport-line.service';
 import { TransportLine } from 'src/app/model/transport-line.model';
+import { UserService } from 'src/app/services/user.service';
+import { ToastrService } from 'ngx-toastr';
 
 declare var MapBBCode: any;
 declare var L: any;
@@ -39,12 +40,14 @@ export class MapComponent implements OnInit {
   private mapEditorStations: object;
   private stationCounter: number;
   private transportLines: TransportLine[];
-  private transportRoutes: TransportRoute[];
+  private transportLineViewers: TransportLineViewer[];
   private tempTransportLines: TransportLine[];
 
   constructor(private stationService: StationService, 
-    private transportLineService: TransportLineService) {
-    this.bbCode = `[map][/map]`;
+    private transportLineService: TransportLineService,
+    private userService: UserService,
+    private toastr: ToastrService) {
+    this.bbCode = "[map][/map]";
     this.imagePath = "assets/lib/dist/lib/images/";
     this.bus1PositionIndex = 0;
     this.positions = [[45.26377, 19.82895], [45.26407, 19.82122], [45.26274, 19.81878],
@@ -56,7 +59,7 @@ export class MapComponent implements OnInit {
     [45.26377, 19.82891]];
     this.mapViewStations = {};
     this.stationCounter = 0;
-    this.transportRoutes = [];
+    this.transportLineViewers = [];
     this.tempTransportLines = [];
     this.busIcon = L.icon({
       iconUrl: this.imagePath + "bus.png",
@@ -140,7 +143,7 @@ export class MapComponent implements OnInit {
       this.transportLines = response;
       for (let index = 0; index < this.transportLines.length; index++) {
         const tl = this.transportLines[index];
-        this.transportRoutes.push(new TransportRoute(tl.id, tl.name, tl.positions, tl.schedule, tl.active,
+        this.transportLineViewers.push(new TransportLineViewer(tl.id, tl.name, tl.positions, tl.schedule, tl.active,
           tl.type, tl.zone, true));
         this.showRoute(tl.id);
       }
@@ -155,36 +158,41 @@ export class MapComponent implements OnInit {
 
   edit(): void {
     var tempThis = this;          // temploral reference to this object
-    var tempMap = this.mapViewer; // temploral reference to this.mapViewer object
     var original = document.getElementById("original");
     original.style.display = "none";
-    this.mapEditorStations = this.deepCopyStations(this.mapViewStations);
+    this.mapEditorStations = this.deepCopyStations();
     this.mapBB.editor("edit", this.bbCode, this.mapEditorStations, this.stationCounter, {
       "bus": this.busStationIcon,
       "metro": this.metroStationIcon,
       "tram": this.tramStationIcon
-    }, function (res) {
+    }, function (res: string) {
       original.style.display = "block";
       if (res !== null) {
-        tempThis.bbCode = tempThis.placeTransportRoutes(res);
-        tempThis.transportLineService.replacetransportLines(
+        tempThis.applyTransportRoutesChanges(res);
+        tempThis.transportLineService.replaceTransportLines(
           new TransportLineCollection(tempThis.tempTransportLines)).subscribe(
             response => {
+              tempThis.bbCode = "[map][/map]";
               tempThis.transportLines = response;
-              tempThis.transportRoutes = [];
-              for (let index = 0; index < tempThis.transportLines.length; index++) {
-                const tl = tempThis.transportLines[index];
-                tempThis.transportRoutes.push(new TransportRoute(tl.id, tl.name, tl.positions, tl.schedule, tl.active,
-                  tl.type, tl.zone, true));
-                  tempThis.showRoute(tl.id);
+              tempThis.transportLineViewers = [];
+              if (!tempThis.transportLines.length){
+                tempThis.mapViewer.updateBBCode(tempThis.bbCode);
+              }else{
+                for (let index = 0; index < tempThis.transportLines.length; index++) {
+                  const tl = tempThis.transportLines[index];
+                  tempThis.transportLineViewers.push(new TransportLineViewer(tl.id, tl.name, tl.positions, tl.schedule, tl.active,
+                    tl.type, tl.zone, true));
+                    tempThis.showRoute(tl.id);
+                }
               }
-            });
+              
+            }, error => this.toastr.error(error));
         tempThis.placeStations();
         tempThis.stationService.replaceStations(new StationCollection(tempThis.stations)).subscribe(
           stations => {
             tempThis.stations = stations;
             tempThis.drawStations();
-          },error => console.log(error));
+          }, error => this.toastr.error(error));
       }
     });
   }
@@ -233,8 +241,12 @@ export class MapComponent implements OnInit {
     }
   }
 
-  private placeTransportRoutes(code: string): string {
-    this.transportRoutes = [];
+  private applyTransportRoutesChanges(code: string): void {
+    if ("/^[map.*][\/map]$/"){
+      return
+    }
+    this.transportLineViewers = [];
+    this.tempTransportLines = [];
     let index: number;
     while (true) {
       index = code.indexOf(";", index + 1);
@@ -246,9 +258,17 @@ export class MapComponent implements OnInit {
         } else {
           let name: string;
           ({ code, name, index } = this.generateNameToContent(code, index, true));
-          this.tempTransportLines.push(new TransportLine(null, name,
-             new TransportLinePosition(null, this.parsePositions(code, index), true),
-                 new Schedule(), true, "BUS", 1));
+          let old: TransportLine = this.findTransportLine(name);
+          if (old != null){
+            this.tempTransportLines.push(new TransportLine(old.id, name,
+              new TransportLinePosition(old.positions.id, this.parsePositions(code, index), true),
+              old.schedule, true, old.type, old.zone));
+          }else{
+            this.tempTransportLines.push(new TransportLine(null, name,
+              new TransportLinePosition(null, this.parsePositions(code, index), true),
+              new Array<number>(), true, "BUS", 1));
+          }
+          
         }
       }
     }
@@ -257,15 +277,30 @@ export class MapComponent implements OnInit {
       code = code.slice(0, index).concat("(blue|gener@ted" + index + ")[" + code.substr(index + 1));
       this.tempTransportLines.push(new TransportLine(null, "gener@ted" + index,
        new TransportLinePosition(null, this.parsePositions(code, code.lastIndexOf("[")), true),
-        new Schedule(), true, "BUS", 1));
+       new Array<number>(), true, "BUS", 1));
     } else {
       let name: string;
       ({ code, name, index } = this.generateNameToContent(code, index, false));
-      this.tempTransportLines.push(new TransportLine(null, name,
-       new TransportLinePosition(null, this.parsePositions(code, code.lastIndexOf("[")), true),
-        new Schedule(), true, "BUS", 1));
+      let old: TransportLine = this.findTransportLine(name);
+          if (old != null){
+            this.tempTransportLines.push(new TransportLine(old.id, name,
+              new TransportLinePosition(old.positions.id, this.parsePositions(code, code.lastIndexOf("[")),
+               true), old.schedule, true, old.type, old.zone));
+          }else{
+            this.tempTransportLines.push(new TransportLine(null, name,
+              new TransportLinePosition(null, this.parsePositions(code, code.lastIndexOf("[")), true),
+              new Array<number>(), true, "BUS", 1));
+          }
     }
-    return code;
+  }
+
+  private findTransportLine(transportLineName:string): TransportLine {
+      for (const transportLine of this.transportLines) {
+        if (transportLine.name == transportLineName){
+          return transportLine;
+        }
+      }
+      return null;
   }
 
   private generateNameToContent(code: string, index: number, skip: boolean): ParsedData {
@@ -320,7 +355,7 @@ export class MapComponent implements OnInit {
     return code.substring(beginTerminalIndex, index);
   }
 
-  private deepCopyStations(original): any {
+  private deepCopyStations(): any {
     var clone = {};
 
     let icon_type: any;
@@ -347,7 +382,7 @@ export class MapComponent implements OnInit {
   }
 
   toogleShowRoute(id: number): void {
-    let transportRoute : TransportRoute = this.transportRoutes
+    let transportRoute : TransportLineViewer = this.transportLineViewers
     .filter(transportRoute => {return transportRoute.id === id})[0];
     if (transportRoute.active) {
       this.hideRoute(id);
@@ -362,7 +397,7 @@ export class MapComponent implements OnInit {
   private showRoute(id: number): void {
     let code: string = this.bbCode + "";
     let suffix: string = "";
-    let routeCode: string = this.transportRoutes
+    let routeCode: string = this.transportLineViewers
     .filter(transportRoute => {return transportRoute.id === id})[0].positions.content;
     let index: number = this.bbCode.lastIndexOf("[");
     if (code.indexOf(";") === -1 && code[index - 1] != ")") { // routes are not shown
@@ -377,7 +412,7 @@ export class MapComponent implements OnInit {
 
   private hideRoute(id: number): void {
     let code: string = this.bbCode + "";
-    let nameIndex: number = code.indexOf(this.transportRoutes
+    let nameIndex: number = code.indexOf(this.transportLineViewers
       .filter(transportRoute => {return transportRoute.id === id})[0].name);
     let beginTerminalSymbloIndex: number = nameIndex;
     let endTerminalSymbolIndex: number = code.indexOf(";", nameIndex);

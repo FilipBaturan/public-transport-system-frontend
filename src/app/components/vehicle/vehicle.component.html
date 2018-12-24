@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<meta http-equiv="Content-Type" content="map/html; charset=utf-8">
+
+<div class="form">
+  <form [formGroup]="formGroup" (ngSubmit)="onFormSubmit()">
+      <label>Name: </label>
+      <input type="text" placeholder="vehicle" formControlName="name"/> <br/>
+      <div *ngIf="name.errors && isValidFormSubmitted != null && !isValidFormSubmitted"> 
+          <span *ngIf="name.errors.minlength">
+            Vehicle name must be at least 3 characters long!
+          </span> 
+          <span *ngIf="name.errors.required"> 
+              Vehicle name is required!
+          </span>	
+      </div>	
+      <label>Type: </label>
+      <select class="dropdown-select" formControlName="type" (change)="onTypeChange($event.target.value)">
+        <option value="BUS">Bus</option>
+        <option value="METRO">Metro</option>
+        <option value="TRAM">Tram</option>
+      </select> 
+      <div *ngIf="type.errors && isValidFormSubmitted != null && !isValidFormSubmitted"> 
+          <span *ngIf="type.errors.required"> 
+              Vehicle type is required!
+          </span>	
+      </div> <br/>
+      <label>Line: </label>
+      <select class="dropdown-select" formControlName="currentLine">
+          <option *ngFor="let transportLine of filtredLinesByType" 
+          [ngValue]="transportLine">{{transportLine.name}}</option>
+      </select>
+      <div *ngIf="currentLine.errors && isValidFormSubmitted != null && !isValidFormSubmitted"> 
+          <span *ngIf="currentLine.errors.required"> 
+              Vehicle line is required!
+          </span>	
+      </div> <br/>
+      <button type="submit">Submit</button>
+  </form>
+</div>
+
+<ng-container *ngIf="vehicleViewers && vehicleViewers.length; then vehiclesExist; else vehicleNotExist"></ng-container>
+<ng-template #vehiclesExist>
+  <div *ngFor="let vehicle of vehicleViewers">
+    <ng-container *ngIf="vehicle.edit; then editVehicle; else showVehicle"></ng-container>
+    <ng-template #showVehicle>
+      <div>
+          <div class="display">
+            <label>Name: {{vehicle.name}}</label> <br/>
+            <label>Type: {{vehicle.type}}</label> <br/>
+            <label>Line: {{vehicle.currentLine.name}}</label> 
+          </div>
+          <div class="options">
+              <button (click)="editVehicle(vehicle.id)">Edit</button>
+              <button (click)="deleteVehicle(vehicle.id)">Delete</button>
+              
+          </div>
+      </div>
+    </ng-template>
+    <ng-template #editVehicle>
+      <div>
+          <div class="editForm"></div>
+          <div class="options">
+              <button (click)="saveVehicle(vehicle.id)">Save</button>
+              <button (click)="cancle(vehicle.id)">Delete</button>
+          </div>
+      </div>
+    </ng-template>
+  </div>
+</ng-template>
+<ng-template #vehicleNotExist>
+  <h2>There are no data about vehicles</h2>  
+</ng-template>
