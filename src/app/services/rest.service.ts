@@ -83,12 +83,12 @@ export abstract class RestService<T> {
 
   protected handleError<E>(operation = 'operation', result?: E) {
     return (response: any): Observable<E> => {
-      console.log(response);
+      //console.log(response);
       // Get error object from response and its error message
       if (response.error) {
-        if (response.error.error) {
-          this.toastr.error(response.error.error);
-        } else {
+        if (response.error) {
+          this.toastr.error(response.error);
+        }else {
           this.toastr.error('Server is down!');
         }
       } else {

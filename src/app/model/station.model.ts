@@ -1,5 +1,5 @@
 import { StationPosition } from "./position.model";
-import { VehicleType } from "./enums/vehicle.enum";
+import { VehicleType } from "./enums/vehicle-type.model";
 
 export class Station {
 

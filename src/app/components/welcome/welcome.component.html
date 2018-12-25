@@ -1,10 +1,6 @@
 <div class="card">
-    <div>
-        <p>Log In</p><br>
-        <input type="text" [class.incorrect]="usernameInvalid" placeholder="Username" [(ngModel)]="login.username" /><br>
-        <input type="password" [class.incorrect]="passwordInvalid" placeholder="Password" [(ngModel)]="login.password" /><br>
-        <button (click)="tryLogin()">Log In</button>
-    </div>
+    <app-news></app-news>
+    <app-auth></app-auth>
     <div class="card-header">
         {{pageTitle}}
     </div>
@@ -22,7 +18,10 @@
                 <button [routerLink]="[ '/signup'] ">Sign up</button>
             </div>
             <app-map></app-map>
-
+            <input id="upload" type="file" (change)="onFileSelected($event)">
+            <button (click)="onUpload()">Upload</button>
+            <button (click)="onLoad()">Load</button>
+            <img alt="testSlika" src="data:image/png;base64,{{image.content}}">
         </div>
     </div>
 </div>

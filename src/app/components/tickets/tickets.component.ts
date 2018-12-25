@@ -10,6 +10,8 @@ import { Item } from 'src/app/model/item.model';
 import { PricelistItem } from 'src/app/model/pricelistItem.model';
 import { ReservationService } from 'src/app/services/reservation.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { User } from 'src/app/model/users/user.model';
+import { Authentication } from 'src/app/model/authentication.model';
 
 @Component({
   selector: 'app-tickets',
@@ -31,6 +33,7 @@ export class TicketsComponent implements OnInit {
   price: number;
   reservation: Reservation;
   line: number;
+  user: User;
   pricelistitemId: number;
 
   constructor(private authService: AuthService, 
@@ -46,16 +49,22 @@ export class TicketsComponent implements OnInit {
     this.ageType = "REGULAR";
     this.durationType = "ONETIME";
     this.transportLineType = "One line";
-    this.zoneService.findAll().subscribe(
-      zones => {
-        this.zones = zones;
-        this.zone = this.zones[0];
-        this.lines = this.zone.lines;
-        this.line = this.lines[0].id;
-        this.pricelistService.getActivePricelist().subscribe(
-          pricelist => {
-            this.pricelist = pricelist;
-            console.log(this.pricelist);
+    this.authService.getCurrentUser().subscribe(
+      result => {
+        this.user = result;
+        console.log(this.user);
+        this.zoneService.findAll().subscribe(
+          zones => {
+            this.zones = zones;
+            this.zone = this.zones[0];
+            this.lines = this.zone.lines;
+            this.line = this.lines[0].id;
+            this.pricelistService.getActivePricelist().subscribe(
+              pricelist => {
+                this.pricelist = pricelist;
+                console.log(this.pricelist);
+              }
+            )
           }
         )
       }

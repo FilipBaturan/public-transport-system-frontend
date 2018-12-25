@@ -3,6 +3,7 @@
 <button (click)="edit()">Edit</button>
 <div id="original"></div>
 <div id="edit"></div>
-<div *ngIf="transportRoutes && transportRoutes.length">
-    <button *ngFor="let route of transportRoutes" (click)="toogleShowRoute(route.id)">{{route.name}}</button>
+<div *ngIf="transportLineViewers && transportLineViewers.length">
+    <button *ngFor="let route of transportLineViewers" 
+    (click)="toogleShowRoute(route.id)">{{route.name}}</button>
 </div>
