@@ -26,6 +26,9 @@ import { RegUserListComponent } from './components/reg-user-list/reg-user-list.c
 import { UserTicketsComponent } from './components/user-tickets/user-tickets.component';
 import { ReportComponent } from './components/report/report.component';
 import { VehicleComponent } from './components/vehicle/vehicle.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ZoneComponent } from './components/zone/zone.component';
+import { ScrollDispatchModule } from '@angular/cdk/scrolling';
 
 @NgModule({
   
@@ -47,10 +50,10 @@ import { VehicleComponent } from './components/vehicle/vehicle.component';
     UserTicketsComponent,
     ReportComponent,
     VehicleComponent,
+    ZoneComponent,
     
   ],
   imports: [
-    FormsModule,
     ReactiveFormsModule,
     BrowserModule,
     HttpClientModule,
@@ -69,6 +72,8 @@ import { VehicleComponent } from './components/vehicle/vehicle.component';
     MatTableModule,
     AngularMultiSelectModule,
     FormsModule,
+    NgbModule,
+    ScrollDispatchModule,
     RouterModule.forRoot([
       { path: 'userTickets/:id', component: UserTicketsComponent},
       { path: 'signin', component: AuthComponent},
@@ -83,6 +88,7 @@ import { VehicleComponent } from './components/vehicle/vehicle.component';
       { path: 'editRoutes', component: MapComponent},
       { path: 'reports', component: ReportComponent},
       { path: 'vehicles', component: VehicleComponent},
+      { path: 'zones', component: ZoneComponent},
       { path: '', redirectTo: '/welcome', pathMatch: 'full' },
       { path: '**', component: WelcomeComponent, pathMatch : 'full'}
     ]),

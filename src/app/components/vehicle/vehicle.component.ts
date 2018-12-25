@@ -1,55 +1,50 @@
 import { Component, OnInit } from '@angular/core';
 import { VehicleService } from 'src/app/services/vehicle.service';
 import { ToastrService } from 'ngx-toastr';
-import { Vehicle, VehicleViewer, TransportLineIdentifier, VehicleSaver } from 'src/app/model/vehicle.model';
+import { Vehicle, VehicleSaver } from 'src/app/model/vehicle.model';
 import { TransportLine } from 'src/app/model/transport-line.model';
 import { TransportLineService } from 'src/app/services/transport-line.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import {NgbModal, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-vehicle',
   templateUrl: './vehicle.component.html',
   styleUrls: ['./vehicle.component.css']
 })
 export class VehicleComponent implements OnInit {
 
   private vehicles: Vehicle[];
-  private vehicleViewers: VehicleViewer[];
   private transportLines: TransportLine[];
   private filtredLinesByType: TransportLine[];
 
   // form attributes
   private formGroup: FormGroup;
   private isValidFormSubmitted: boolean;
-  private vehicleEditForm: Vehicle; 
+  private headerName: string;
+  private modalForm: NgbModalRef;
 
-  constructor(private vehicleServic: VehicleService, 
+  constructor(private vehicleService: VehicleService, 
     private transportLineServic: TransportLineService,
-    private toastr: ToastrService) {
+    private toastr: ToastrService,
+    private modalService: NgbModal) {
     this.vehicles = new Array<Vehicle>();
-    this.vehicleViewers = new Array<VehicleViewer>();
     this.transportLines = new Array<TransportLine>();
     this.filtredLinesByType = new Array<TransportLine>();
 
     this.isValidFormSubmitted = null;
     this.formGroup = new FormGroup({
-      name: new FormControl('', [Validators.required, Validators.minLength(3)]),
+      name: new FormControl('', [Validators.required, 
+        Validators.minLength(3), Validators.maxLength(30)]),
       type: new FormControl(null, [Validators.required]),
-      currentLine: new FormControl(null, [Validators.required])
+      currentLine: new FormControl(null, []),
+      id: new FormControl(null, [])
     });
-
-    this.vehicleEditForm = null;
+    this.headerName = "Create Vehicle";
    }
 
   ngOnInit() {
     // fetch all vehicles
-    this.vehicleServic.findAll().subscribe(response => {
-      this.vehicles = response;
-      let tempThis = this;
-      this.vehicles.forEach(function (vehicle:Vehicle) {
-        tempThis.vehicleViewers.push(new VehicleViewer(vehicle, false));
-      });
-    });
+    this.vehicleService.findAll().subscribe(response => this.vehicles = response);
     
     // fetch all transport lines
     this.transportLineServic.findAll().subscribe(response => {
@@ -58,12 +53,27 @@ export class VehicleComponent implements OnInit {
     });
   }
 
+  open(content: any) {
+    this.modalForm = this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'});
+  }
+
   onTypeChange(vehicleType: string): void {
       this.filtredLinesByType = this.transportLines
       .filter(transportLine => transportLine.type == vehicleType);
       if (this.filtredLinesByType.length){
         this.currentLine.setValue(this.filtredLinesByType[0]);
       }
+  }
+
+  editVehicle(id: number, content: any){
+    let vehicle = this.vehicles.find(vehicle => vehicle.id == id);
+    this.name.setValue(vehicle.name);
+    this.type.setValue(vehicle.type);
+    this.currentLine.setValue(vehicle.currentLine);
+    this.id.setValue(id);
+
+    this.headerName = "Edit Vehicle";
+    this.open(content);
   }
 
   onFormSubmit(): void {
@@ -76,36 +86,46 @@ export class VehicleComponent implements OnInit {
     if (currentLine !== null){
       currentLine = currentLine.id
     }
-    this.vehicleServic.create(
-      new VehicleSaver(null, this.name.value, this.type.value, currentLine))
-         .subscribe(result => {
-            this.vehicles.push(result);
-            this.vehicleViewers.push(new VehicleViewer(result, false));
+    this.vehicleService.create(
+      new VehicleSaver(this.id.value, this.name.value, this.type.value, currentLine))
+         .subscribe(result=> {
+            let vehicle: Vehicle = result as Vehicle;
+            if(vehicle.id != this.id.value){
+              this.vehicles.push(result);
+            }else{
+              let index: number = this.vehicles.findIndex(v => v.id == vehicle.id);
+              this.vehicles[index] = vehicle;
+            }
+            this.id.setValue(null);
+            this.modalForm.close();
             this.toastr.success("Vehicle successfully saved!");
+            this.formGroup.reset();
          });
-    this.formGroup.reset();
  }
 
- deleteVehicle(id: number): void{
+ deleteVehicle(id: number): void {
    for (let index = 0; index < this.vehicles.length; index++) {
      const vehicle = this.vehicles[index];
      if (vehicle.id == id){
-      this.vehicleServic.remove(id, index, this.vehicles, this.vehicleViewers);
+      this.vehicleService.remove(id, index, this.vehicles);
       return;
     }
    }
  }
 
- get name() {
+ private get name() {
   return this.formGroup.get("name");
  }
 
- get type() {
+ private get type() {
   return this.formGroup.get("type");
  }
 
- get currentLine() {
+ private get currentLine() {
   return this.formGroup.get("currentLine");
  }
 
+ private get id () {
+  return this.formGroup.get("id");
+ }
 }
