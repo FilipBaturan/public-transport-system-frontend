@@ -16,11 +16,11 @@ const userToken = "userToken";
 export class AuthService extends RestService<User> {
 
   constructor(http: HttpClient, toastr: ToastrService, private tokenUtils: TokenUtilsService) {
-    super(http, ['/api/user/auth'], toastr);
+    super(http, ['/api/user'], toastr);
   }
 
   authenticate(body: User): Observable<Authentication> {
-    return this.http.post<Authentication>(this.url(), body).pipe(
+    return this.http.post<Authentication>(this.url(["auth"]), body).pipe(
       tap(res => {
         console.log(res);
         localStorage.setItem(userToken, JSON.stringify({
@@ -44,7 +44,7 @@ export class AuthService extends RestService<User> {
   }
 
   getCurrentUser() {
-    return this.http.get<User>(this.url(['me'])).pipe(
+    return this.http.get<User>(this.url(['currentUser'])).pipe(
       catchError(this.handleError<User>())
     );
   }

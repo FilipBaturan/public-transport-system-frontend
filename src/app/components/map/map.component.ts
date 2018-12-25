@@ -9,6 +9,9 @@ import { TransportLineService } from 'src/app/services/transport-line.service';
 import { TransportLine } from 'src/app/model/transport-line.model';
 import { UserService } from 'src/app/services/user.service';
 import { ToastrService } from 'ngx-toastr';
+import { MapService } from 'src/app/services/map.service';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 declare var MapBBCode: any;
 declare var L: any;
@@ -22,10 +25,9 @@ const refresher = interval(2000);
 })
 export class MapComponent implements OnInit {
 
+  // map atributes
   private mapBB: any;
   private mapViewer: any;
-  private bus1PositionIndex: number;
-  private positions: any[];
   private bbCode: string;
   private imagePath: string;
   private busIcon: any;
@@ -34,7 +36,8 @@ export class MapComponent implements OnInit {
   private busStationIcon: any;
   private metroStationIcon: any;
   private tramStationIcon: any;
-  private b1: any;
+
+  // collections of entities
   private stations: Station[];
   private mapViewStations: object;
   private mapEditorStations: object;
@@ -42,25 +45,22 @@ export class MapComponent implements OnInit {
   private transportLines: TransportLine[];
   private transportLineViewers: TransportLineViewer[];
   private tempTransportLines: TransportLine[];
+  private editTransprotLine: TransportLine;
+
+  // form attributes
+  private formGroup: FormGroup;
+  private isValidFormSubmitted: boolean;
+  private modalForm: NgbModalRef;
 
   constructor(private stationService: StationService, 
     private transportLineService: TransportLineService,
     private userService: UserService,
-    private toastr: ToastrService) {
+    private toastrService: ToastrService,
+    private modalService: NgbModal,
+    private mapService: MapService) {
+    // map init
     this.bbCode = "[map][/map]";
     this.imagePath = "assets/lib/dist/lib/images/";
-    this.bus1PositionIndex = 0;
-    this.positions = [[45.26377, 19.82895], [45.26407, 19.82122], [45.26274, 19.81878],
-    [45.26015, 19.82195], [45.25761, 19.82431], [45.2529, 19.82431],
-    [45.24867, 19.82466], [45.24398, 19.82504], [45.23972, 19.82552],
-    [45.23712, 19.82655], [45.23879, 19.83264], [45.24166, 19.84268],
-    [45.24565, 19.84045], [45.24951, 19.83839], [45.25229, 19.83685],
-    [45.25833, 19.83341], [45.26154, 19.83174], [45.26419, 19.83028],
-    [45.26377, 19.82891]];
-    this.mapViewStations = {};
-    this.stationCounter = 0;
-    this.transportLineViewers = [];
-    this.tempTransportLines = [];
     this.busIcon = L.icon({
       iconUrl: this.imagePath + "bus.png",
       shadowUrl: this.imagePath + "marker-shadow.png",
@@ -115,6 +115,20 @@ export class MapComponent implements OnInit {
       shadowAnchor: [4, 62],  // the same for the shadow
       popupAnchor: [0, -46] // point from which the popup should open relative to the iconAnchor
     });
+
+    // collections of entities init
+    this.mapViewStations = {};
+    this.stationCounter = 0;
+    this.transportLineViewers = [];
+    this.tempTransportLines = []; 
+
+    // form init
+    this.isValidFormSubmitted = null;
+    this.formGroup = new FormGroup({
+      name: new FormControl('', [Validators.required,
+         Validators.minLength(1), Validators.maxLength(30)]),
+      type: new FormControl(null, [Validators.required])
+    });
   }
 
   ngOnInit() {
@@ -150,9 +164,9 @@ export class MapComponent implements OnInit {
     });
     
 
-    this.b1 = L.marker([45.26377, 19.82895], { icon: this.busIcon }).addTo(this.mapViewer.map).bindPopup("<h4>bus1</h4>");
-    var m1 = L.marker([45.24398, 19.82504], { icon: this.metroIcon }).addTo(this.mapViewer.map).bindPopup("<h4>metro1</h4>");
-    var t1 = L.marker([45.25229, 19.83685], { icon: this.tramIcon }).addTo(this.mapViewer.map).bindPopup("<h4>tram</h4>");
+    var b1 = L.marker([45.26377, 19.82895], { icon: this.busIcon }).addTo(this.mapViewer.map).bindPopup("<p>bus1</p>");
+    var m1 = L.marker([45.24398, 19.82504], { icon: this.metroIcon }).addTo(this.mapViewer.map).bindPopup("<p>metro1</p>");
+    var t1 = L.marker([45.25229, 19.83685], { icon: this.tramIcon }).addTo(this.mapViewer.map).bindPopup("<p>tram</p>");
     //refresher.subscribe(() => this.b1.setLatLng(this.positions[(++this.bus1PositionIndex) % this.positions.length]));
   }
 
@@ -186,18 +200,56 @@ export class MapComponent implements OnInit {
                 }
               }
               
-            }, error => this.toastr.error(error));
+            }, error => error != undefined ? 
+            this.toastrService.error(error) : 
+            this.toastrService.error("Error happend, could not save changes for lines!"));
         tempThis.placeStations();
         tempThis.stationService.replaceStations(new StationCollection(tempThis.stations)).subscribe(
           stations => {
             tempThis.stations = stations;
             tempThis.drawStations();
-          }, error => this.toastr.error(error));
+          }, error => error != undefined ? 
+            this.toastrService.error(error) : 
+            this.toastrService.error("Error happend, could not save changes for stations!"));
       }
     });
   }
 
-  private drawStations() {
+  editRoute(id: number, content: any): void {
+    this.editTransprotLine = this.transportLines.find(v => v.id == id);
+      this.name.setValue(this.editTransprotLine.name);
+      this.type.setValue(this.editTransprotLine.type);
+      this.open(content);
+    
+  }
+
+  onFormSubmit(): void {
+    this.isValidFormSubmitted = false;
+    if (this.formGroup.invalid) {
+       return;
+    }
+    this.isValidFormSubmitted = true;
+    this.editTransprotLine.name = this.name.value;
+    this.editTransprotLine.type = this.type.value;
+    this.transportLineService.create(this.editTransprotLine).subscribe(result=> {
+            let transportLine: TransportLine = result as TransportLine;
+            let index: number = this.transportLines.findIndex(t => t.id == transportLine.id);
+            let trannsprotViewer: TransportLineViewer = this.transportLineViewers
+              .find(t => t.id == transportLine.id);
+            this.transportLines[index] = transportLine;
+            trannsprotViewer.name = transportLine.name;
+            trannsprotViewer.type = transportLine.type;
+            this.modalForm.close();
+            this.toastrService.success("Transport line successfully saved!");
+            this.formGroup.reset();
+         });
+  }
+  open(content: any) {
+    this.modalForm = this.modalService.open(content, 
+      {ariaLabelledBy: 'modal-basic-title', size: "sm"});
+  }
+
+  private drawStations(): void {
     let icon_type: any;
     this.stations.forEach(station => {
       if (station.type === VehicleType.BUS) {
@@ -210,7 +262,7 @@ export class MapComponent implements OnInit {
       this.mapViewStations[station.id] = L.marker(
         [station.position.latitude, station.position.longitude], { icon: icon_type })
         .addTo(this.mapViewer.map)
-        .bindPopup("<h4>" + station.name + "</h4>");
+        .bindPopup("<p>" + station.name + "<p>");
     });
   }
 
@@ -242,7 +294,7 @@ export class MapComponent implements OnInit {
   }
 
   private applyTransportRoutesChanges(code: string): void {
-    if ("/^[map.*][\/map]$/"){
+    if (/^\[map(=.+)?\]\[\/map\]/.test(code)){
       return
     }
     this.transportLineViewers = [];
@@ -342,10 +394,8 @@ export class MapComponent implements OnInit {
   }
 
   private parsePositions(code: string, index: number): string {
-    let result: StationPosition[] = new Array<StationPosition>();
     let beginTerminalIndex: number = index;
     let i: number = 1;
-    let tokens: string[];
     while (true) {
       if (code[index - i] == ";" || code[index - i] == "]") {
         break;
@@ -436,6 +486,14 @@ export class MapComponent implements OnInit {
     this.bbCode = code;
     this.mapViewer.updateBBCode(this.bbCode);
   }
+
+  private get name() {
+    return this.formGroup.get("name");
+   }
+  
+  private get type() {
+    return this.formGroup.get("type");
+   }
 }
 
 class ParsedData {

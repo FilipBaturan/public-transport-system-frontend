@@ -17,8 +17,10 @@ export class RegUserListComponent implements OnInit {
   constructor(private userService: UserService) { }
 
   ngOnInit() {
+    this.registeredUsers = [];
     this.userService.getRegUsers().subscribe(
-      response => {this.registeredUsers = response; 
+      response => {
+        this.registeredUsers = response; 
         this.checkUsersLength();
       }
     )

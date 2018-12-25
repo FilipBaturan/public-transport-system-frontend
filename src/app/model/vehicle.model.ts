@@ -23,15 +23,6 @@ export class TransportLineIdentifier {
     }
 }
 
-export class VehicleViewer extends Vehicle {
-    edit: boolean;
-
-    constructor(vehicle: Vehicle, edit: boolean){
-            super(vehicle.id, vehicle.name, vehicle.type, vehicle.currentLine)
-        this.edit = edit;
-    }
-}
-
 export class VehicleSaver {
     id: number;
     name: string;

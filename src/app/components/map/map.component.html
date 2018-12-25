@@ -4,6 +4,54 @@
 <div id="original"></div>
 <div id="edit"></div>
 <div *ngIf="transportLineViewers && transportLineViewers.length">
-    <button *ngFor="let route of transportLineViewers" 
-    (click)="toogleShowRoute(route.id)">{{route.name}}</button>
+        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                <div *ngFor="let route of transportLineViewers" class="btn-group mr-2" role="group">
+                        <button class="btn btn-primary"  
+                        (click)="toogleShowRoute(route.id)">{{route.name}}</button>
+                        <button class="btn btn-primary" (click)="editRoute(route.id, content)">
+                                <i class="fas fa-edit"></i></button>
+                </div>
+              </div>
 </div>
+
+<ng-template #content let-modal>
+        <div class="modal-header">
+          <h4 class="modal-title" id="modal-basic-title">Edit Transport Line</h4>
+          <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="formGroup">
+            <div class="form-group">
+              <label for="name">Name</label>
+              <input type="text" placeholder="DTR1" formControlName="name"/> <br/>
+          <div *ngIf="name.errors && isValidFormSubmitted != null && !isValidFormSubmitted"> 
+              <span *ngIf="name.errors.minlength">
+                Transport line name must be at least 1 characters long!
+              </span> 
+              <span *ngIf="name.errors.maxlength">
+                Transport line name must be maximum 30 characters long!
+                </span> 
+              <span *ngIf="name.errors.required"> 
+                Transport line name is required!
+              </span>	
+          </div>	
+          <label for="type">Type: </label>
+          <select class="dropdown-select" formControlName="type">
+            <option value="BUS">Bus</option>
+            <option value="METRO">Metro</option>
+            <option value="TRAM">Tram</option>
+          </select> 
+          <div *ngIf="type.errors && isValidFormSubmitted != null && !isValidFormSubmitted"> 
+              <span *ngIf="type.errors.required"> 
+                Transport line type is required!
+              </span>	
+          </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-outline-dark" (click)="onFormSubmit()">Save</button>
+        </div>
+    </ng-template>
