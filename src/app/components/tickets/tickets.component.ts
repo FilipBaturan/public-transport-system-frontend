@@ -1,17 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { Zone } from 'src/app/model/zone.model';
-import { ZoneService } from 'src/app/services/zone.service';
 import { ZoneTransportLine } from 'src/app/model/users/zone-transport-line.model';
-import { PricelistService } from 'src/app/services/pricelist.service';
 import { Pricelist } from 'src/app/model/pricelist.model';
 import { Reservation } from 'src/app/model/reservation.model';
 import { Ticket } from 'src/app/model/ticket.model';
 import { Item } from 'src/app/model/item.model';
 import { PricelistItem } from 'src/app/model/pricelistItem.model';
-import { ReservationService } from 'src/app/services/reservation.service';
-import { AuthService } from 'src/app/services/auth.service';
 import { User } from 'src/app/model/users/user.model';
 import { Authentication } from 'src/app/model/authentication.model';
+import { AuthService } from 'src/app/core/services/auth.service';
+import { ZoneService } from 'src/app/core/services/zone.service';
+import { PricelistService } from 'src/app/core/services/pricelist.service';
+import { ReservationService } from 'src/app/core/services/reservation.service';
 
 @Component({
   selector: 'app-tickets',

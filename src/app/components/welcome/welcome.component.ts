@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { LogIn } from 'src/app/model/login.model';
-import { UserService } from 'src/app/services/user.service';
-import { UploadService } from 'src/app/services/upload.service';
+
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
-import { NewsService } from 'src/app/services/news.service';
+
 import { News } from 'src/app/model/news.model';
+import { UploadService } from 'src/app/core/services/upload.service';
+import { UserService } from 'src/app/core/services/user.service';
+import { NewsService } from 'src/app/core/services/news.service';
 
 
 @Component({
