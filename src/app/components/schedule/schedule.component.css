@@ -8,3 +8,7 @@ table {
   max-width: 200px !important;
 }
 
+.selected-list .c-btn {
+  width: 50% !important;
+  
+}

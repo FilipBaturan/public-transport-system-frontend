@@ -28,3 +28,8 @@
 .form-control:focus {
     z-index: 2;
 }
+
+.selected-list .c-btn {
+  width: 50% !important;
+  
+}
