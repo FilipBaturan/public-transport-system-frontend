@@ -15,11 +15,7 @@ import { RouterModule } from '@angular/router';
   ],
   imports: [
     CommonModule,
-    SharedModule,
-    RouterModule.forChild([
-      { path: 'vehicles', component: VehicleComponent},
-      { path: 'zones', component: ZoneComponent},
-    ])
+    SharedModule
   ],
   exports: [
     MapComponent,

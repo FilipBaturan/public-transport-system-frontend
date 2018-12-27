@@ -80,6 +80,20 @@ export class UserService extends RestService<User> {
       && authenticatedUser.roles.indexOf('ADMIN') > -1;
   }
 
+  isOperater(): boolean {
+    const authenticatedUser = this.getAuthenticatedUser();
+    return authenticatedUser
+      && authenticatedUser.roles
+      && authenticatedUser.roles.indexOf('OPERATER') > -1;
+  }
+
+  isValidator(): boolean {
+    const authenticatedUser = this.getAuthenticatedUser();
+    return authenticatedUser
+      && authenticatedUser.roles
+      && authenticatedUser.roles.indexOf('VALIDATOR') > -1;
+  }  
+
   getUnconfirmedUsers() {
     return this.http.get<User[]>(this.url(['unvalidatedUsers'])).pipe(
       catchError(this.handleError<User[]>())

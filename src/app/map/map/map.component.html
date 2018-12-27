@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <meta http-equiv="Content-Type" content="map/html; charset=utf-8">
-<button (click)="edit()">Edit</button>
+<button *ngIf="userService.isOperater()" (click)="edit()">Edit</button>
 <div id="original"></div>
 <div id="edit"></div>
 <div *ngIf="transportLineViewers && transportLineViewers.length">
   <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
     <div *ngFor="let route of transportLineViewers" class="btn-group mr-2" role="group">
       <button class="btn btn-primary" (click)="toogleShowRoute(route.id)">{{route.name}}</button>
-      <button class="btn btn-primary" (click)="editRoute(route.id, content)">
+      <button *ngIf="userService.isOperater()" class="btn btn-primary" (click)="editRoute(route.id, content)">
         <i class="fas fa-edit"></i></button>
     </div>
   </div>
