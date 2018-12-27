@@ -1,0 +1,46 @@
+<div>
+    <p>Transport type</p>
+    <select [(ngModel)]="transportType">
+        <option>BUS</option>
+        <option>METRO</option>
+        <option>TRAM</option>
+    </select>
+    <p>Zones</p>
+    <select (change)="zoneChange($event.target.value)">
+        <option *ngFor="let zone of zones" [ngValue]="zone">{{zone.name}}</option>
+    </select>
+    <p>Age</p>
+    <select [(ngModel)]="ageType">
+        <option>REGULAR</option>
+        <option>PENSIONER</option>
+        <option>STUDENT</option>
+    </select>
+    <p>Duration</p>
+    <select [(ngModel)]="durationType">
+        <option>ONETIME</option>
+        <option>DAILY</option>
+        <option>MONTHLY</option>
+        <option>ANNUAL</option>
+    </select>
+    <p>Transport line type</p>
+    <select [(ngModel)]="transportLineType">
+        <option>One line</option>
+        <option>All lines</option>
+    </select>
+    <div *ngIf="transportLineType === 'One line'">
+        <p>Line</p>
+        <select (change)="lineChange($event.target.value)">
+            <option *ngFor="let line of lines">{{line.name}}</option>
+        </select>
+    </div>
+    <br>
+    <div>
+        <mat-form-field>
+            <input matInput [matDatepicker]="picker" [(ngModel)]="purchaseDate" placeholder="Od">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+    </div>
+    <button (click)="check()">Reserve</button>
+    <button (click)="reserve()">Finish</button>
+</div>

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { ReportService } from '../../services/report.service';
+import { ReportService } from 'src/app/core/services/report.service';
+
 
 @Component({
   selector: 'app-report',

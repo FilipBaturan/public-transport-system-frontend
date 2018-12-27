@@ -19,13 +19,13 @@ export class ZoneTransportLine {
     
     id: number;
     name: string;
-    type: VehicleType;
+    vehicleType: VehicleType;
     active: boolean;
 
     constructor(id: number, name:string, type: VehicleType, active: boolean) {
         this.id = id;
         this.name = name;
-        this.type = type;
+        this.vehicleType = type;
         this.active = active;
     }
 }

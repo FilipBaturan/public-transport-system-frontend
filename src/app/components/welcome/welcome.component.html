@@ -1,7 +1,10 @@
 <div class="card">
+    <app-news></app-news>
+    <app-auth></app-auth>
     <div class="card-header">
         {{pageTitle}}
     </div>
+
     <div class="card-body">
         <div class="container-fluid">
             <div class="text-center">
@@ -9,12 +12,14 @@
                 />
             </div>
 
-            <div class="text-center">Developed by:</div>
-            <div class="text-center">
+            <div class=" text-center ">Developed by:</div>
+            <div class="text-center ">
                 <h3>Filip Baturan</h3>
-                <button [routerLink]="['/signup']">Sign up</button>
+                <button [routerLink]="[ '/signup'] ">Sign up</button>
             </div>
+
             <app-map></app-map>
+
             <input id="upload" type="file" (change)="onFileSelected($event)">
             <button (click)="onUpload()">Upload</button>
             <button (click)="onLoad()">Load</button>
