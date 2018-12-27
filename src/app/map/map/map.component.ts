@@ -290,7 +290,8 @@ export class MapComponent implements OnInit {
       trannsprotViewer.name = transportLine.name;
       trannsprotViewer.type = transportLine.type;
       this.modalForm.close();
-      this.mapViewer.updateBBCode(this.bbCode.replace(nameToReplace, transportLine.name));
+      this.bbCode = this.bbCode.replace(nameToReplace, transportLine.name);
+      this.mapViewer.updateBBCode(this.bbCode);
       this.toastrService.success("Transport line successfully saved!");
       this.formGroup.reset();
     });
@@ -373,6 +374,8 @@ export class MapComponent implements OnInit {
         beginTerminalSymbloIndex += 2;
         endTerminalSymbolIndex += 2;
         break;
+      } else if (i > code.length) {
+        return;
       }
       ++i; --beginTerminalSymbloIndex;
     }
