@@ -2,17 +2,19 @@ import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/c
 import { Injectable, Injector } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { UserService } from '../services/user.service';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class TokenInterceptorService {
+export class TokenInterceptorService implements HttpInterceptor {
 
   constructor(private inj: Injector) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    console.log('usao u token interceptor');
     const authService: UserService = this.inj.get(UserService);
+    console.log('token: ' + authService.getToken());
     request = request.clone({
       setHeaders: {
         'X-Auth-Token': `${authService.getToken()}`

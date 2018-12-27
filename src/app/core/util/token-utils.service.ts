@@ -11,7 +11,7 @@ export class TokenUtilsService {
     const jwtData = token.split('.')[1];
     const decodedJwtDataJson = window.atob(jwtData);
     const decodedJwtData = JSON.parse(decodedJwtDataJson);
-
+    console.log(decodedJwtData.authorities.split(','));
     return decodedJwtData.authorities.split(',');
   }
 }

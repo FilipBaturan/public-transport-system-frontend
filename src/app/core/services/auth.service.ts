@@ -8,7 +8,7 @@ import { User } from 'src/app/model/users/user.model';
 import { Authentication } from 'src/app/model/authentication.model';
 import { TokenUtilsService } from '../util/token-utils.service';
 
-const userToken = "userToken";
+const authenticatedUser = "authenticatedUser";
 
 @Injectable({
   providedIn: 'root'
@@ -22,8 +22,7 @@ export class AuthService extends RestService<User> {
   authenticate(body: User): Observable<Authentication> {
     return this.http.post<Authentication>(this.url(["auth"]), body).pipe(
       tap(res => {
-        console.log(res);
-        localStorage.setItem(userToken, JSON.stringify({
+        localStorage.setItem(authenticatedUser, JSON.stringify({
           user: res.user,
           roles: this.tokenUtils.getRoles(res.token),
           token: res.token
@@ -34,7 +33,7 @@ export class AuthService extends RestService<User> {
   }
 
   signout(): void {
-    localStorage.removeItem(userToken);
+    localStorage.removeItem(authenticatedUser);
   }
 
   usernameTaken(username: string): Observable<boolean> {
@@ -50,7 +49,7 @@ export class AuthService extends RestService<User> {
   }
 
   getAuthenticatedUser() {
-    return JSON.parse(localStorage.getItem(userToken));
+    return JSON.parse(localStorage.getItem(authenticatedUser));
   }
 
   getAuthenticatedUserId() {

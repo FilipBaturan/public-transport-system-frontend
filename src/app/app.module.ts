@@ -15,6 +15,7 @@ import { MapModule } from './map/map.module';
 import { SharedModule } from './shared/shared.module';
 import { UserModule } from './user/user.module';
 import { ScheduleModule } from './schedule/schedule.module';
+import { CoreModule } from './core/core.module';
 
 
 @NgModule({
@@ -28,7 +29,7 @@ import { ScheduleModule } from './schedule/schedule.module';
   ],
   imports: [
     BrowserModule,
-    HttpClientModule,
+    CoreModule,
     MapModule,
     RouterModule.forRoot([
       { path: 'tickets', component: TicketsComponent},
