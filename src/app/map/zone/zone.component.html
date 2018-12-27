@@ -2,110 +2,106 @@
 <meta http-equiv="Content-Type" content="map/html; charset=utf-8">
 
 <ng-template #content let-modal>
-    <div class="modal-header">
-      <h4 class="modal-title" id="modal-basic-title">{{headerName}}</h4>
-      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="modal-body">
-      <form [formGroup]="formGroup">
-        <div class="form-group">
-          <label for="name">Name</label>
-          <input type="text" placeholder="south block" formControlName="name"/> <br/>
-      <div *ngIf="name.errors && isValidFormSubmitted != null && !isValidFormSubmitted"> 
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{headerName}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="formGroup">
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" placeholder="south block" formControlName="name" /> <br />
+        <div *ngIf="name.errors && isValidFormSubmitted != null && !isValidFormSubmitted">
           <span *ngIf="name.errors.minlength">
             Zone name must be at least 1 characters long!
           </span>
           <span *ngIf="name.errors.maxlength">
-              Zone name must be maximum 30 characters long!
-            </span> 
-          <span *ngIf="name.errors.required"> 
-              Zone name is required!
+            Zone name must be maximum 30 characters long!
           </span>
-      </div>	
-      <div class="line-editor" style="width:100%;height:100%;
+          <span *ngIf="name.errors.required">
+            Zone name is required!
+          </span>
+        </div>
+        <div class="line-editor" style="width:100%;height:100%;
       margin-right:10px;
       float:left;">
           <div class="line-slot" style="float:left;margin-right:15px;width: 49%">
-            
-               <div class="card text-white bg-primary">
-                <div class="card-body">
-                  <h4 class="card-title">Available Zones</h4>
-                  <cdk-virtual-scroll-viewport itemSize="50" style=" height: 200px;width: 100%;
+
+            <div class="card text-white bg-primary">
+              <div class="card-body">
+                <h4 class="card-title">Available Zones</h4>
+                <cdk-virtual-scroll-viewport itemSize="50" style=" height: 200px;width: 100%;
                   border: 1px solid black;">
-                      <div *cdkVirtualFor="let line of availableLines; templateCacheSize: 0" style="height: 50px;">
-                        <table>
-                          <tbody>
-                            <tr>
-                              <td> {{line.name}}</td>
-                              <td> <button type="button" class="btn btn-success"
-                                (click)="addLine(line.id, content)">Add</button></td>
-                            </tr>
-                          </tbody>
-                        </table>
-                       
-                        
-                      </div>
-                    </cdk-virtual-scroll-viewport>
-                </div>
+                  <div *cdkVirtualFor="let line of availableLines; templateCacheSize: 0" style="height: 50px;">
+                    <table>
+                      <tbody>
+                        <tr>
+                          <td> {{line.name}}</td>
+                          <td> <button type="button" class="btn btn-success" (click)="addLine(line.id, content)">Add</button></td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+
+                  </div>
+                </cdk-virtual-scroll-viewport>
               </div>
+            </div>
           </div>
-          
+
           <div class="line-slot" style="float:left; width: 49%">
-              <div class="card text-white bg-primary">
-                <div class="card-body">
-                  <h4 class="card-title">Target Zone</h4>
-                  <cdk-virtual-scroll-viewport itemSize="50" style=" height: 200px;width: 100%;
+            <div class="card text-white bg-primary">
+              <div class="card-body">
+                <h4 class="card-title">Target Zone</h4>
+                <cdk-virtual-scroll-viewport itemSize="50" style=" height: 200px;width: 100%;
                   border: 1px solid black;">
-                      <div *cdkVirtualFor="let line of selectedZoneLines; templateCacheSize: 0" style="height: 50px;">
-                          <table>
-                              <tbody>
-                                <tr>
-                                  <td> {{line.name}}</td>
-                                  <td> <button type="button" class="btn btn-danger" 
-                                    (click)="removeLine(line.id, content)">Remove</button></td>
-                                </tr>
-                              </tbody>
-                            </table>
-                      </div>
-                    </cdk-virtual-scroll-viewport>
-                </div>
+                  <div *cdkVirtualFor="let line of selectedZoneLines; templateCacheSize: 0" style="height: 50px;">
+                    <table>
+                      <tbody>
+                        <tr>
+                          <td> {{line.name}}</td>
+                          <td> <button type="button" class="btn btn-danger" (click)="removeLine(line.id, content)">Remove</button></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </cdk-virtual-scroll-viewport>
               </div>
+            </div>
           </div>
-      </div>	
         </div>
-      </form>
-    </div>
-    <div class="modal-footer">
-      <button type="submit" class="btn btn-outline-dark" (click)="onFormSubmit()">Save</button>
-    </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="submit" class="btn btn-outline-dark" (click)="onFormSubmit()">Save</button>
+  </div>
 </ng-template>
-  
+
 <button class="btn btn-lg btn-outline-primary" (click)="create(content)">Add</button>
 
 <ng-container *ngIf="zones && zones.length; then zonesExist; else zonesNotExist"></ng-container>
 <ng-template #zonesExist>
   <div *ngFor="let zone of zones">
-      <div>
-          <div class="display">
-            <label for="zone-name">Name: {{zone.name}}</label> <br/>
-            <div class="lines-container">
-              <div *ngFor="let line of zone.lines">
-                  <label for="line-name">Line: {{line.name}}</label>
-                  <label for="line-type">Type: {{line.type}}</label>
-              </div>
-            </div>
+    <div>
+      <div class="display">
+        <label for="zone-name">Name: {{zone.name}}</label> <br />
+        <div class="lines-container">
+          <div *ngFor="let line of zone.lines">
+            <label for="line-name">Line: {{line.name}}</label>
+            <label for="line-type">Type: {{line.type}}</label>
           </div>
-          <div class="options">
-              <button class="btn btn-lg btn-outline-primary" 
-                    (click)="editZone(zone.id, content)">Edit</button>
-              <button class="btn btn-lg btn-outline-primary" 
-                    (click)="deleteZone(zone.id)">Delete</button>
-          </div>
+        </div>
       </div>
+      <div class="options">
+        <button class="btn btn-lg btn-outline-primary" (click)="editZone(zone.id, content)">Edit</button>
+        <button class="btn btn-lg btn-outline-primary" (click)="deleteZone(zone.id)">Delete</button>
+      </div>
+    </div>
   </div>
 </ng-template>
 <ng-template #zonesNotExist>
-  <h2>There are no data about zones</h2>  
+  <h2>There are no data about zones</h2>
 </ng-template>

@@ -1,12 +1,13 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { ToastrModule } from 'ngx-toastr';
 import { AppComponent } from './app.component';
 import { RouterModule } from '@angular/router';
-import { WelcomeComponent } from './components/welcome/welcome.component';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MapComponent } from './map/map.component';
+
+import { ToastrModule } from 'ngx-toastr';
+import { WelcomeComponent } from './components/welcome/welcome.component';
+import { MapComponent } from './map/map/map.component';
 import { TicketsComponent } from './components/tickets/tickets.component';
 import { ReportComponent } from './components/report/report.component';
 import { NewsComponent } from './components/news/news.component';

@@ -2,72 +2,69 @@
 <meta http-equiv="Content-Type" content="map/html; charset=utf-8">
 
 <ng-template #content let-modal>
-    <div class="modal-header">
-      <h4 class="modal-title" id="modal-basic-title">{{headerName}}</h4>
-      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="modal-body">
-      <form [formGroup]="formGroup">
-        <div class="form-group">
-          <label for="name">Name</label>
-          <input type="text" placeholder="NS-452-2G" formControlName="name"/> <br/>
-      <div *ngIf="name.errors && isValidFormSubmitted != null && !isValidFormSubmitted"> 
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{headerName}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="formGroup">
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" placeholder="NS-452-2G" formControlName="name" /> <br />
+        <div *ngIf="name.errors && isValidFormSubmitted != null && !isValidFormSubmitted">
           <span *ngIf="name.errors.minlength">
             Vehicle name must be at least 3 characters long!
-          </span> 
+          </span>
           <span *ngIf="name.errors.maxlength">
-              Vehicle name must be maximum 30 characters long!
-            </span> 
-          <span *ngIf="name.errors.required"> 
-              Vehicle name is required!
-          </span>	
-      </div>	
-      <label for="type">Type: </label>
-      <select class="dropdown-select" formControlName="type" (change)="onTypeChange($event.target.value)">
-        <option value="BUS">Bus</option>
-        <option value="METRO">Metro</option>
-        <option value="TRAM">Tram</option>
-      </select> 
-      <div *ngIf="type.errors && isValidFormSubmitted != null && !isValidFormSubmitted"> 
-          <span *ngIf="type.errors.required"> 
-              Vehicle type is required!
-          </span>	
-      </div> <br/>
-      <label for="line">Line: </label>
-      <select class="dropdown-select" formControlName="currentLine">
-          <option *ngFor="let transportLine of filtredLinesByType" 
-          [ngValue]="transportLine">{{transportLine.name}}</option>
-      </select>
+            Vehicle name must be maximum 30 characters long!
+          </span>
+          <span *ngIf="name.errors.required">
+            Vehicle name is required!
+          </span>
         </div>
-      </form>
-    </div>
-    <div class="modal-footer">
-      <button type="submit" class="btn btn-outline-dark" (click)="onFormSubmit()">Save</button>
-    </div>
+        <label for="type">Type: </label>
+        <select class="dropdown-select" formControlName="type" (change)="onTypeChange($event.target.value)">
+          <option value="BUS">Bus</option>
+          <option value="METRO">Metro</option>
+          <option value="TRAM">Tram</option>
+        </select>
+        <div *ngIf="type.errors && isValidFormSubmitted != null && !isValidFormSubmitted">
+          <span *ngIf="type.errors.required">
+            Vehicle type is required!
+          </span>
+        </div> <br />
+        <label for="line">Line: </label>
+        <select class="dropdown-select" formControlName="currentLine">
+          <option *ngFor="let transportLine of filtredLinesByType" [ngValue]="transportLine">{{transportLine.name}}</option>
+        </select>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="submit" class="btn btn-outline-dark" (click)="onFormSubmit()">Save</button>
+  </div>
 </ng-template>
-  
-  <button class="btn btn-lg btn-outline-primary" (click)="open(content)">Add</button>
+
+<button class="btn btn-lg btn-outline-primary" (click)="open(content)">Add</button>
 
 <ng-container *ngIf="vehicles && vehicles.length; then vehiclesExist; else vehicleNotExist"></ng-container>
 <ng-template #vehiclesExist>
   <div *ngFor="let vehicle of vehicles">
-      <div>
-          <div class="display">
-            <label for="name">Name: {{vehicle.name}}</label> <br/>
-            <label for="type">Type: {{vehicle.type}}</label> <br/>
-            <label for="line">Line: {{vehicle.currentLine?.name || "None"}}</label> 
-          </div>
-          <div class="options">
-              <button class="btn btn-lg btn-outline-primary" 
-                    (click)="editVehicle(vehicle.id, content)">Edit</button>
-              <button class="btn btn-lg btn-outline-primary" 
-                    (click)="deleteVehicle(vehicle.id)">Delete</button>
-          </div>
+    <div>
+      <div class="display">
+        <label for="name">Name: {{vehicle.name}}</label> <br />
+        <label for="type">Type: {{vehicle.type}}</label> <br />
+        <label for="line">Line: {{vehicle.currentLine?.name || "None"}}</label>
       </div>
+      <div class="options">
+        <button class="btn btn-lg btn-outline-primary" (click)="editVehicle(vehicle.id, content)">Edit</button>
+        <button class="btn btn-lg btn-outline-primary" (click)="deleteVehicle(vehicle.id)">Delete</button>
+      </div>
+    </div>
   </div>
 </ng-template>
 <ng-template #vehicleNotExist>
-  <h2>There are no data about vehicles</h2>  
+  <h2>There are no data about vehicles</h2>
 </ng-template>
