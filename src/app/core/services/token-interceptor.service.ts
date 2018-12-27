@@ -9,7 +9,7 @@ import { UserService } from './user.service';
 })
 export class TokenInterceptorService implements HttpInterceptor {
 
-  constructor(private inj: Injector) { console.log('usao u konstruktor'); }
+  constructor(private inj: Injector) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     console.log('usao u token interceptor');
