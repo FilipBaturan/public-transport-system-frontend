@@ -25,6 +25,12 @@ export class VehicleComponent implements OnInit {
   private transportLines: TransportLine[];
   private filtredLinesByType: TransportLine[];
 
+  // image paths
+  private busImage: string = "src/assets/img/bus.jpg";
+  private metroImage: string = "src/assets/img/metro.jpg";
+  private tramImage: string = "src/assets/img/tram.jpg";
+  private addImage: string = "src/assets/img/addVehicle.png";
+
   // form attributes
   private formGroup: FormGroup;
   private isValidFormSubmitted: boolean;
@@ -102,7 +108,8 @@ export class VehicleComponent implements OnInit {
     let vehicle = this.vehicles.find(vehicle => vehicle.id == id);
     this.name.setValue(vehicle.name);
     this.type.setValue(vehicle.type);
-    this.currentLine.setValue(vehicle.currentLine);
+    this.currentLine.setValue(null);
+    this.onTypeChange(vehicle.type);
     this.id.setValue(id);
 
     this.headerName = "Edit Vehicle";
@@ -162,9 +169,6 @@ export class VehicleComponent implements OnInit {
   onTypeChange(vehicleType: string): void {
     this.filtredLinesByType = this.transportLines
       .filter(transportLine => transportLine.type == vehicleType);
-    if (this.filtredLinesByType.length) {
-      this.currentLine.setValue(this.filtredLinesByType[0]);
-    }
   }
 
   private get name() {

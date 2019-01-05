@@ -42,6 +42,7 @@ export class VehicleService extends RestService<Vehicle> {
         // remove vehicle from collection
         vehicles.splice(index, 1);
         this.toastr.success(msg);
-      }, err => this.toastr.error(err.error));
+      }, err => 
+      err.status == 403 ? this.toastr.error("Forbidden!") : this.toastr.error(err.error));
   }
 }

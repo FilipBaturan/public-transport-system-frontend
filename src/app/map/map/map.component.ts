@@ -28,7 +28,6 @@ const refresher = interval(2000);
  * @implements {OnInit}
  */
 @Component({
-  selector: 'app-map',
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.css']
 })
@@ -152,7 +151,7 @@ export class MapComponent implements OnInit {
 
   /**
    * Fetchs transport line, vehicle, station, zone data
-   * Set map configuration
+   * Sets map configuration
    *
    * @memberof MapComponent
    */

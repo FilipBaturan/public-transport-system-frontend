@@ -29,13 +29,6 @@ import { RouteMapperModule } from './route-mapper/route-mapper.module';
   ],
   imports: [
     BrowserModule,
-    // RouterModule.forRoot([
-    //   { path: 'tickets', component: TicketsComponent},
-    //   { path: 'editRoutes', component: MapComponent},
-    //   { path: 'reports', component: ReportComponent},
-    //   { path: '', redirectTo: '/welcome', pathMatch: 'full' },
-    //   { path: '**', component: WelcomeComponent, pathMatch : 'full'}
-    // ]),
     BrowserAnimationsModule,
     ToastrModule.forRoot(),
     CoreModule,

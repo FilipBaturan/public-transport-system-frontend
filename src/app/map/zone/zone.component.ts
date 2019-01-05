@@ -19,14 +19,16 @@ import { ZoneService } from 'src/app/core/services/zone.service';
 })
 export class ZoneComponent implements OnInit {
 
+  public isCollapsed: boolean;
+  public isValidFormSubmitted: boolean;
+  public headerName: string;
+
   private zones: Zone[];
   private selectedZoneLines: ZoneTransportLine[];
   private availableLines: ZoneTransportLine[];
 
   // form attributes
   private formGroup: FormGroup;
-  private isValidFormSubmitted: boolean;
-  private headerName: string;
   private modalForm: NgbModalRef;
 
   /**
@@ -42,6 +44,7 @@ export class ZoneComponent implements OnInit {
     this.zones = new Array<Zone>();
 
     this.isValidFormSubmitted = null;
+    this.isCollapsed = false;
     this.formGroup = new FormGroup({
       name: new FormControl('', [Validators.required,
       Validators.minLength(1), Validators.maxLength(30)]),

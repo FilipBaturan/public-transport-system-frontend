@@ -31,7 +31,7 @@ import { IsValidatorGuard } from './is-validator.guard';
     CommonModule,
     RouterModule.forRoot([
       { path: 'tickets', component: TicketsComponent, canActivate: [IsAuthenticatedGuard]},
-      { path: 'map', component: MapComponent, canActivate: [IsOperaterGuard]},
+      { path: 'map', component: MapComponent},
       { path: 'reports', component: ReportComponent, canActivate: [IsAuthenticatedGuard]},
       { path: 'vehicles', component: VehicleComponent, canActivate: [IsOperaterGuard]},
       { path: 'zones', component: ZoneComponent, canActivate: [IsOperaterGuard]},

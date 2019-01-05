@@ -84,23 +84,21 @@
 
 <ng-container *ngIf="zones && zones.length; then zonesExist; else zonesNotExist"></ng-container>
 <ng-template #zonesExist>
-  <div *ngFor="let zone of zones">
-    <div>
-      <div class="display">
-        <label for="zone-name">Name: {{zone.name}}</label> <br />
-        <div class="lines-container">
-          <div *ngFor="let line of zone.lines">
-            <label for="line-name">Line: {{line.name}}</label>
-            <label for="line-type">Type: {{line.type}}</label>
+  <div class="row card-deck">
+      <div *ngFor="let zone of zones" class="col-sm-2 mb-3 d-flex align-items-stretch">
+          <div class="card text-white bg-primary">
+              <div class="card-body">
+                <h4 class="card-title text-center">{{zone.name}}</h4>
+                <p class="card-title text-center">Number of routes: {{zone.lines.length}}</p>
+              </div>
+              <div class="card-footer text-center">
+                  <button class="btn btn-success w-50" (click)="editZone(zone.id, content)">Edit</button>
+                  <button class="btn btn-danger w-50" (click)="deleteZone(zone.id)">Delete</button>
+              </div>
           </div>
-        </div>
       </div>
-      <div class="options">
-        <button class="btn btn-lg btn-outline-primary" (click)="editZone(zone.id, content)">Edit</button>
-        <button class="btn btn-lg btn-outline-primary" (click)="deleteZone(zone.id)">Delete</button>
-      </div>
-    </div>
   </div>
+  
 </ng-template>
 <ng-template #zonesNotExist>
   <h2>There are no data about zones</h2>
