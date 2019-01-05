@@ -6,7 +6,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { ToastrModule } from 'ngx-toastr';
 import { WelcomeComponent } from './components/welcome/welcome.component';
-import { MapComponent } from './map/map/map.component';
 import { TicketsComponent } from './components/tickets/tickets.component';
 import { ReportComponent } from './components/report/report.component';
 import { NewsComponent } from './components/news/news.component';

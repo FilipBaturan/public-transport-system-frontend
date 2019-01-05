@@ -1,5 +1,42 @@
-<!DOCTYPE html>
-<meta http-equiv="Content-Type" content="map/html; charset=utf-8">
+<div class="wrapper">
+  <app-nav-bar></app-nav-bar>
+  <div id="content">
+    <ng-container *ngIf="vehicles && vehicles.length; then vehiclesExist; else vehicleNotExist"></ng-container>
+    <ng-template #vehiclesExist>
+      <div class="row card-deck">
+        <div *ngFor="let vehicle of vehicles" class="col-sm-3 mb-3 d-flex align-items-stretch">
+          <div class="card text-white bg-primary">
+            <div class="card-body">
+              <h4 class="card-title text-center">{{vehicle.name}}</h4>
+              <img *ngIf="vehicle.type == 'BUS'" class="card-img-top" [src]="busImage" alt="Bus image">
+              <img *ngIf="vehicle.type == 'METRO'" class="card-img-top" [src]="metroImage" alt="Metro image">
+              <img *ngIf="vehicle.type == 'TRAM'" class="card-img-top" [src]="tramImage" alt="Tram image">
+              <p class="text-center">Current Line: {{vehicle.currentLine?.name || "None"}}</p>
+
+            </div>
+            <div class="card-footer text-center">
+              <button class="btn btn-success w-50" (click)="editVehicle(vehicle.id, content)">Edit</button>
+              <button class="btn btn-danger w-50" (click)="deleteVehicle(vehicle.id)">Delete</button>
+            </div>
+
+          </div>
+        </div>
+        <div class="col-sm-3 mb-3 d-flex align-items-stretch" (click)="open(content)">
+          <div class="card text-white bg-primary">
+            <div class="card-body">
+              <h4 class="card-title text-center">Add a Vehicle</h4>
+              <img class="card-img-top" [src]="addImage" alt="Add a vehicle">
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </ng-template>
+    <ng-template #vehicleNotExist>
+      <h2>There are no data about vehicles</h2>
+    </ng-template>
+  </div>
+</div>
 
 <ng-template #content let-modal>
   <div class="modal-header">
@@ -12,7 +49,7 @@
     <form [formGroup]="formGroup">
       <div class="form-group">
         <label for="name">Name</label>
-        <input type="text" placeholder="NS-452-2G" formControlName="name" /> <br />
+        <input type="text" placeholder="NS-B-452-2G" formControlName="name" /> <br />
         <div *ngIf="name.errors && isValidFormSubmitted != null && !isValidFormSubmitted">
           <span *ngIf="name.errors.minlength">
             Vehicle name must be at least 3 characters long!
@@ -45,39 +82,4 @@
   <div class="modal-footer">
     <button type="submit" class="btn btn-success" (click)="onFormSubmit()">Save</button>
   </div>
-</ng-template>
-
-<ng-container *ngIf="vehicles && vehicles.length; then vehiclesExist; else vehicleNotExist"></ng-container>
-<ng-template #vehiclesExist>
-  <div class="row card-deck">
-      <div *ngFor="let vehicle of vehicles" class="col-sm-3 mb-3 d-flex align-items-stretch">
-              <div class="card text-white bg-primary">
-                  <div class="card-body">
-                    <h4 class="card-title text-center">{{vehicle.name}}</h4>
-                    <img *ngIf="vehicle.type == 'BUS'" class="card-img-top" [src]="busImage" alt="Bus image"> 
-                    <img *ngIf="vehicle.type == 'METRO'" class="card-img-top" [src]="metroImage" alt="Metro image">
-                    <img *ngIf="vehicle.type == 'TRAM'" class="card-img-top" [src]="tramImage" alt="Tram image">  
-                        <p class="text-center">Current Line: {{vehicle.currentLine?.name || "None"}}</p>
-                     
-                  </div>
-                  <div class="card-footer text-center">
-                      <button class="btn btn-success w-50" (click)="editVehicle(vehicle.id, content)">Edit</button>
-                      <button class="btn btn-danger w-50" (click)="deleteVehicle(vehicle.id)">Delete</button>
-                  </div>
-                
-              </div>
-    </div>
-    <div class="col-sm-3 mb-3 d-flex align-items-stretch" (click)="open(content)">
-      <div class="card text-white bg-primary">
-        <div class="card-body">
-          <h4 class="card-title text-center">Add a Vehicle</h4>
-          <img class="card-img-top" [src]="addImage" alt="Add a vehicle"> 
-        </div>
-      </div>
-    </div>
-  </div>
-  
-</ng-template>
-<ng-template #vehicleNotExist>
-  <h2>There are no data about vehicles</h2>
 </ng-template>
