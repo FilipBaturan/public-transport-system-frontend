@@ -136,6 +136,11 @@ a.logout {
   color: #7386D5;
 }
 
+a.sighIn,
+a.sighIn:hover {
+    background: #6d7fcc !important;
+    color: #fff !important;
+  }
 
 /* ---------------------------------------------------
   CONTENT STYLE

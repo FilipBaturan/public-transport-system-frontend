@@ -57,8 +57,8 @@ export class MapComponent implements OnInit {
 
   // form attributes
   private formGroup: FormGroup;
-  private isValidFormSubmitted: boolean;
   private modalForm: NgbModalRef;
+  public isValidFormSubmitted: boolean;
 
   /**
    * Creates an instance of MapComponent.
@@ -70,9 +70,9 @@ export class MapComponent implements OnInit {
    * @param {MapService} mapService map service
    * @memberof MapComponent
    */
-  constructor(private stationService: StationService,
+  constructor( public userService: UserService,
+    private stationService: StationService,
     private transportLineService: TransportLineService,
-    private userService: UserService,
     private toastrService: ToastrService,
     private modalService: NgbModal,
     private mapService: MapService) {

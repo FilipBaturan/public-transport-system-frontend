@@ -1,12 +1,7 @@
-<div class="wrapper">
-    <app-nav-bar></app-nav-bar>
-    <div id="content">
-        <div>
-            <div *ngFor="let news of allNews">
-                <p>{{news.title}}</p>
-                <p>{{news.content}}</p>
-                <p>{{news.date}}</p>
-            </div>
-        </div>
+<div>
+    <div *ngFor="let news of allNews">
+        <p>{{news.title}}</p>
+        <p>{{news.content}}</p>
+        <p>{{news.date}}</p>
     </div>
 </div>

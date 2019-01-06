@@ -23,19 +23,19 @@ export class VehicleComponent implements OnInit {
 
   private vehicles: Vehicle[];
   private transportLines: TransportLine[];
-  private filtredLinesByType: TransportLine[];
+  public filtredLinesByType: TransportLine[];
 
   // image paths
-  private busImage: string = "src/assets/img/bus.jpg";
-  private metroImage: string = "src/assets/img/metro.jpg";
-  private tramImage: string = "src/assets/img/tram.jpg";
-  private addImage: string = "src/assets/img/addVehicle.png";
+  public busImage: string = "src/assets/img/bus.jpg";
+  public metroImage: string = "src/assets/img/metro.jpg";
+  public tramImage: string = "src/assets/img/tram.jpg";
+  public addImage: string = "src/assets/img/addVehicle.png";
 
   // form attributes
   private formGroup: FormGroup;
-  private isValidFormSubmitted: boolean;
-  private headerName: string;
   private modalForm: NgbModalRef;
+  public isValidFormSubmitted: boolean;
+  public headerName: string;
 
   /**
    * Creates an instance of VehicleComponent.
