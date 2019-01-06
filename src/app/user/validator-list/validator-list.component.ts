@@ -1,14 +1,9 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { User } from '../../model/users/user.model';
 import { ToastrService } from 'ngx-toastr';
 import { UserService } from 'src/app/core/services/user.service';
+import { MatTable } from '@angular/material';
 
-export interface PeriodicElement {
-  name: string;
-  position: number;
-  weight: number;
-  symbol: string;
-}
 
 @Component({
   selector: 'app-validator-list',
@@ -26,24 +21,22 @@ export class ValidatorListComponent implements OnInit {
   
   //Ruganje gore (mock up)
   newUser: User;
-  changedUser: User;
 
-  changeFormShowed: boolean;
+  formShowed: boolean;
+
+  @ViewChild(MatTable) table: MatTable<any>;
 
   constructor(private userService: UserService, private toastr: ToastrService,
     private changeDetectorRefs: ChangeDetectorRef) { }
 
-  
-  
-
   ngOnInit() {
 
     //ruganje gore
-    this.newUser = new User(null, "newUserName", "newPass", "newName", "newLastName", "newEmail", 
-                    true, "123123");
+    this.newUser = new User(null, "new User Name", "new Pass", "new Name", "new Last Name",
+     "new Email",  true, "123123");
 
 
-    this.changeFormShowed = false;
+    this.formShowed = false;
 
     this.userService.getValidators().subscribe(
       response => {this.validators = response; 
@@ -52,9 +45,9 @@ export class ValidatorListComponent implements OnInit {
     )
   }
 
-  showChangeForm(user:User)
+  showForm()
   {
-    this.toastr.info("Show form!");
+    this.formShowed = true;
   }
 
   blockValidator(user:User)
@@ -83,8 +76,6 @@ export class ValidatorListComponent implements OnInit {
 
   addValidator(){
 
-    //opet ruganje gore
-
     this.userService.addValidator(this.newUser).subscribe(
       response => {
         if (response == false)
@@ -92,12 +83,15 @@ export class ValidatorListComponent implements OnInit {
         else
         {
           this.validators.push(this.newUser);
+          this.table.renderRows();
           this.toastr.info("Validator succesfully added!")
         }
         
         this.checkUsersLength();
       }
     )
+
+    this.formShowed = false;
   }
 
 

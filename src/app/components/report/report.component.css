@@ -1,0 +1,26 @@
+.chartDiv{
+    width: 45%; 
+    height: 300px;
+    display: inline-block;
+}
+
+.noChart{
+    margin-top: 50px;
+}
+
+.mainDiv{
+    text-align: center;
+
+}
+
+.mainDiv h1, p{
+    margin: 20px;
+}
+
+#datePickerDiv{
+    margin: 30px;
+}
+
+#getReportButton{
+    margin-left: 20px;
+}

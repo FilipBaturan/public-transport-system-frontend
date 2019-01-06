@@ -13,8 +13,22 @@ export class ReportService extends RestService<any>  {
     super(http, ['/api/ticket'], toastr);
   }
 
-  getReport(startDate: Date, endDate: Date){
+  getReport(startDate: string, endDate: string){
     return this.http.get<any>(this.url(['reprot/' + startDate + '/' +
+      endDate])).pipe(
+      catchError(this.handleError<any>())
+    );
+  }
+
+  getVisitsPerWeek(startDate: string, endDate: string){
+    return this.http.get<any>(this.url(['getVisitsPerWeek/' + startDate + '/' +
+      endDate])).pipe(
+      catchError(this.handleError<any>())
+    );
+  }
+
+  getVisitsPerMonth(startDate: string, endDate: string){
+    return this.http.get<any>(this.url(['getVisitsPerMonth/' + startDate + '/' +
       endDate])).pipe(
       catchError(this.handleError<any>())
     );
