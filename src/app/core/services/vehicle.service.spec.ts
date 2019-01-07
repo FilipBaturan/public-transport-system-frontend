@@ -60,7 +60,7 @@ describe('VehicleService', () => {
     });
 
     const req = mockHttp.expectOne(url);
-    expect(req.request.method).toBe("GET");
+    expect(req.request.method).toBe('GET');
     req.flush(dbVehicles);
   }));
 
@@ -114,7 +114,7 @@ describe('VehicleService', () => {
     });
 
     const req = mockHttp.expectOne(url);
-    expect(req.request.method).toBe("POST");
+    expect(req.request.method).toBe('POST');
     req.flush(new Vehicle(vehicleSaver.id, vehicleSaver.name,
        vehicleSaver.type, new TransportLineIdentifier(vehicleSaver.currentLine, 'B1')));
   }));
@@ -125,12 +125,13 @@ describe('VehicleService', () => {
 
     service.remove(1,0,dbVehicles);
 
-    const req = mockHttp.expectOne(url + "/" + 1);
-    expect(req.request.method).toBe("DELETE");
+    const req = mockHttp.expectOne(url + '/' + 1);
+    expect(req.request.method).toBe('DELETE');
     req.flush('Vehicle successfully removed!');
 
     expect(dbVehicles.length).toBe(length - 1);
     expect(dbVehicles[0]).toEqual(v);
+    expect(mockToastrService.success).toHaveBeenCalled();
   }));
 
   it('should receive forbidden error for unauthorized deletion', fakeAsync(() => {
@@ -139,13 +140,14 @@ describe('VehicleService', () => {
 
     service.remove(1,0,dbVehicles);
 
-    const req = mockHttp.expectOne(url + "/" + 1);
-    expect(req.request.method).toBe("DELETE");
+    const req = mockHttp.expectOne(url + '/' + 1);
+    expect(req.request.method).toBe('DELETE');
     req.flush({ message: 'Forbidden!'},
       { status: 403, statusText: 'Unauthorazied' });
 
     expect(dbVehicles.length).toBe(length);
     expect(dbVehicles[0]).toEqual(v);
+    expect(mockToastrService.error).toHaveBeenCalled();
   }));
 
   it('should receive vehicle does not exist error', fakeAsync(() => {
@@ -154,13 +156,14 @@ describe('VehicleService', () => {
 
     service.remove(1,0,dbVehicles);
 
-    const req = mockHttp.expectOne(url + "/" + 1);
-    expect(req.request.method).toBe("DELETE");
+    const req = mockHttp.expectOne(url + '/' + 1);
+    expect(req.request.method).toBe('DELETE');
     req.flush({ message: 'Vehicle does not exist!'},
       { status: 400, statusText: 'Bad Request' });
 
     expect(dbVehicles.length).toBe(length);
     expect(dbVehicles[0]).toEqual(v);
+    expect(mockToastrService.error).toHaveBeenCalled();
   }));
 
 });

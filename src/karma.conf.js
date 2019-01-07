@@ -26,6 +26,26 @@ module.exports = function (config) {
     logLevel: config.LOG_INFO,
     autoWatch: true,
     browsers: ['Chrome'],
-    singleRun: false
+    singleRun: false,
+    files: [
+      'typings.d.ts',
+      'assets/lib/dist/lib/leaflet.js',
+      'assets/lib/dist/lib/leaflet.draw.js',
+      'assets/lib/src/MapBBCode.js',
+      'assets/lib/src/MapBBCodeUI.js',
+      'assets/lib/src/MapBBCodeUI.Editor.js',
+      'assets/lib/src/images/EditorSprites.js',
+      'assets/lib/src/controls/FunctionButton.js',
+      'assets/lib/src/controls/LetterIcon.js',
+      'assets/lib/src/controls/PopupIcon.js',
+      'assets/lib/src/controls/Leaflet.Search.js',
+      'assets/lib/src/controls/PermalinkAttribution.js',
+      'assets/lib/src/controls/StaticLayerSwitcher.js',
+      'assets/lib/src/handlers/Handler.Text.js',
+      'assets/lib/src/handlers/Handler.Color.js',
+      'assets/lib/src/handlers/Handler.Width.js',
+      'assets/lib/src/handlers/Handler.Measure.js',
+      'assets/lib/src/strings/English.js',
+    ]
   });
 };

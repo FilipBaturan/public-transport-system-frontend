@@ -9,6 +9,9 @@ import {
 
 declare const require: any;
 
+declare var MapBBCode: any;
+declare var L: any;
+
 // First, initialize the Angular testing environment.
 getTestBed().initTestEnvironment(
   BrowserDynamicTestingModule,

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
-import { RestService } from './rest.service';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -17,16 +16,26 @@ import { Station, StationCollection } from 'src/app/model/station.model';
 @Injectable({
   providedIn: 'root'
 })
-export class StationService extends RestService<Station> {
+export class StationService {
+
+  private url: string = "/api/station";
 
   /**
    * Creates an instance of StationService.
    * @param {HttpClient} http HTTP REST service
-   * @param {ToastrService} toastrService user notification service
    * @memberof StationService
    */
-  constructor(http: HttpClient, toastrService: ToastrService) {
-    super(http, ["/api/station"], toastrService);
+  constructor(private http: HttpClient) {
+  }
+
+  /**
+   * Gets all available stations
+   *
+   * @returns {Observable<Station[]>} all available stations
+   * @memberof StationService
+   */
+  findAll(): Observable<Station[]> {
+    return this.http.get<Station[]>(this.url).pipe(catchError(this.handleException));
   }
 
   /**
@@ -37,7 +46,7 @@ export class StationService extends RestService<Station> {
    * @memberof StationService
    */
   replaceStations(stations: StationCollection): Observable<Station[]> {
-    return this.http.post<Station[]>(this.url() + "/replace", stations).pipe(
+    return this.http.post<Station[]>(this.url + "/replace", stations).pipe(
        catchError(this.handleException)
     );
   }
@@ -48,10 +57,21 @@ export class StationService extends RestService<Station> {
    * @private
    * @param {HttpErrorResponse} err HTTP reponse error
    * @returns {Observable<never>} observable
-   * @memberof StationService
+   * @memberof TransportLineService
    */
   private handleException(err: HttpErrorResponse): Observable<never> {
-    return throwError(err.message);
+    if (err.error) {
+      if (err.error.message) {
+        return throwError(err.error.message);
+      } else if ((typeof err.error === 'string')
+        && !err.error.startsWith("Error occured")) {
+        return throwError(err.error);
+      } else {
+        return throwError('Server is down!');
+      }
+    } else {
+      return throwError('Client side error!');
+    }
   }
 
 }

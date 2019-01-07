@@ -70,7 +70,7 @@ export class MapComponent implements OnInit {
    * @param {MapService} mapService map service
    * @memberof MapComponent
    */
-  constructor( public userService: UserService,
+  constructor(public userService: UserService,
     private stationService: StationService,
     private transportLineService: TransportLineService,
     private toastrService: ToastrService,
@@ -212,8 +212,8 @@ export class MapComponent implements OnInit {
     }, function (res: string) {
       original.style.display = "block";
       if (res !== null) {
-        tempThis.mapService.applyTransportRoutesChanges(res, tempThis.transportLineViewers,
-          tempThis.transportLines, tempThis.tempTransportLines);
+        tempThis.mapService.applyTransportRoutesChanges(res, tempThis.transportLines,
+          tempThis.tempTransportLines);
         tempThis.transportLineService.replaceTransportLines(
           new TransportLineCollection(tempThis.tempTransportLines)).subscribe(
             response => {
@@ -232,8 +232,8 @@ export class MapComponent implements OnInit {
               }
 
             }, error => error != undefined ?
-              this.toastrService.error(error) :
-              this.toastrService.error("Error happend, could not save changes for lines!"));
+              tempThis.toastrService.error(error) :
+              tempThis.toastrService.error("Error happend, could not save changes for lines!"));
         tempThis.stationCounter = tempThis.mapService.placeStations(tempThis.mapViewer,
           tempThis.mapViewStations, tempThis.mapEditorStations, tempThis.stations, tempThis.stationCounter);
         tempThis.stationService.replaceStations(new StationCollection(tempThis.stations)).subscribe(
@@ -241,8 +241,8 @@ export class MapComponent implements OnInit {
             tempThis.stations = stations;
             tempThis.drawStations();
           }, error => error != undefined ?
-            this.toastrService.error(error) :
-            this.toastrService.error("Error happend, could not save changes for stations!"));
+            tempThis.toastrService.error(error) :
+            tempThis.toastrService.error("Error happend, could not save changes for stations!"));
       }
     });
   }
