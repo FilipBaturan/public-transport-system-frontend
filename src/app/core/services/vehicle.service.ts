@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
-import { RestService } from './rest.service';
 import { ToastrService } from 'ngx-toastr';
-import { Vehicle } from 'src/app/model/vehicle.model';
+import { Vehicle, VehicleSaver } from 'src/app/model/vehicle.model';
 
 
 /**
@@ -16,7 +17,9 @@ import { Vehicle } from 'src/app/model/vehicle.model';
 @Injectable({
   providedIn: 'root'
 })
-export class VehicleService extends RestService<Vehicle> {
+export class VehicleService {
+
+  private url: string;
 
   /**
    * Creates an instance of VehicleService.
@@ -24,8 +27,29 @@ export class VehicleService extends RestService<Vehicle> {
    * @param {ToastrService} toastrService user notification service
    * @memberof VehicleService
    */
-  constructor(http: HttpClient, toastrService: ToastrService) {
-    super(http, ["/api/vehicle"], toastrService);
+  constructor(private http: HttpClient, private toastrService: ToastrService) {
+    this.url = "/api/vehicle";
+  }
+
+  /**
+   * Gets all available vehicles 
+   *
+   * @returns {Observable<Vehicle[]>} all available vehicles
+   * @memberof VehicleService
+   */
+  findAll(): Observable<Vehicle[]> {
+    return this.http.get<Vehicle[]>(this.url).pipe(catchError(this.handleException));
+  }
+
+  /**
+   * Creates/Updates vehicle
+   *
+   * @param {VehicleSaver} vehicle vehicle that needs to be crated/updated
+   * @returns {Observable<Vehicle>} created/updated vehicle
+   * @memberof VehicleService
+   */
+  create(vehicle: VehicleSaver): Observable<Vehicle> {
+    return this.http.post<Vehicle>(this.url, vehicle).pipe(catchError(this.handleException));
   }
 
   /**
@@ -37,12 +61,35 @@ export class VehicleService extends RestService<Vehicle> {
    * @memberof VehicleService
    */
   remove(id: number, index: number, vehicles: Vehicle[]): void {
-    this.http.delete(this.url() + "/" + id, { responseType: "text" as "text" }).
+    this.http.delete(this.url + "/" + id, { responseType: "text" as "text" }).
       subscribe(msg => {
         // remove vehicle from collection
         vehicles.splice(index, 1);
-        this.toastr.success(msg);
-      }, err => 
-      err.status == 403 ? this.toastr.error("Forbidden!") : this.toastr.error(err.error));
+        this.toastrService.success(msg);
+      }, err =>
+          err.status == 403 ? this.toastrService.error("Forbidden!") : this.toastrService.error(err.error));
+  }
+
+  /**
+   * Handles errors occured by REST service
+   *
+   * @private
+   * @param {HttpErrorResponse} err HTTP reponse error
+   * @returns {Observable<never>} observable
+   * @memberof TransportLineService
+   */
+  private handleException(err: HttpErrorResponse): Observable<never> {
+    if (err.error) {
+      if (err.error.message) {
+        return throwError(err.error.message);
+      } else if ((typeof err.error === 'string')
+        && !err.error.startsWith("Error occured")) {
+        return throwError(err.error);
+      } else {
+        return throwError('Server is down!');
+      }
+    } else {
+      return throwError('Client side error!');
+    }
   }
 }

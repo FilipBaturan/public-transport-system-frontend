@@ -23,30 +23,30 @@ export class VehicleComponent implements OnInit {
 
   private vehicles: Vehicle[];
   private transportLines: TransportLine[];
-  private filtredLinesByType: TransportLine[];
+  public filtredLinesByType: TransportLine[];
 
   // image paths
-  private busImage: string = "src/assets/img/bus.jpg";
-  private metroImage: string = "src/assets/img/metro.jpg";
-  private tramImage: string = "src/assets/img/tram.jpg";
-  private addImage: string = "src/assets/img/addVehicle.png";
+  public busImage: string = "src/assets/img/bus.jpg";
+  public metroImage: string = "src/assets/img/metro.jpg";
+  public tramImage: string = "src/assets/img/tram.jpg";
+  public addImage: string = "src/assets/img/addVehicle.png";
 
   // form attributes
   private formGroup: FormGroup;
-  private isValidFormSubmitted: boolean;
-  private headerName: string;
   private modalForm: NgbModalRef;
+  public isValidFormSubmitted: boolean;
+  public headerName: string;
 
   /**
    * Creates an instance of VehicleComponent.
    * @param {VehicleService} vehicleService REST service for vehicle
-   * @param {TransportLineService} transportLineServic REST service for transport line
+   * @param {TransportLineService} transportLineService REST service for transport line
    * @param {ToastrService} toastrService user notification service
    * @param {NgbModal} modalService modal form service
    * @memberof VehicleComponent
    */
   constructor(private vehicleService: VehicleService,
-    private transportLineServic: TransportLineService,
+    private transportLineService: TransportLineService,
     private toastrService: ToastrService,
     private modalService: NgbModal) {
     this.vehicles = new Array<Vehicle>();
@@ -71,10 +71,12 @@ export class VehicleComponent implements OnInit {
    */
   ngOnInit() {
     // fetch all vehicles
-    this.vehicleService.findAll().subscribe(response => this.vehicles = response);
+    this.vehicleService.findAll().subscribe(
+      response => this.vehicles = response,
+      err => this.toastrService.error(err));
 
     // fetch all transport lines
-    this.transportLineServic.findAll().subscribe(response => {
+    this.transportLineService.findAll().subscribe(response => {
       this.transportLines = response;
       this.filtredLinesByType = response;
     });
