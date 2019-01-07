@@ -40,13 +40,13 @@ export class VehicleComponent implements OnInit {
   /**
    * Creates an instance of VehicleComponent.
    * @param {VehicleService} vehicleService REST service for vehicle
-   * @param {TransportLineService} transportLineServic REST service for transport line
+   * @param {TransportLineService} transportLineService REST service for transport line
    * @param {ToastrService} toastrService user notification service
    * @param {NgbModal} modalService modal form service
    * @memberof VehicleComponent
    */
   constructor(private vehicleService: VehicleService,
-    private transportLineServic: TransportLineService,
+    private transportLineService: TransportLineService,
     private toastrService: ToastrService,
     private modalService: NgbModal) {
     this.vehicles = new Array<Vehicle>();
@@ -71,10 +71,12 @@ export class VehicleComponent implements OnInit {
    */
   ngOnInit() {
     // fetch all vehicles
-    this.vehicleService.findAll().subscribe(response => this.vehicles = response);
+    this.vehicleService.findAll().subscribe(
+      response => this.vehicles = response,
+      err => this.toastrService.error(err));
 
     // fetch all transport lines
-    this.transportLineServic.findAll().subscribe(response => {
+    this.transportLineService.findAll().subscribe(response => {
       this.transportLines = response;
       this.filtredLinesByType = response;
     });
