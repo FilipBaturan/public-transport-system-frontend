@@ -11,10 +11,7 @@ import { SharedModule } from '../shared/shared.module';
   ],
   imports: [
     CommonModule,
-    SharedModule,
-    RouterModule.forChild([
-      { path: 'schedule', component: ScheduleComponent},
-    ])
+    SharedModule
   ],
   exports: [
     ScheduleComponent,

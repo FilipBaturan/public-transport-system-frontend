@@ -3,6 +3,7 @@ import { User } from 'src/app/model/users/user.model';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/core/services/auth.service';
+import { UserService } from 'src/app/core/services/user.service';
 
 @Component({
   selector: 'app-auth',
@@ -14,14 +15,15 @@ export class AuthComponent implements OnInit {
   user: User = new User(0, "", "", "", "", "", true, "");
 
 
-  constructor(private authService: AuthService,
+  constructor(private userService: UserService,
+    private authSerivce: AuthService,
     private router: Router,
     private toastr: ToastrService) { }
 
   ngOnInit() {}
 
   signin(): void {
-    this.authService.authenticate(this.user).subscribe(
+    this.userService.authenticate(this.user).subscribe(
       response => {
         this.toastr.success(`Welcome ${this.user.username}`);
         this.router.navigate(['home']);

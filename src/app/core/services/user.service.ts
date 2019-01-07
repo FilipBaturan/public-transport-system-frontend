@@ -10,7 +10,7 @@ import { LogIn } from 'src/app/model/login.model';
 import { TokenUtilsService } from '../util/token-utils.service';
 
 
-const authenticatedUserKey = 'authenticatedUser';
+const authenticatedUser = 'authenticatedUser';
 
 @Injectable({
   providedIn: 'root'
@@ -22,13 +22,14 @@ export class UserService extends RestService<User> {
   }
 
   authenticate(body: User): Observable<Authentication> {
-    return this.http.post<Authentication>(this.url(), body).pipe(
+    return this.http.post<Authentication>(this.url(["auth"]), body).pipe(
       tap(res => {
-        localStorage.setItem(authenticatedUserKey, JSON.stringify({
+        localStorage.setItem(authenticatedUser, JSON.stringify({
           user: res.user,
           roles: this.tokenUtils.getRoles(res.token),
           token: res.token
         }));
+        console.log(localStorage);
       }),
       catchError(this.handleError<Authentication>())
     );
@@ -39,7 +40,7 @@ export class UserService extends RestService<User> {
   }
 
   signout(): void {
-    localStorage.removeItem(authenticatedUserKey);
+    localStorage.removeItem(authenticatedUser);
   }
 
   usernameTaken(username: string): Observable<boolean> {
@@ -55,7 +56,7 @@ export class UserService extends RestService<User> {
   }
 
   getAuthenticatedUser() {
-    return JSON.parse(localStorage.getItem(authenticatedUserKey));
+    return JSON.parse(localStorage.getItem(authenticatedUser));
   }
 
   getAuthenticatedUserId() {
@@ -78,6 +79,20 @@ export class UserService extends RestService<User> {
       && authenticatedUser.roles
       && authenticatedUser.roles.indexOf('ADMIN') > -1;
   }
+
+  isOperater(): boolean {
+    const authenticatedUser = this.getAuthenticatedUser();
+    return authenticatedUser
+      && authenticatedUser.roles
+      && authenticatedUser.roles.indexOf('OPERATER') > -1;
+  }
+
+  isValidator(): boolean {
+    const authenticatedUser = this.getAuthenticatedUser();
+    return authenticatedUser
+      && authenticatedUser.roles
+      && authenticatedUser.roles.indexOf('VALIDATOR') > -1;
+  }  
 
   getUnconfirmedUsers() {
     return this.http.get<User[]>(this.url(['unvalidatedUsers'])).pipe(
@@ -103,7 +118,7 @@ export class UserService extends RestService<User> {
     );
   }
 
-  blockValidator(user: User){
+  updateValidator(user: User){
     return this.http.put<User>(this.url(['updateValidator']), user).pipe(
       catchError(this.handleError<boolean>())
     );
@@ -118,6 +133,12 @@ export class UserService extends RestService<User> {
   getRegUsers(){
     return this.http.get<User[]>(this.url(['registeredUsers'])).pipe(
       catchError(this.handleError<User[]>())
+    );
+  }
+
+  getByUsername(username: String){
+    return this.http.get<User>(this.url(['getByUsername/' + username])).pipe(
+      catchError(this.handleError<User>())
     );
   }
 

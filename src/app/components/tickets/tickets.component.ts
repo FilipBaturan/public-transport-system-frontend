@@ -49,6 +49,7 @@ export class TicketsComponent implements OnInit {
     this.ageType = "REGULAR";
     this.durationType = "ONETIME";
     this.transportLineType = "One line";
+    console.log("usao")
     this.authService.getCurrentUser().subscribe(
       result => {
         this.user = result;

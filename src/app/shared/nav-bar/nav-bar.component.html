@@ -1,14 +1,80 @@
-<div style="text-align:center">
-    <ul class="nav navbar-nav">
-        <li><a [routerLink]="['/welcome']">Home</a></li>
-        <li><a [routerLink] = "['/schedule']">Schedules</a></li>
-        <li><a [routerLink]="['/transportLineList']">Transport Lines</a></li>
-        <li><a [routerLink]="['/unconfirmedUsers']">Unconfirmed Users</a></li>
-        <li><a [routerLink]="['/validators']">Validators</a></li>
-        <li><a [routerLink]="['/registeredUsers']">Registered Users</a></li>
-        <li><a [routerLink]="['/reports']">Reports</a></li>
-        <li><a [routerLink]="['/vehicles']">Vehicles</a></li>
-        <li><a [routerLink]="['/tickets']">Tickets</a></li>
-        <li><a [routerLink]="['/zones']">Zones</a></li>
+<nav id="sidebar">
+    <div class="sidebar-header">
+        <h3>Bootstrap Sidebar</h3>
+    </div>
+
+    <ul class="list-unstyled components">
+        <p class="text-center">Arch Transport</p>
+        <li>
+            <a [routerLink]="['/welcome']">Home</a>
+        </li>
+        <li>
+            <a [routerLink]="" (click)="mapCollapsed = !mapCollapsed" [attr.aria-expanded]="!mapCollapsed"
+                aria-controls="homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Map</a>
+            <ul class="collapse list-unstyled" id="homeSubmenu" [ngbCollapse]="mapCollapsed">
+                <li>
+                    <a [routerLink]="['/map']">Routes</a>
+                </li>
+                <li>
+                    <a [routerLink]="['/zones']">Zones</a>
+                </li>
+                <li>
+                    <a [routerLink]="['/vehicles']">Vehicles</a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a [routerLink]="['/tickets']">Tickets</a>
+        </li>
+        <li>
+            <a [routerLink]="['/schedule']">Schedule</a>
+        </li>
+        <li>
+            <a [routerLink]="['/reports']">Reports</a>
+        </li>
+        <li>
+            <a [routerLink]="" (click)="accCollapsed = !accCollapsed" [attr.aria-expanded]="!accCollapsed"
+                aria-controls="pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Account</a>
+            <ul class="collapse list-unstyled" id="pageSubmenu" [ngbCollapse]="accCollapsed">
+                <li>
+                    <a [routerLink]="">Profile</a>
+                </li>
+                <li>
+                    <a [routerLink]="['/unconfirmedUsers']">Unconfirmed Users</a>
+                </li>
+                <li>
+                    <a [routerLink]="['/registeredUsers']">Registered Users</a>
+                </li>
+                <li>
+                    <a [routerLink]="['/validators']">Validators</a>
+                </li>
+            </ul>
+        </li>
     </ul>
-</div>
+
+    <ul class="list-unstyled CTAs">
+        <li>
+            <a [routerLink]="" class="logout">Logout</a>
+        </li>
+    </ul>
+</nav>
+
+
+
+
+
+
+
+
+<!-- <nav class="nav flex-column">
+        <a class="nav-link active" [routerLink]="['/welcome']">Home</a>
+        <a class="nav-link active" [routerLink] = "['/schedule']">Schedules</a>
+        <a class="nav-link active" [routerLink]="['/unconfirmedUsers']">Unconfirmed Users</a>
+        <a class="nav-link active" [routerLink]="['/validators']">Validators</a>
+        <a class="nav-link active" [routerLink]="['/registeredUsers']">Registered Users</a>
+        <a class="nav-link active" [routerLink]="['/reports']">Reports</a>
+        <a class="nav-link active" [routerLink]="['/vehicles']">Vehicles</a>
+        <a class="nav-link active" [routerLink]="['/tickets']">Tickets</a>
+        <a class="nav-link active" [routerLink]="['/zones']">Zones</a>
+        <a class="nav-link active" [routerLink]="['/map']">Map</a>
+    </nav> -->

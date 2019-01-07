@@ -86,9 +86,11 @@ export abstract class RestService<T> {
       //console.log(response);
       // Get error object from response and its error message
       if (response.error) {
-        let error: string  = response.error as string;
-        if (!error.startsWith("Error occured")) {
-          this.toastr.error(response.error);
+        if(response.error.message){
+          this.toastr.error(response.error.message);
+        }else if((typeof response.error === 'string' || response.error instanceof String)
+         && !response.error.startsWith("Error occured")) {
+            this.toastr.error(response.error);
         }else {
           this.toastr.error('Server is down!');
         }
