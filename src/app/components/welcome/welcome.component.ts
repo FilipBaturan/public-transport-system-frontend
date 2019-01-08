@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 
 import { News } from 'src/app/model/news.model';
+import { NewsComponent } from 'src/app/components/news/news.component';
 import { UploadService } from 'src/app/core/services/upload.service';
 import { UserService } from 'src/app/core/services/user.service';
 import { NewsService } from 'src/app/core/services/news.service';
@@ -37,11 +38,10 @@ pageTitle: string = "DOBRO DOSO KORISNIKU!!1!1"
 
   ngOnInit() {
     this.login = new LogIn("", "");
-    this.resetFlags();
+    //this.resetFlags();
     this.newsService.findAll().subscribe(
       result => {
         this.allNews = result;
-        console.log(this.allNews);
       }
     )
   }

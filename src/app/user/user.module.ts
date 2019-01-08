@@ -32,6 +32,7 @@ import { RouterModule } from '@angular/router';
       { path: 'userProfile', component: UserProfileComponent},
       { path: 'validators', component: ValidatorListComponent},
       { path: 'registeredUsers', component: RegUserListComponent},
+      { path: 'profile', component: UserProfileComponent},
     ]),
   ],
   exports: [

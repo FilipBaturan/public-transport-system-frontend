@@ -35,6 +35,9 @@ export class TicketsComponent implements OnInit {
   line: number;
   user: User;
   pricelistitemId: number;
+  dailySelected: boolean;
+  monthlySelected: boolean;
+  annualSelected: boolean;
 
   constructor(private authService: AuthService, 
               private zoneService: ZoneService, 
@@ -42,6 +45,9 @@ export class TicketsComponent implements OnInit {
               private reservationService: ReservationService) { }
 
   ngOnInit() {
+    this.dailySelected = true;
+    this.monthlySelected = false;
+    this.annualSelected = false;
     this.pricelistitemId = 0;
     this.reservation = new Reservation(0, [], 21);
     this.price = 0;
@@ -69,6 +75,24 @@ export class TicketsComponent implements OnInit {
         )
       }
     )
+  }
+
+  chooseType(type: string): void{
+    if(type === 'DAILY'){
+      this.dailySelected = true;
+      this.monthlySelected = false;
+      this.annualSelected = false;
+    }
+    else if(type === 'MONTHLY'){
+      this.dailySelected = false;
+      this.monthlySelected = true;
+      this.annualSelected = false;
+    }
+    else if(type === 'ANNUAL'){
+      this.dailySelected = false;
+      this.monthlySelected = false;
+      this.annualSelected = true;
+    }
   }
 
   zoneChange(zoneName: string): void{
@@ -100,7 +124,7 @@ export class TicketsComponent implements OnInit {
   }
 
   check(): void{
-    let feedback = this.checkAndSetExpiryDate();
+    let feedback = this.checkPurchaseDate();
     if(feedback === 0){
       this.checkPrice();
       let t = new Ticket(this.purchaseDate, this.line, this.pricelistitemId, this.durationType);
@@ -115,7 +139,7 @@ export class TicketsComponent implements OnInit {
     }
   }
 
-  checkAndSetExpiryDate(): number{
+  checkPurchaseDate(): number{
     if(!this.purchaseDate){
       return 1;
     }

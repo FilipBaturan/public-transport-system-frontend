@@ -1,5 +1,7 @@
 <div class="card">
-    <app-news></app-news>
+    <div *ngFor="let news of allNews">
+        <app-news></app-news>
+    </div>
     <app-auth></app-auth>
     <div class="card-header">
         {{pageTitle}}

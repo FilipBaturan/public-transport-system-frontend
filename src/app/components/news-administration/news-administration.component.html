@@ -2,7 +2,8 @@
     <p>Adding news</p>
     <br>
     <p>Title</p>
-    <input>
+    <input [value]="title" (input)="title=$event.target.value">
     <p>Content</p>
-    <input>
+    <input [value]="content" (input)="content=$event.target.value">
+    <button (click)="addNews()">Save</button>
 </div>

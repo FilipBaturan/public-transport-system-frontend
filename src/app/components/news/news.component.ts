@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { News } from 'src/app/model/news.model';
 
 @Component({
@@ -8,7 +8,7 @@ import { News } from 'src/app/model/news.model';
 })
 export class NewsComponent implements OnInit {
 
-  allNews: News[];
+  @Input() news: News;
 
   constructor() { }
 
