@@ -79,7 +79,7 @@ export class VehicleComponent implements OnInit {
     this.transportLineService.findAll().subscribe(response => {
       this.transportLines = response;
       this.filtredLinesByType = response;
-    });
+    }, err => this.toastrService.error(err));
   }
 
   /**

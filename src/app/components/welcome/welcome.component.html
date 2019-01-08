@@ -19,7 +19,7 @@
                     <input id="upload" type="file" (change)="onFileSelected($event)">
                     <button (click)="onUpload()">Upload</button>
                     <button (click)="onLoad()">Load</button>
-                    <img alt="testSlika" src="data:image/png;base64,{{image.content}}">
+                    <img *ngIf="image.content" alt="testSlika" src="data:image/png;base64,{{image.content}}">
                 </div>
             </div>
         </div>
