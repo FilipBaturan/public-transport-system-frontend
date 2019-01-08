@@ -1,0 +1,39 @@
+<div class="wrapper">
+  <app-nav-bar></app-nav-bar>
+  <div id="content">
+
+      <angular2-multiselect [data]="transportLineDropdown" [(ngModel)]="selectedItems" [settings]="transportLineDropdownSettings"
+          (onSelect)="onItemSelect($event)" (onDeSelect)="onItemDeSelect($event)"></angular2-multiselect>
+
+      <table mat-table [dataSource]="dataSource" matSort>
+
+          <!-- Position Column -->
+          <ng-container matColumnDef="{{column}}" *ngFor="let column of displayedColumns">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> {{column}} </mat-header-cell>
+              <mat-cell *matCellDef="let element">
+                  <mat-form-field floatLabel="never">
+                      <input matInput placeholder="Departure" (focus) ="memorizeFocusedDeparture($event, element[column])" (focusout)="checkDeparture($event, element[column], element, column)" [value]="element[column]" [(ngModel)]="element[column]">
+                    </mat-form-field>
+                 </mat-cell>
+          </ng-container>
+
+          <!-- <ng-container matColumnDef="{{column}}" *ngFor="let column of daysOfWeekArray"> 
+              <th mat-header-cell *matHeaderCellDef> {{column}} </th>
+          </ng-container> -->
+
+
+          <mat-header-row *matHeaderRowDef="columnsToDisplay"></mat-header-row>
+
+          <!-- <tr mat-header-row *matHeaderRowDef="daysOfWeekArray"
+            class="example-second-header-row">
+          </tr> -->
+
+          <mat-row *matRowDef="let row; columns: columnsToDisplay;"></mat-row>
+      </table>
+
+      <!--<i class="fa fa-plus-square"></i> <i class="fa fa-minus-square"></i>-->
+      <button (click) = "addNewRow()">Add</button>
+      <button (click) = "removeRow()">Remove</button>
+      <button (click) = "updateSchedule()">Save</button>
+  </div>
+</div>

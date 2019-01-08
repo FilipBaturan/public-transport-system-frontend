@@ -9,6 +9,7 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
 import { UserTicketsComponent } from './user-tickets/user-tickets.component';
 import { ValidatorListComponent } from './validator-list/validator-list.component';
 import { RouterModule } from '@angular/router';
+import { OperatorListComponent } from './operator-list/operator-list.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { RouterModule } from '@angular/router';
     UnconfirmedUserListComponent,
     UserProfileComponent,
     UserTicketsComponent,
-    ValidatorListComponent
+    ValidatorListComponent,
+    OperatorListComponent
   ],
   imports: [
     CommonModule,
