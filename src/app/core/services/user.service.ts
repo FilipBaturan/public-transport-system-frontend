@@ -122,7 +122,7 @@ export class UserService extends RestService<User> {
     );
   }
 
-  blockValidator(user: User){
+  updateValidator(user: User){
     return this.http.put<User>(this.url(['updateValidator']), user).pipe(
       catchError(this.handleError<boolean>())
     );
@@ -155,6 +155,12 @@ export class UserService extends RestService<User> {
   getRegUsers(){
     return this.http.get<User[]>(this.url(['registeredUsers'])).pipe(
       catchError(this.handleError<User[]>())
+    );
+  }
+
+  getByUsername(username: String){
+    return this.http.get<User>(this.url(['getByUsername/' + username])).pipe(
+      catchError(this.handleError<User>())
     );
   }
 

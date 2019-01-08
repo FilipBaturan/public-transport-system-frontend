@@ -60,7 +60,7 @@ describe('ZoneService', () => {
   });
 
   it('should be created', () => {
-    const service: ZoneService = TestBed.get(ZoneService);
+    service = TestBed.get(ZoneService);
     expect(service).toBeTruthy();
   });
 
@@ -75,7 +75,7 @@ describe('ZoneService', () => {
     });
 
     const req = mockHttp.expectOne(url);
-    expect(req.request.method).toBe("GET");
+    expect(req.request.method).toBe('GET');
     req.flush(dbZones);
   }));
 
@@ -129,7 +129,7 @@ describe('ZoneService', () => {
     });
 
     const req = mockHttp.expectOne(url);
-    expect(req.request.method).toBe("POST");
+    expect(req.request.method).toBe('POST');
     req.flush(new Zone(zone.id, zone.name, zone.lines, zone.active));
   }));
 
@@ -137,13 +137,14 @@ describe('ZoneService', () => {
 
     service.remove(1,dbZones);
 
-    const req1 = mockHttp.expectOne(url + "/" + 1);
-    expect(req1.request.method).toBe("DELETE");
+    const req1 = mockHttp.expectOne(url + '/' + 1);
+    expect(req1.request.method).toBe('DELETE');
     req1.flush('Zone successfully removed!');
 
     const req2 = mockHttp.expectOne(url);
-    expect(req2.request.method).toBe("GET");
+    expect(req2.request.method).toBe('GET');
     req2.flush(dbZones.splice(0,1));
+    expect(mockToastrService.success).toHaveBeenCalled();
   }));
 
   it('should receive forbidden error for unauthorized deletion', fakeAsync(() => {
@@ -152,13 +153,14 @@ describe('ZoneService', () => {
 
     service.remove(1,dbZones);
 
-    const req = mockHttp.expectOne(url + "/" + 1);
-    expect(req.request.method).toBe("DELETE");
+    const req = mockHttp.expectOne(url + '/' + 1);
+    expect(req.request.method).toBe('DELETE');
     req.flush({ message: 'Forbidden!'},
       { status: 403, statusText: 'Unauthorazied' });
 
     expect(dbZones.length).toBe(length);
     expect(dbZones[0]).toEqual(z);
+    expect(mockToastrService.error).toHaveBeenCalled();
   }));
 
   it('should receive zone does not exist error', fakeAsync(() => {
@@ -167,13 +169,14 @@ describe('ZoneService', () => {
 
     service.remove(1,dbZones);
 
-    const req = mockHttp.expectOne(url + "/" + 1);
-    expect(req.request.method).toBe("DELETE");
+    const req = mockHttp.expectOne(url + '/' + 1);
+    expect(req.request.method).toBe('DELETE');
     req.flush({ message: 'Zone does not exist!'},
     { status: 400, statusText: 'Bad Request' });
 
     expect(dbZones.length).toBe(length);
     expect(dbZones[0]).toEqual(z);
+    expect(mockToastrService.error).toHaveBeenCalled();
   }));
 
 });

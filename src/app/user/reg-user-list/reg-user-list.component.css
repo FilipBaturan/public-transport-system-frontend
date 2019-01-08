@@ -17,6 +17,9 @@
 .mat-header-row {
     width: 100%;
 }
+.mat-header-row th, tr{
+  text-align: center;
+}
 
 .mat-row {
     width: 100%;

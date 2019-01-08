@@ -35,12 +35,11 @@ export class MapService {
    * @param {TransportLine[]} tempTransportLines temploral collection of transprot lines
    * @memberof MapService
    */
-  applyTransportRoutesChanges(code: string, transportLineViewers: TransportLineViewer[],
-    transportLines: TransportLine[], tempTransportLines: TransportLine[], ): void {
+  applyTransportRoutesChanges(code: string, transportLines: TransportLine[],
+    tempTransportLines: TransportLine[], ): void {
     if (/^\[map(=.+)?\]\[\/map\]/.test(code)) {
       return
     }
-    transportLineViewers.splice(0, transportLineViewers.length);
     tempTransportLines.splice(0, tempTransportLines.length);
     let index: number;
     while (true) {
@@ -163,7 +162,7 @@ export class MapService {
         code = code.slice(0, index - i).concat(color + "|" + name + code.substr(index - 1));
       } else if (width != "" && color != "") {
         code = code.slice(0, index - i).concat(color + "," + width + "|" + name + code.substr(index - 1));
-      } else if (width != "" && color == "") {
+      } else { // (width != "" && color == "")
         code = code.slice(0, index - i).concat(width + "|" + name + code.substr(index - 1));
       }
       if (skip) {
@@ -188,9 +187,7 @@ export class MapService {
     mapEditorStations: object, stations: Station[], stationCounter: number): number {
     // remove all stations on map
     for (const key in mapViewStations) {
-      if (mapViewStations.hasOwnProperty(key)) {
-        mapViewer.map.removeLayer(mapViewStations[key]);
-      }
+      mapViewer.map.removeLayer(mapViewStations[key]);
     }
     // update station counter
     stationCounter += Object.keys(mapEditorStations).length;
@@ -202,13 +199,12 @@ export class MapService {
     let latitude: number = 0;
     let longitude: number = 0;
     for (const key in mapEditorStations) {
-      if (mapEditorStations.hasOwnProperty(key)) {
-        const element = mapEditorStations[key];
-        [type, name] = element.options.title.split("-");
-        ({ lat: latitude, lng: longitude } = element.getLatLng());
-        stations.push(new Station(null, name, new StationPosition(null, latitude, longitude, true),
-          VehicleType[type.toUpperCase()], true));
-      }
+      const element = mapEditorStations[key];
+      [type, name] = element.options.title.split("-");
+      ({ lat: latitude, lng: longitude } = element.getLatLng());
+      stations.push(new Station(null, name, new StationPosition(null, latitude, longitude, true),
+        VehicleType[type.toUpperCase()], true));
+
     }
     return stationCounter;
   }

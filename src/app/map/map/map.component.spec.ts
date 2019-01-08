@@ -39,7 +39,7 @@ describe('MapComponent', () => {
 
   beforeEach(async(() => {
     mockUserService = jasmine.createSpyObj(['']);
-    mockStationService = jasmine.createSpyObj(['']);
+    mockStationService = jasmine.createSpyObj(['findAll', 'replaceStations']);
     mockTransportLineService = jasmine.createSpyObj(['']);
     mockToastrService = jasmine.createSpyObj(['']);
     mockModalService = jasmine.createSpyObj(['']);

@@ -17,7 +17,9 @@ import { TransportLine, TransportLineCollection } from 'src/app/model/transport-
 @Injectable({
   providedIn: 'root'
 })
-export class TransportLineService extends RestService<TransportLine>  {
+export class TransportLineService {
+
+  private url: string = "/api/transportLine";
 
   /**
    * Creates an instance of TransportLineService.
@@ -25,8 +27,28 @@ export class TransportLineService extends RestService<TransportLine>  {
    * @param {ToastrService} toastrService user notification service
    * @memberof TransportLineService
    */
-  constructor(http: HttpClient, toastrService: ToastrService) {
-    super(http, ["/api/transportLine"], toastrService);
+  constructor(private http: HttpClient) {
+  }
+
+  /**
+   * Gets all available transport lines
+   *
+   * @returns {Observable<TransportLine[]>} all available transport lines
+   * @memberof TransportLineService
+   */
+  findAll(): Observable<TransportLine[]> {
+    return this.http.get<TransportLine[]>(this.url).pipe(catchError(this.handleException));
+  }
+
+  /**
+   * Creates/Updates transport line
+   *
+   * @param {TransportLine} transportLine transport line that needs to be crated/updated
+   * @returns {Observable<TransportLine>} created/updated transport line
+   * @memberof TransportLineService
+   */
+  create(transportLine: TransportLine): Observable<TransportLine> {
+    return this.http.post<TransportLine>(this.url, transportLine).pipe(catchError(this.handleException));
   }
 
   /**
@@ -37,7 +59,7 @@ export class TransportLineService extends RestService<TransportLine>  {
    * @memberof TransportLineService
    */
   replaceTransportLines(transportLines: TransportLineCollection): Observable<TransportLine[]> {
-    return this.http.post<TransportLine[]>(this.url() + "/replace", transportLines).pipe(
+    return this.http.post<TransportLine[]>(this.url + "/replace", transportLines).pipe(
       catchError(this.handleException)
     );
   }
@@ -51,7 +73,18 @@ export class TransportLineService extends RestService<TransportLine>  {
    * @memberof TransportLineService
    */
   private handleException(err: HttpErrorResponse): Observable<never> {
-    return throwError(err.message || "Server error");
+    if (err.error) {
+      if (err.error.message) {
+        return throwError(err.error.message);
+      } else if ((typeof err.error === 'string')
+        && !err.error.startsWith("Error occured")) {
+        return throwError(err.error);
+      } else {
+        return throwError('Server is down!');
+      }
+    } else {
+      return throwError('Client side error!');
+    }
   }
 }
 
