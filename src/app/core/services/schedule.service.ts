@@ -29,7 +29,6 @@ export class ScheduleService extends RestService<Schedule> {
   }
 
   updateSchedule(schedule: Schedule){
-    console.log(schedule);
     return this.http.put<any>(this.url(['updateSchedule']), schedule).pipe(
       catchError(this.handleError<boolean>())
     );

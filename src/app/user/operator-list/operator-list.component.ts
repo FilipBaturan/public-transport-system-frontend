@@ -1,7 +1,9 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { User } from '../../model/users/user.model';
 import { ToastrService } from 'ngx-toastr';
 import { UserService } from 'src/app/core/services/user.service';
+import { MatTable } from '@angular/material';
+
 
 @Component({
   selector: 'app-operator-list',
@@ -19,15 +21,13 @@ export class OperatorListComponent implements OnInit {
   
   //Ruganje gore (mock up)
   newUser: User;
-  changedUser: User;
 
-  changeFormShowed: boolean;
+  formShowed: boolean;
+
+  @ViewChild(MatTable) table: MatTable<any>;
 
   constructor(private userService: UserService, private toastr: ToastrService,
     private changeDetectorRefs: ChangeDetectorRef) { }
-
-  
-  
 
   ngOnInit() {
 
@@ -35,62 +35,110 @@ export class OperatorListComponent implements OnInit {
     this.newUser = new User(null, "newUserName", "newPass", "newName", "newLastName", "newEmail", 
                     true, "123123");
 
-
-    this.changeFormShowed = false;
+    this.formShowed = false;
 
     this.userService.getOperators().subscribe(
       response => {
+        console.log(response);
         this.operators = response;
-        console.log(this.operators); 
         this.checkUsersLength();
       }
     )
   }
 
-  showChangeForm(user:User)
+  showForm()
   {
-    this.toastr.info("Show form!");
+    this.formShowed = true;
+  }
+
+  showChangeForm(user: User)
+  {
+    console.log(user);
+    this.newUser = user;
+    this.showForm();
   }
 
   blockOperator(user:User)
   {
-    user.active = false;
-    this.userService.blockOperator(user).subscribe(
-      response => {
-        if (response == false)
-          this.toastr.info("A problem occured when trying to block the operator!");
-        else
-        {
-          var index = this.operators.indexOf(user);
-          const copiedData =  this.operators.slice();
-          copiedData.splice(index, 1);
-          this.operators = copiedData;
-         
-          this.toastr.info("Operator succesfully blocked!")
-        }
-        
-        this.checkUsersLength();
+    if (user.id == null)
+      this.toastr.warning("Please refresh the page to block this operator!");
+    else
+    {
+      user.active = false;
+      this.userService.updateOperator(user).subscribe(
+        response => {
+          if (response == false)
+            this.toastr.info("There was a problem with blocking the operator!");
+          else
+          {
+            var index = this.operators.indexOf(user);
+            const copiedData =  this.operators.slice();
+            copiedData.splice(index, 1);
+            this.operators = copiedData;
+           
+            this.toastr.info("Operator succesfully blocked!")
+          }
           
-      }
-    )
-    this.changeDetectorRefs.detectChanges();
+          this.checkUsersLength();
+            
+        }
+      )
+      this.changeDetectorRefs.detectChanges();
+    }
+
   }
 
   addOperator(){
 
-    this.userService.addOperator(this.newUser).subscribe(
-      response => {
-        if (response == false)
-          this.toastr.info("A problem occured when trying to add the operator!");
-        else
-        {
-          this.operators.push(this.newUser);
-          this.toastr.info("Operator succesfully added!")
+    // updating operator
+    if (this.newUser.id != null)
+    {
+      this.userService.updateOperator(this.newUser).subscribe(
+        response => {
+          if (response == false)
+            this.toastr.error("There was a problem with updating the operator");
+          else
+          {
+            this.toastr.info("Operator succesfully updated!");
+            this.formShowed = false;
+            this.newUser = new User(null, "new User Name", "new Pass", "new Name", "new Last Name",
+            "new Email",  true, "123123");
+          }
         }
-        
-        this.checkUsersLength();
-      }
-    )
+      )
+    }
+    // adding new operator
+    else
+    {
+      this.userService.addOperator(this.newUser).subscribe(
+        response => {
+          if (response == false)
+            this.toastr.info("There was a problem with adding the operator");
+          else
+          {
+            this.userService.getByUsername(this.newUser.username).subscribe(
+              response => {
+                if (response != null)
+                {
+                  this.newUser = response;
+                  this.operators.push(this.newUser);
+                  this.newUser = new User(null, "new User Name", "new Pass", "new Name", "new Last Name",
+                  "new Email",  true, "123123");
+                  this.table.renderRows();
+                  this.toastr.info("Operator succesfully added!")
+                }
+              })
+            
+           
+          }
+          
+          this.checkUsersLength();
+        }
+      )
+  
+      this.formShowed = false;
+    }
+
   }
 
 
@@ -102,4 +150,3 @@ export class OperatorListComponent implements OnInit {
   }
 
 }
-

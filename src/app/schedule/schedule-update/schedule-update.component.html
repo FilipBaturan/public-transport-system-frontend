@@ -12,7 +12,7 @@
               <mat-header-cell *matHeaderCellDef mat-sort-header> {{column}} </mat-header-cell>
               <mat-cell *matCellDef="let element">
                   <mat-form-field floatLabel="never">
-                      <input matInput placeholder="Departure" [value]="element[column]" [(ngModel)]="element[column]">
+                      <input matInput placeholder="Departure" (focus) ="memorizeFocusedDeparture($event, element[column])" (focusout)="checkDeparture($event, element[column], element, column)" [value]="element[column]" [(ngModel)]="element[column]">
                     </mat-form-field>
                  </mat-cell>
           </ng-container>

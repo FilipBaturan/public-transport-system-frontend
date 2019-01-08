@@ -19,6 +19,10 @@
     width: 100%;
 }
 
+.mat-header-row th{
+  text-align: center;
+}
+
 .mat-row {
     width: 100%;
 }
@@ -56,7 +60,23 @@
     text-align: center;
 }
 
+#mainDiv{
+  text-align: center;
+}
 
+#addButton{
+  margin: 20px;
+}
+ 
+.full-width {
+  width: 100%;
+}
+
+#regDiv{
+  margin: 0 auto; 
+  width: 500px;
+  margin-top: 100px;  
+}
 
 /* ---------------------------------------------------
     SIDEBAR STYLE

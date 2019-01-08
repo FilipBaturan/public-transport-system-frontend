@@ -7,6 +7,7 @@ import { TransportLine } from 'src/app/model/transport-line.model';
 import { DayOfWeek } from 'src/app/model/enums/day-of-week.model';
 import { ScheduleService } from 'src/app/core/services/schedule.service';
 import { TransportLineService } from 'src/app/core/services/transport-line.service';
+import { ToastrService } from 'ngx-toastr';
 
 
 @Component({
@@ -34,8 +35,11 @@ export class ScheduleUpdateComponent implements OnInit {
   selectedItems = [];
   transportLineDropdownSettings = {};
 
+  focusedDeparture: string = "";
+
   constructor(private scheduleService: ScheduleService,
-              private tranposrtLineService: TransportLineService) { }
+              private tranposrtLineService: TransportLineService,
+              private toastSerivce: ToastrService) { }
 
   ngOnInit() {
     //this.setupScheduleTable();
@@ -46,6 +50,8 @@ export class ScheduleUpdateComponent implements OnInit {
   setupDataSource(){
     this.scheduleService.findAll().subscribe(
       response => {
+        let obje = this.setupObj(response);
+        console.log(obje);
         this.schedules = <Array<Schedule>> response;
         let temp = this.tableArr.map(x => Object.assign({}, x));
         response.forEach(element => {
@@ -58,9 +64,17 @@ export class ScheduleUpdateComponent implements OnInit {
               obj[key] = departure;
               temp.push(obj);
             }else{
-              temp[index][key] = departure;
+              if (temp[index])
+                temp[index][key] = departure;
+              else{
+                let obj = this.setupObj(response);
+                obj[key] = departure;
+                temp.push(obj);
+              }
             }index++;
           });
+          console.log("temp");
+          console.log(temp);
           this.tableArr = temp;
         });
         this.dataSource = new MatTableDataSource(this.tableArr);
@@ -68,6 +82,24 @@ export class ScheduleUpdateComponent implements OnInit {
       },
       (err) => console.error(err)
     );
+  }
+
+  setupObj(schedules){
+
+    let obj = {};
+
+    schedules.forEach(element => {
+      let tl = element.transportLine.name;
+      let workday = tl + "-WORKDAY";
+      let saturday = tl + "-SATURDAY";
+      let sunday = tl + "-SUNDAY";
+
+      obj[workday] = "";
+      obj[saturday] = "";
+      obj[sunday] = "";
+    });
+    
+    return obj;
   }
 
   setupTransportLineSelect(){
@@ -145,9 +177,9 @@ export class ScheduleUpdateComponent implements OnInit {
     let sunday = tl + "-SUNDAY";
 
     this.tableArr.forEach(element=>{
-      workdayDepartures.push(element[workday]);
-      saturdayDepartures.push(element[saturday]);
-      sundayDepartures.push(element[sunday]);
+      if (element[workday])  workdayDepartures.push(element[workday].trim());
+      if (element[saturday]) saturdayDepartures.push(element[saturday].trim());
+      if (element[sunday])   sundayDepartures.push(element[sunday].trim());
     });
 
     console.log(workdayDepartures);
@@ -158,18 +190,46 @@ export class ScheduleUpdateComponent implements OnInit {
       if (schedule.transportLine.name == tl){
         if (String(schedule.dayOfWeek) == "WORKDAY"){
           schedule.departures = workdayDepartures;
-          this.scheduleService.updateSchedule(schedule);
+          this.scheduleService.updateSchedule(schedule).subscribe(
+            response=> console.log(response)
+          );
         }
         else if (String(schedule.dayOfWeek) == "SATURDAY"){
           schedule.departures = saturdayDepartures;
-          this.scheduleService.updateSchedule(schedule);
+          this.scheduleService.updateSchedule(schedule).subscribe(
+            response=> console.log(response)
+          );;
         }
         else if (String(schedule.dayOfWeek) == "SUNDAY"){
           schedule.departures = sundayDepartures;
-          this.scheduleService.updateSchedule(schedule);
+          this.scheduleService.updateSchedule(schedule).subscribe(
+            response=> console.log(response)
+          );
         }
       }
     });      
+  }
+
+  memorizeFocusedDeparture(event, departure: string){
+    this.focusedDeparture = departure;
+  }
+
+  checkDeparture(event, departure: string, element, column){
+    if (departure == "") return;
+
+    if (departure.length!=5 || !departure.includes(":")){
+      this.toastSerivce.warning("Wrong departure format. The correct format is HH:MM.")
+      element[column] = this.focusedDeparture;
+      return;
+    }
+    let hhMM = departure.split(":");
+    let hh = parseInt(hhMM[0]);
+    let mm = parseInt(hhMM[1]);
+
+    if (hh<0 || hh>23 || mm<0 || mm>59){
+      this.toastSerivce.warning("Hours range from 0 to 23, minutes from 0 to 59!");
+      element[column] = this.focusedDeparture;
+    }
   }
 
   getDayOfWeekEnum (dow: string): DayOfWeek{

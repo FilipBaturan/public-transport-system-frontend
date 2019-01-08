@@ -146,7 +146,7 @@ export class UserService extends RestService<User> {
     );
   }
 
-  blockOperator(user: User){
+  updateOperator(user: User){
     return this.http.put<User>(this.url(['updateOperator']), user).pipe(
       catchError(this.handleError<boolean>())
     );
