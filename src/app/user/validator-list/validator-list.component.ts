@@ -64,7 +64,7 @@ export class ValidatorListComponent implements OnInit {
       user.active = false;
       this.userService.updateValidator(user).subscribe(
         response => {
-          if (response == false)
+          if (response == null)
             this.toastr.info("There was a problem with blocking the validator");
           else
           {
@@ -92,7 +92,7 @@ export class ValidatorListComponent implements OnInit {
     {
       this.userService.updateValidator(this.newUser).subscribe(
         response => {
-          if (response == false)
+          if (response == null)
             this.toastr.error("There was a problem with updating the validator");
           else
           {
@@ -109,7 +109,7 @@ export class ValidatorListComponent implements OnInit {
     {
       this.userService.addValidator(this.newUser).subscribe(
         response => {
-          if (response == false)
+          if (response == null)
             this.toastr.info("There was a problem with adding the validator");
           else
           {

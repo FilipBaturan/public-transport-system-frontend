@@ -35,7 +35,7 @@ import { RouteMapperModule } from './route-mapper/route-mapper.module';
     SharedModule,
     UserModule,
     ScheduleModule,
-    RouteMapperModule
+    RouteMapperModule,
   ],
   exports: [RouterModule],
   providers: [],

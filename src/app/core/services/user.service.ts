@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { RestService } from './rest.service';
 import { User } from 'src/app/model/users/user.model';
@@ -95,51 +95,67 @@ export class UserService extends RestService<User> {
   }  
 
   getUnconfirmedUsers() {
-    return this.http.get<User[]>(this.url(['unvalidatedUsers'])).pipe(
-      catchError(this.handleError<User[]>())
+    console.log(this.url(['unvalidatedUsers']));
+    return this.http.get<any>(this.url(['unvalidatedUsers'])).pipe(
+      catchError(this.handleException)
     );
   }
 
   acceptUser(user: User){
-    return this.http.put<User>(this.url(['approveUser']), user).pipe(
-      catchError(this.handleError<boolean>())
+    return this.http.put<any>(this.url(['approveUser']), user).pipe(
+      catchError(this.handleException)
     );
   }
 
   denyUser(user: User){
-    return this.http.put<User>(this.url(['denyUser']), user).pipe(
-      catchError(this.handleError<boolean>())
+    return this.http.put<any>(this.url(['denyUser']), user).pipe(
+      catchError(this.handleException)
     );
   }
 
   getValidators(){
-    return this.http.get<User[]>(this.url(['getValidators'])).pipe(
-      catchError(this.handleError<User[]>())
+    return this.http.get<any>(this.url(['getValidators'])).pipe(
+      catchError(this.handleException)
     );
   }
 
   updateValidator(user: User){
-    return this.http.put<User>(this.url(['updateValidator']), user).pipe(
-      catchError(this.handleError<boolean>())
+    return this.http.put<any>(this.url(['updateValidator']), user).pipe(
+      catchError(this.handleException)
     );
   }
 
   addValidator(user: User){
-    return this.http.post<User>(this.url(['addValidator']), user).pipe(
-      catchError(this.handleError<boolean>())
+    return this.http.post<any>(this.url(['addValidator']), user).pipe(
+      catchError(this.handleException)
     );
   }
 
   getRegUsers(){
-    return this.http.get<User[]>(this.url(['registeredUsers'])).pipe(
-      catchError(this.handleError<User[]>())
+    return this.http.get<any>(this.url(['registeredUsers'])).pipe(
+      catchError(this.handleException)
     );
   }
 
   getByUsername(username: String){
-    return this.http.get<User>(this.url(['getByUsername/' + username])).pipe(
-      catchError(this.handleError<User>())
+    return this.http.get<any>(this.url(['getByUsername/' + username])).pipe(
+      catchError(this.handleException)
     );
+  }
+
+  private handleException(response: HttpErrorResponse): Observable<never> {
+    if (response.error) {
+      if (response.error.message) {
+        return throwError(response.error.message);
+      } else if ((typeof response.error === 'string')
+        && !response.error.startsWith("Error occured")) {
+        return throwError(response.error);
+      } else {
+        return throwError('Server is down!');
+      }
+    } else {
+      return throwError('Client side error!');
+    }
   }
 
 }

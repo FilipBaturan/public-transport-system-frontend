@@ -30,7 +30,7 @@ export class UnconfirmedUserListComponent implements OnInit {
   acceptUser(user:User){
     this.userService.acceptUser(user).subscribe(
       response => {
-        if (response == false)
+        if (response == null)
           this.toastr.info("There was a problem with accepting this users document");
         else
         {
@@ -46,7 +46,7 @@ export class UnconfirmedUserListComponent implements OnInit {
   denyUser(user: User){
     this.userService.denyUser(user).subscribe(
       response => {
-        if (response == false)
+        if (response == null)
         this.toastr.info("There was a problem with denying this users document");
         else
         {
