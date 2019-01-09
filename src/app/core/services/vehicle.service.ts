@@ -12,7 +12,6 @@ import { Vehicle, VehicleSaver } from 'src/app/model/vehicle.model';
  *
  * @export
  * @class VehicleService
- * @extends {RestService<Vehicle>} REST service template
  */
 @Injectable({
   providedIn: 'root'

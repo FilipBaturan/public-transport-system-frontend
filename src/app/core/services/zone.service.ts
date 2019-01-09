@@ -11,7 +11,6 @@ import { catchError } from 'rxjs/operators';
  *
  * @export
  * @class ZoneService
- * @extends {RestService<Zone>}
  */
 @Injectable({
   providedIn: 'root'

@@ -1,14 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { LogIn } from 'src/app/model/login.model';
-
 import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs/operators';
 
 import { News } from 'src/app/model/news.model';
 import { UploadService } from 'src/app/core/services/upload.service';
 import { UserService } from 'src/app/core/services/user.service';
 import { NewsService } from 'src/app/core/services/news.service';
-import { Image } from 'src/app/model/image.mode';
+import { Image } from 'src/app/model/util.model';
 
 
 @Component({

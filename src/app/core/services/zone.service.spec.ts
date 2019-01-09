@@ -131,19 +131,21 @@ describe('ZoneService', () => {
     const req = mockHttp.expectOne(url);
     expect(req.request.method).toBe('POST');
     req.flush(new Zone(zone.id, zone.name, zone.lines, zone.active));
+    expect(req.request.body).toBe(zone);
   }));
 
   it('should delete zone', fakeAsync(() => {
 
-    service.remove(1,dbZones);
+    service.remove(1, dbZones);
 
     const req1 = mockHttp.expectOne(url + '/' + 1);
     expect(req1.request.method).toBe('DELETE');
     req1.flush('Zone successfully removed!');
+    expect(req1.request.responseType).toBe('text');
 
     const req2 = mockHttp.expectOne(url);
     expect(req2.request.method).toBe('GET');
-    req2.flush(dbZones.splice(0,1));
+    req2.flush(dbZones.splice(0, 1));
     expect(mockToastrService.success).toHaveBeenCalled();
   }));
 
@@ -151,12 +153,13 @@ describe('ZoneService', () => {
     let length = dbZones.length;
     let z = dbZones[0];
 
-    service.remove(1,dbZones);
+    service.remove(1, dbZones);
 
     const req = mockHttp.expectOne(url + '/' + 1);
     expect(req.request.method).toBe('DELETE');
-    req.flush({ message: 'Forbidden!'},
+    req.flush({ message: 'Forbidden!' },
       { status: 403, statusText: 'Unauthorazied' });
+    expect(req.request.responseType).toBe('text');
 
     expect(dbZones.length).toBe(length);
     expect(dbZones[0]).toEqual(z);
@@ -167,12 +170,13 @@ describe('ZoneService', () => {
     let length = dbZones.length;
     let z = dbZones[0];
 
-    service.remove(1,dbZones);
+    service.remove(1, dbZones);
 
     const req = mockHttp.expectOne(url + '/' + 1);
     expect(req.request.method).toBe('DELETE');
-    req.flush({ message: 'Zone does not exist!'},
-    { status: 400, statusText: 'Bad Request' });
+    req.flush({ message: 'Zone does not exist!' },
+      { status: 400, statusText: 'Bad Request' });
+    expect(req.request.responseType).toBe('text');
 
     expect(dbZones.length).toBe(length);
     expect(dbZones[0]).toEqual(z);

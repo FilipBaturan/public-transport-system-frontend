@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { ToastrService } from 'ngx-toastr';
@@ -32,10 +32,12 @@ export class VehicleComponent implements OnInit {
   public addImage: string = "src/assets/img/addVehicle.png";
 
   // form attributes
-  private formGroup: FormGroup;
   private modalForm: NgbModalRef;
   public isValidFormSubmitted: boolean;
   public headerName: string;
+  public formGroup: FormGroup;
+
+  @ViewChild("content") modalFormElement: ElementRef;
 
   /**
    * Creates an instance of VehicleComponent.
@@ -158,7 +160,8 @@ export class VehicleComponent implements OnInit {
         this.modalForm.close();
         this.toastrService.success("Vehicle successfully saved!");
         this.formGroup.reset();
-      });
+      }, err =>
+          err.status == 403 ? this.toastrService.error("Forbidden!") : this.toastrService.error(err.error));
   }
 
   /**

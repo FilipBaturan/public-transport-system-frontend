@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 import { ToastrService } from 'ngx-toastr';
@@ -22,14 +22,17 @@ export class ZoneComponent implements OnInit {
   public isCollapsed: boolean;
   public isValidFormSubmitted: boolean;
   public headerName: string;
+  public addImage: string = "src/assets/img/addZone.png";
 
   private zones: Zone[];
   private selectedZoneLines: ZoneTransportLine[];
   private availableLines: ZoneTransportLine[];
 
   // form attributes
-  private formGroup: FormGroup;
   private modalForm: NgbModalRef;
+  public formGroup: FormGroup;
+
+  @ViewChild("content") modalFormElement: ElementRef;
 
   /**
    * Creates an instance of ZoneComponent.
@@ -60,7 +63,9 @@ export class ZoneComponent implements OnInit {
    */
   ngOnInit() {
     // fetch all zones
-    this.zoneService.findAll().subscribe(response => this.zones = response);
+    this.zoneService.findAll().subscribe(
+      response => this.zones = response,
+      err => this.toastrService.error(err));
   }
 
   /**
@@ -158,9 +163,10 @@ export class ZoneComponent implements OnInit {
       .subscribe(() => {
         this.zoneService.findAll().subscribe(result => this.zones = result);
         this.modalForm.close();
-        this.toastrService.success("Vehicle successfully saved!");
+        this.toastrService.success("Zone successfully saved!");
         this.formGroup.reset();
-      });
+      }, err =>
+          err.status == 403 ? this.toastrService.error("Forbidden!") : this.toastrService.error(err.error));
   }
 
   /**
