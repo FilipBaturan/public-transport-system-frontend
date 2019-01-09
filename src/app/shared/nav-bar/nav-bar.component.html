@@ -30,6 +30,9 @@
             <a [routerLink]="['/schedule']">Schedule</a>
         </li>
         <li>
+            <a [routerLink]="['/updateSchedules']">Update Schedules</a>
+        </li>
+        <li>
             <a [routerLink]="['/reports']">Reports</a>
         </li>
         <li>
@@ -48,16 +51,19 @@
                 <li>
                     <a [routerLink]="['/validators']">Validators</a>
                 </li>
+                <li>
+                    <a [routerLink]="['/operators']">Operators</a>
+                </li>
             </ul>
         </li>
     </ul>
 
     <ul class="list-unstyled CTAs">
-        <li>
+        <li *ngIf="!userService.isAuthenticated()">
             <a [routerLink]="" class="singIn">Sign In</a>
         </li>
-        <li>
-            <a [routerLink]="" class="logout">Log Out</a>
+        <li *ngIf="userService.isAuthenticated()">
+            <a [routerLink]="" class="logout" (click)="logout()">Log Out</a>
         </li>
     </ul>
 </nav>

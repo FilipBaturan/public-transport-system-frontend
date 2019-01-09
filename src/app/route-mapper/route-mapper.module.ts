@@ -19,6 +19,8 @@ import { RegUserListComponent } from '../user/reg-user-list/reg-user-list.compon
 import { IsAuthenticatedGuard } from './is-authenticated.guard';
 import { IsOperaterGuard } from './is-operater.guard';
 import { IsValidatorGuard } from './is-validator.guard';
+import { OperatorListComponent } from '../user/operator-list/operator-list.component';
+import { ScheduleUpdateComponent } from '../schedule/schedule-update/schedule-update.component';
 
 @NgModule({
   declarations: [],
@@ -36,12 +38,14 @@ import { IsValidatorGuard } from './is-validator.guard';
       { path: 'vehicles', component: VehicleComponent, canActivate: [IsOperaterGuard]},
       { path: 'zones', component: ZoneComponent, canActivate: [IsOperaterGuard]},
       { path: 'schedule', component: ScheduleComponent},
+      { path: 'updateSchedules', component: ScheduleUpdateComponent},
       { path: 'userTickets/:id', component: UserTicketsComponent, canActivate: [IsAuthenticatedGuard]},
       { path: 'signin', component: AuthComponent},
       { path: 'signup', component: SignupComponent},
       { path: 'unconfirmedUsers', component: UnconfirmedUserListComponent, canActivate: [IsValidatorGuard]},
       { path: 'userProfile', component: UserProfileComponent, canActivate: [IsAuthenticatedGuard]},
       { path: 'validators', component: ValidatorListComponent, canActivate: [IsAuthenticatedGuard]},
+      { path: 'operators', component: OperatorListComponent, canActivate: [IsOperaterGuard]},
       { path: 'registeredUsers', component: RegUserListComponent, canActivate: [IsAuthenticatedGuard]},
       { path: '', redirectTo: '/welcome', pathMatch: 'full' },
       { path: '**', component: WelcomeComponent, pathMatch : 'full'}

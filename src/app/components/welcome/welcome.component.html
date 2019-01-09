@@ -12,7 +12,7 @@
                     </div>
 
 
-                    <div class="text-center ">
+                    <div *ngIf="!userService.isAuthenticated()" class="text-center ">
                         <button [routerLink]="[ '/signup'] ">Sign up</button>
                     </div>
 

@@ -39,6 +39,10 @@ export class UserService extends RestService<User> {
     return this.http.post<any>(this.url(['auth']), user);
   }
 
+  logout(){
+    localStorage.removeItem(authenticatedUser);
+  }
+
   signout(): void {
     localStorage.removeItem(authenticatedUser);
   }
@@ -128,6 +132,24 @@ export class UserService extends RestService<User> {
   addValidator(user: User){
     return this.http.post<any>(this.url(['addValidator']), user).pipe(
       catchError(this.handleException)
+    );
+  }
+
+  addOperator(user: User){
+    return this.http.post<User>(this.url(['addOperator']), user).pipe(
+      catchError(this.handleError<boolean>())
+    );
+  }
+
+  getOperators(){
+    return this.http.get<User[]>(this.url(['getOperators'])).pipe(
+      catchError(this.handleError<User[]>())
+    );
+  }
+
+  updateOperator(user: User){
+    return this.http.put<User>(this.url(['updateOperator']), user).pipe(
+      catchError(this.handleError<boolean>())
     );
   }
 
