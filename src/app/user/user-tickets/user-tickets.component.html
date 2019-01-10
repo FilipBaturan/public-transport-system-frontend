@@ -7,7 +7,7 @@
 
     <div class="example-container mat-elevation-z8">
 
-      <table *ngIf="tickets.length != 0" mat-table [dataSource]="tickets">
+      <table id = "usersTickets" *ngIf="tickets.length != 0" mat-table [dataSource]="tickets">
 
         <!--- Note that these columns can be defined in any order.
                     The actual rendered columns are set as a property on the row definition" -->

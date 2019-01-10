@@ -5,7 +5,7 @@
 
     <div class="example-container mat-elevation-z8">
 
-      <table *ngIf="unconfirmedUsers.length != 0" mat-table [dataSource]="unconfirmedUsers">
+      <table id = "uncUsersTable" *ngIf="unconfirmedUsers.length != 0" mat-table [dataSource]="unconfirmedUsers">
 
         <!--- Note that these columns can be defined in any order.
                     The actual rendered columns are set as a property on the row definition" -->

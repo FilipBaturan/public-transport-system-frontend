@@ -35,7 +35,9 @@ export class UnconfirmedUserListComponent implements OnInit {
         else
         {
           var index = this.unconfirmedUsers.indexOf(user);
-          this.unconfirmedUsers.splice(index, 1);
+          const copiedData =  this.unconfirmedUsers.slice();
+          copiedData.splice(index, 1);
+          this.unconfirmedUsers = copiedData;
         }
         this.toastr.info("Documents succesfully accepted!")
         this.checkUsersLength();
@@ -51,7 +53,9 @@ export class UnconfirmedUserListComponent implements OnInit {
         else
         {
           var index = this.unconfirmedUsers.indexOf(user);
-          this.unconfirmedUsers.splice(index, 1);
+          const copiedData =  this.unconfirmedUsers.slice();
+          copiedData.splice(index, 1);
+          this.unconfirmedUsers = copiedData;
         }
         this.toastr.info("Documents succesfully denied!")
         this.checkUsersLength();

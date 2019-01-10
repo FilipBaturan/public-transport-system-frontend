@@ -124,6 +124,10 @@ export class ValidatorListComponent implements OnInit {
                   this.table.renderRows();
                   this.toastr.info("Validator succesfully added!")
                 }
+              },
+              
+              err => {
+                this.toastr.info("There was a problem with adding the validator");
               })
             
            

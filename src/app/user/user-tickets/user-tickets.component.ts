@@ -36,7 +36,9 @@ export class UserTicketsComponent implements OnInit {
         {
           this.toastr.info("Succesfully denied ticket");
           var index = this.tickets.indexOf(t);
-          this.tickets.splice(index, 1);
+          const copiedData =  this.tickets.slice();
+          copiedData.splice(index, 1);
+          this.tickets = copiedData;
         }
         else
           this.toastr.error("Could not find ticket you want to deny");
