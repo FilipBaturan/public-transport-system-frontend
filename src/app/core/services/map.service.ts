@@ -3,7 +3,8 @@ import { Injectable } from '@angular/core';
 import { Station } from 'src/app/model/station.model';
 import { StationPosition, TransportLinePosition } from 'src/app/model/position.model';
 import { VehicleType } from 'src/app/model/enums/vehicle-type.model';
-import { TransportLine, TransportLineViewer } from 'src/app/model/transport-line.model';
+import { TransportLine } from 'src/app/model/transport-line.model';
+import { ParsedData } from 'src/app/model/util.model';
 
 
 
@@ -247,31 +248,5 @@ export class MapService {
       ++i; --beginTerminalIndex;
     }
     return code.substring(beginTerminalIndex, index);
-  }
-}
-
-/**
- * Contains important information about parsing
- * the map content
- *
- * @class ParsedData
- */
-class ParsedData {
-
-  code: string;
-  name: string;
-  index: number;
-
-  /**
-   * Creates an instance of ParsedData.
-   * @param {string} code map code content
-   * @param {string} name transport line name
-   * @param {number} index current parsing index
-   * @memberof ParsedData
-   */
-  constructor(code: string, name: string, index: number) {
-    this.code = code;
-    this.name = name;
-    this.index = index;
   }
 }

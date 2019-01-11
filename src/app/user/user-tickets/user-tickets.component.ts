@@ -22,8 +22,8 @@ export class UserTicketsComponent implements OnInit {
     let id = +this.route.snapshot.paramMap.get('id');
 
     this.ticketService.getTicketsForUser(id).subscribe(
-      response => this.tickets = response),
-      (err) => this.toastr.error(err);
+      response => this.tickets = response,
+      err => this.toastr.error("Error"));
   }
 
   
@@ -31,19 +31,14 @@ export class UserTicketsComponent implements OnInit {
     t.active = false;
 
     this.ticketService.denyTicket(t).subscribe(
-      response => {
-        if (response == true)
-        {
-          this.toastr.info("Succesfully denied ticket");
-          var index = this.tickets.indexOf(t);
-          const copiedData =  this.tickets.slice();
-          copiedData.splice(index, 1);
-          this.tickets = copiedData;
-        }
-        else
-          this.toastr.error("Could not find ticket you want to deny");
+      () => {
+      this.toastr.info("Succesfully denied ticket");
+      var index = this.tickets.indexOf(t);
+      const copiedData =  this.tickets.slice();
+      copiedData.splice(index, 1);
+      this.tickets = copiedData;
     },
-    (err) => this.toastr.error("Ticket denial failed"))
+    err => this.toastr.error("Ticket denial failed"))
   }
 
 }

@@ -12,7 +12,6 @@ export class UnconfirmedUserListComponent implements OnInit {
 
   displayedColumns: string[] = ['firstName', 'lastName', 'userName', 'email','docs', 'accept', 'deny']
   unconfirmedUsers: User[];
-  noUsers: boolean;
 
   constructor(private userService: UserService, private toastr: ToastrService) { }
 
@@ -21,17 +20,15 @@ export class UnconfirmedUserListComponent implements OnInit {
     this.unconfirmedUsers = [];
 
     this.userService.getUnconfirmedUsers().subscribe(
-      response => {this.unconfirmedUsers = response; 
-        this.checkUsersLength();
-      }
+      response => {this.unconfirmedUsers = response; }
     )
   }
 
   acceptUser(user:User){
     this.userService.acceptUser(user).subscribe(
       response => {
-        if (response == null)
-          this.toastr.info("There was a problem with accepting this users document");
+        if (response.status != 200)
+          this.toastr.error("There was a problem with accepting this users document");
         else
         {
           var index = this.unconfirmedUsers.indexOf(user);
@@ -40,16 +37,16 @@ export class UnconfirmedUserListComponent implements OnInit {
           this.unconfirmedUsers = copiedData;
         }
         this.toastr.info("Documents succesfully accepted!")
-        this.checkUsersLength();
-      }
+      },
+      // => this.toastr.error("Could not accept user")
     )
   }
 
   denyUser(user: User){
     this.userService.denyUser(user).subscribe(
       response => {
-        if (response == null)
-        this.toastr.info("There was a problem with denying this users document");
+        if (response.status != 200)
+          this.toastr.error("There was a problem with denying this users document");
         else
         {
           var index = this.unconfirmedUsers.indexOf(user);
@@ -58,16 +55,10 @@ export class UnconfirmedUserListComponent implements OnInit {
           this.unconfirmedUsers = copiedData;
         }
         this.toastr.info("Documents succesfully denied!")
-        this.checkUsersLength();
-      }
+      },
+      //err => this.toastr.error("Could not deny user")
     )
   }
 
-  checkUsersLength(){
-    if (this.unconfirmedUsers.length == 0)
-      this.noUsers = true;
-    else
-      this.noUsers = false;
-  }
 
 }

@@ -10,7 +10,7 @@ import { VehicleType } from 'src/app/model/enums/vehicle-type.model';
 describe('VehicleService', () => {
 
   const url: string = '/api/vehicle';
-  let dbVehicles: Vehicle[]; 
+  let dbVehicles: Vehicle[];
   const vehicleSaver: VehicleSaver = new VehicleSaver(6, 'bus6', VehicleType.BUS, 1);
 
   let mockToastrService: any;
@@ -106,7 +106,7 @@ describe('VehicleService', () => {
   }));
 
   it('should create/update vehicle', fakeAsync(() => {
-    service.create(vehicleSaver).subscribe(vehicle =>{
+    service.create(vehicleSaver).subscribe(vehicle => {
       expect(vehicle.id).toEqual(vehicleSaver.id);
       expect(vehicle.name).toEqual(vehicleSaver.name);
       expect(vehicle.type).toEqual(vehicleSaver.type);
@@ -116,18 +116,20 @@ describe('VehicleService', () => {
     const req = mockHttp.expectOne(url);
     expect(req.request.method).toBe('POST');
     req.flush(new Vehicle(vehicleSaver.id, vehicleSaver.name,
-       vehicleSaver.type, new TransportLineIdentifier(vehicleSaver.currentLine, 'B1')));
+      vehicleSaver.type, new TransportLineIdentifier(vehicleSaver.currentLine, 'B1')));
+    expect(req.request.body).toBe(vehicleSaver);
   }));
 
   it('should delete vehicle', fakeAsync(() => {
     let length = dbVehicles.length;
     let v = dbVehicles[1];
 
-    service.remove(1,0,dbVehicles);
+    service.remove(1, 0, dbVehicles);
 
     const req = mockHttp.expectOne(url + '/' + 1);
     expect(req.request.method).toBe('DELETE');
     req.flush('Vehicle successfully removed!');
+    expect(req.request.responseType).toBe('text');
 
     expect(dbVehicles.length).toBe(length - 1);
     expect(dbVehicles[0]).toEqual(v);
@@ -138,12 +140,13 @@ describe('VehicleService', () => {
     let length = dbVehicles.length;
     let v = dbVehicles[0];
 
-    service.remove(1,0,dbVehicles);
+    service.remove(1, 0, dbVehicles);
 
     const req = mockHttp.expectOne(url + '/' + 1);
     expect(req.request.method).toBe('DELETE');
-    req.flush({ message: 'Forbidden!'},
+    req.flush({ message: 'Forbidden!' },
       { status: 403, statusText: 'Unauthorazied' });
+    expect(req.request.responseType).toBe('text');
 
     expect(dbVehicles.length).toBe(length);
     expect(dbVehicles[0]).toEqual(v);
@@ -154,12 +157,13 @@ describe('VehicleService', () => {
     let length = dbVehicles.length;
     let v = dbVehicles[0];
 
-    service.remove(1,0,dbVehicles);
+    service.remove(1, 0, dbVehicles);
 
     const req = mockHttp.expectOne(url + '/' + 1);
     expect(req.request.method).toBe('DELETE');
-    req.flush({ message: 'Vehicle does not exist!'},
+    req.flush({ message: 'Vehicle does not exist!' },
       { status: 400, statusText: 'Bad Request' });
+    expect(req.request.responseType).toBe('text');
 
     expect(dbVehicles.length).toBe(length);
     expect(dbVehicles[0]).toEqual(v);

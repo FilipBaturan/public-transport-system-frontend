@@ -11,7 +11,6 @@ import { Station, StationCollection } from 'src/app/model/station.model';
  *
  * @export
  * @class StationService
- * @extends {RestService<Station>} REST service template
  */
 @Injectable({
   providedIn: 'root'

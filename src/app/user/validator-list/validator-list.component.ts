@@ -5,6 +5,7 @@ import { UserService } from 'src/app/core/services/user.service';
 import { MatTable } from '@angular/material';
 
 
+
 @Component({
   selector: 'app-validator-list',
   templateUrl: './validator-list.component.html',
@@ -17,7 +18,6 @@ export class ValidatorListComponent implements OnInit {
   dataSource : any[];
 
   validators: User[] = [];
-  noUsers: boolean;
   
   //Ruganje gore (mock up)
   newUser: User;
@@ -38,21 +38,8 @@ export class ValidatorListComponent implements OnInit {
     this.formShowed = false;
 
     this.userService.getValidators().subscribe(
-      response => {this.validators = response; 
-        this.checkUsersLength();
-      }
+      response => {this.validators = response; }
     )
-  }
-
-  showForm()
-  {
-    this.formShowed = true;
-  }
-
-  showChangeForm(user: User)
-  {
-    this.newUser = user;
-    this.showForm();
   }
 
   blockValidator(user:User)
@@ -64,8 +51,8 @@ export class ValidatorListComponent implements OnInit {
       user.active = false;
       this.userService.updateValidator(user).subscribe(
         response => {
-          if (response == null)
-            this.toastr.info("There was a problem with blocking the validator");
+          if (response.status != 200)
+            this.toastr.error("There was a problem with blocking the validator");
           else
           {
             var index = this.validators.indexOf(user);
@@ -75,9 +62,6 @@ export class ValidatorListComponent implements OnInit {
            
             this.toastr.info("Validator succesfully blocked!")
           }
-          
-          this.checkUsersLength();
-            
         }
       )
       this.changeDetectorRefs.detectChanges();
@@ -92,7 +76,7 @@ export class ValidatorListComponent implements OnInit {
     {
       this.userService.updateValidator(this.newUser).subscribe(
         response => {
-          if (response == null)
+          if (response.status != 200)
             this.toastr.error("There was a problem with updating the validator");
           else
           {
@@ -109,8 +93,8 @@ export class ValidatorListComponent implements OnInit {
     {
       this.userService.addValidator(this.newUser).subscribe(
         response => {
-          if (response == null)
-            this.toastr.info("There was a problem with adding the validator");
+          if (response.status != 200)
+            this.toastr.error("There was a problem with adding the validator");
           else
           {
             this.userService.getByUsername(this.newUser.username).subscribe(
@@ -119,21 +103,16 @@ export class ValidatorListComponent implements OnInit {
                 {
                   this.newUser = response;
                   this.validators.push(this.newUser);
+                  this.table.renderRows();
                   this.newUser = new User(null, "new User Name", "new Pass", "new Name", "new Last Name",
                   "new Email",  true, "123123");
-                  this.table.renderRows();
                   this.toastr.info("Validator succesfully added!")
                 }
-              },
-              
-              err => {
-                this.toastr.info("There was a problem with adding the validator");
-              })
-            
-           
+                else
+                  this.toastr.error("There was a problem with adding the validator");
+              }
+            )
           }
-          
-          this.checkUsersLength();
         }
       )
   
@@ -141,13 +120,4 @@ export class ValidatorListComponent implements OnInit {
     }
 
   }
-
-
-  checkUsersLength(){
-    if (this.validators.length == 0)
-      this.noUsers = true;
-    else
-      this.noUsers = false;
-  }
-
 }

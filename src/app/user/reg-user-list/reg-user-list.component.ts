@@ -21,17 +21,8 @@ export class RegUserListComponent implements OnInit {
     this.registeredUsers = [];
     this.userService.getRegUsers().subscribe(
       response => {
-        this.registeredUsers = response; 
-        this.checkUsersLength();
+        this.registeredUsers = response;
       }
     )
   }
-
-  checkUsersLength(){
-    if (this.registeredUsers.length == 0)
-      this.noUsers = true;
-    else
-      this.noUsers = false;
-  }
-
 }

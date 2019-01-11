@@ -3,8 +3,6 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { RestService } from './rest.service';
-import { ToastrService } from 'ngx-toastr';
 import { TransportLine, TransportLineCollection } from 'src/app/model/transport-line.model';
 
 /**
@@ -12,7 +10,6 @@ import { TransportLine, TransportLineCollection } from 'src/app/model/transport-
  *
  * @export
  * @class TransportLineService
- * @extends {RestService<TransportLine>} REST service template
  */
 @Injectable({
   providedIn: 'root'
