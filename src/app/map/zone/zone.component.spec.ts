@@ -44,51 +44,56 @@ describe('ZoneComponent', () => {
   let minimum: boolean;
   let maximum: boolean;
   let serverError: boolean;
-  let forbidden: boolean;
 
   beforeEach(async(() => {
     create = true;
     minimum = false;
     maximum = false;
     serverError = false;
-    forbidden = false;
     index = 1;
 
     dbZones = [
-      new Zone(1, 'Z1', [
-        new ZoneTransportLine(1, 'T1', VehicleType.BUS, true),
-        new ZoneTransportLine(4, 'T4', VehicleType.BUS, true)
-      ], true),
-      new Zone(2, 'Z2', [], true),
-      new Zone(3, 'Z3', [
-        new ZoneTransportLine(3, 'T3', VehicleType.METRO, true),
-        new ZoneTransportLine(5, 'T5', VehicleType.BUS, true),
-        new ZoneTransportLine(6, 'T6', VehicleType.TRAM, true)
-      ], true),
-      new Zone(4, 'Z4', [
-        new ZoneTransportLine(2, 'T2', VehicleType.TRAM, true)
-      ], true)
+      {
+        id: 1, name: 'Z1', lines: [
+          { id: 1, name: 'T1', vehicleType: VehicleType.BUS, active: true },
+          { id: 4, name: 'T4', vehicleType: VehicleType.BUS, active: true }
+        ], active: true
+      },
+      { id: 2, name: 'Z2', lines: [], active: true },
+      {
+        id: 3, name: 'Z3', lines: [
+          { id: 3, name: 'T3', vehicleType: VehicleType.METRO, active: true },
+          { id: 5, name: 'T5', vehicleType: VehicleType.BUS, active: true },
+          { id: 6, name: 'T6', vehicleType: VehicleType.TRAM, active: true }
+        ], active: true
+      },
+      {
+        id: 4, name: 'Z4', lines: [
+          { id: 2, name: 'T2', vehicleType: VehicleType.TRAM, active: true }
+        ], active: true
+      }
     ];
 
-    newZone = new Zone(5, 'Z5', [new ZoneTransportLine(7, 'T7', VehicleType.METRO, true)], true);
+    newZone = {
+      id: 5, name: 'Z5', lines: [
+        { id: 7, name: 'T7', vehicleType: VehicleType.METRO, active: true }]
+      , active: true
+    };
 
     mockZoneService = {
       create() {
-        if (serverError && !forbidden) {
+        if (serverError) {
           return throwError({ status: 503 }, asyncScheduler);
-        } else if (!serverError && forbidden) {
-          return throwError({ status: 403 }, asyncScheduler)
         }
-
         if (create) {
           if (maximum) {
             newZone.name = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
-          } else if(minimum){
+          } else if (minimum) {
             newZone.name = 'a';
           }
           dbZones.push(newZone);
         } else {
-          if (index == 1) {
+          if (index === 1) {
             dbZones[index].lines.push(dbZones[0].lines.shift());
           } else {
             dbZones[0].lines.push(dbZones[index].lines.shift());
@@ -99,15 +104,15 @@ describe('ZoneComponent', () => {
       },
       findAll() {
         if (serverError) {
-          return throwError({ status: 503 }, asyncScheduler)
-        }else {
+          return throwError({ status: 503 }, asyncScheduler);
+        } else {
           return of(dbZones, asyncScheduler);
         }
       },
       remove() {
         dbZones.splice(index, 1);
       }
-    }
+    };
 
     spyOn(mockZoneService, 'create').and.callThrough();
     spyOn(mockZoneService, 'findAll').and.callThrough();
@@ -179,9 +184,9 @@ describe('ZoneComponent', () => {
     tick();
     fixture.detectChanges();
     let dH4 = fixture.debugElement.queryAll(By.css('h4.card-title.text-center'));
-    let beforeCountH4 = dH4.length; // 5 zone cards and one for add zone card
+    const beforeCountH4 = dH4.length; // 5 zone cards and one for add zone card
     let dP = fixture.debugElement.queryAll(By.css('div.card-body p.text-center'));
-    let beforeCountP = dP.length;
+    const beforeCountP = dP.length;
 
     component.create(component.modalFormElement);
 
@@ -211,9 +216,9 @@ describe('ZoneComponent', () => {
     tick();
     fixture.detectChanges();
     let dH4 = fixture.debugElement.queryAll(By.css('h4.card-title.text-center'));
-    let beforeCountH4 = dH4.length; // 5 zone cards and one for add zone card
+    const beforeCountH4 = dH4.length; // 5 zone cards and one for add zone card
     let dP = fixture.debugElement.queryAll(By.css('div.card-body p.text-center'));
-    let beforeCountP = dP.length;
+    const beforeCountP = dP.length;
 
     component.editZone(dbZones[index].id, component.modalFormElement);
 
@@ -243,9 +248,9 @@ describe('ZoneComponent', () => {
     tick();
     fixture.detectChanges();
     let dH4 = fixture.debugElement.queryAll(By.css('h4.card-title.text-center'));
-    let beforeCountH4 = dH4.length; // 5 zone cards and one for add zone card
+    const beforeCountH4 = dH4.length; // 5 zone cards and one for add zone card
     let dP = fixture.debugElement.queryAll(By.css('div.card-body p.text-center'));
-    let beforeCountP = dP.length;
+    const beforeCountP = dP.length;
 
     component.editZone(dbZones[index].id, component.modalFormElement);
 
@@ -276,9 +281,9 @@ describe('ZoneComponent', () => {
     tick();
     fixture.detectChanges();
     let dH4 = fixture.debugElement.queryAll(By.css('h4.card-title.text-center'));
-    let beforeCountH4 = dH4.length; // 5 zone cards and one for add zone card
+    const beforeCountH4 = dH4.length; // 5 zone cards and one for add zone card
     let dP = fixture.debugElement.queryAll(By.css('div.card-body p.text-center'));
-    let beforeCountP = dP.length;
+    const beforeCountP = dP.length;
 
     component.editZone(dbZones[index].id, component.modalFormElement);
 
@@ -305,9 +310,9 @@ describe('ZoneComponent', () => {
     tick();
     fixture.detectChanges();
     let dH4 = fixture.debugElement.queryAll(By.css('h4.card-title.text-center'));
-    let beforeCountH4 = dH4.length; // 5 zone cards and one for add zone card
+    const beforeCountH4 = dH4.length; // 5 zone cards and one for add zone card
     let dP = fixture.debugElement.queryAll(By.css('div.card-body p.text-center'));
-    let beforeCountP = dP.length;
+    const beforeCountP = dP.length;
 
     component.create(component.modalFormElement);
 
@@ -335,9 +340,9 @@ describe('ZoneComponent', () => {
     tick();
     fixture.detectChanges();
     let dH4 = fixture.debugElement.queryAll(By.css('h4.card-title.text-center'));
-    let beforeCountH4 = dH4.length; // 5 zone cards and one for add zone card
+    const beforeCountH4 = dH4.length; // 5 zone cards and one for add zone card
     let dP = fixture.debugElement.queryAll(By.css('div.card-body p.text-center'));
-    let beforeCountP = dP.length;
+    const beforeCountP = dP.length;
 
     component.create(component.modalFormElement);
 
@@ -365,9 +370,9 @@ describe('ZoneComponent', () => {
     tick();
     fixture.detectChanges();
     let dH4 = fixture.debugElement.queryAll(By.css('h4.card-title.text-center'));
-    let beforeCountH4 = dH4.length; // 5 zone cards and one for add zone card
+    const beforeCountH4 = dH4.length; // 5 zone cards and one for add zone card
     let dP = fixture.debugElement.queryAll(By.css('div.card-body p.text-center'));
-    let beforeCountP = dP.length;
+    const beforeCountP = dP.length;
 
     component.create(component.modalFormElement);
 
@@ -396,9 +401,9 @@ describe('ZoneComponent', () => {
     tick();
     fixture.detectChanges();
     let dH4 = fixture.debugElement.queryAll(By.css('h4.card-title.text-center'));
-    let beforeCountH4 = dH4.length; // 5 zone cards and one for add zone card
+    const beforeCountH4 = dH4.length; // 5 zone cards and one for add zone card
     let dP = fixture.debugElement.queryAll(By.css('div.card-body p.text-center'));
-    let beforeCountP = dP.length;
+    const beforeCountP = dP.length;
 
     component.create(component.modalFormElement);
 
@@ -427,9 +432,9 @@ describe('ZoneComponent', () => {
     tick();
     fixture.detectChanges();
     let dH4 = fixture.debugElement.queryAll(By.css('h4.card-title.text-center'));
-    let beforeCountH4 = dH4.length; // 5 zone cards and one for add zone card
+    const beforeCountH4 = dH4.length; // 5 zone cards and one for add zone card
     let dP = fixture.debugElement.queryAll(By.css('div.card-body p.text-center'));
-    let beforeCountP = dP.length;
+    const beforeCountP = dP.length;
 
     component.create(component.modalFormElement);
 
@@ -458,9 +463,9 @@ describe('ZoneComponent', () => {
     tick();
     fixture.detectChanges();
     let dH4 = fixture.debugElement.queryAll(By.css('h4.card-title.text-center'));
-    let beforeCountH4 = dH4.length; // 5 zone cards and one for add zone card
+    const beforeCountH4 = dH4.length; // 5 zone cards and one for add zone card
     let dP = fixture.debugElement.queryAll(By.css('div.card-body p.text-center'));
-    let beforeCountP = dP.length;
+    const beforeCountP = dP.length;
 
     component.deleteZone(dbZones[index].id);
 
@@ -483,42 +488,11 @@ describe('ZoneComponent', () => {
     tick();
     fixture.detectChanges();
     let dH4 = fixture.debugElement.queryAll(By.css('h4.card-title.text-center'));
-    let beforeCountH4 = dH4.length; // 5 zone cards and one for add zone card
+    const beforeCountH4 = dH4.length; // 5 zone cards and one for add zone card
     let dP = fixture.debugElement.queryAll(By.css('div.card-body p.text-center'));
-    let beforeCountP = dP.length;
+    const beforeCountP = dP.length;
 
     serverError = true;
-    component.create(component.modalFormElement);
-
-    component.formGroup.get('id').setValue(null);
-    component.formGroup.get('name').setValue(newZone.name);
-    component.onFormSubmit();
-
-    tick();
-    fixture.detectChanges();
-
-    dH4 = fixture.debugElement.queryAll(By.css('h4.card-title.text-center'));
-    expect(dH4.length).toBe(beforeCountH4);
-    expect(dH4[dH4.length - 2].nativeElement.textContent).toContain(dbZones[dbZones.length - 1].name);
-
-    dP = fixture.debugElement.queryAll(By.css('div.card-body p.text-center'));
-    expect(dP.length).toBe(beforeCountP);
-    expect(dP[dP.length - 1].nativeElement.textContent).toContain(dbZones[dbZones.length - 1].lines.length);
-
-    expect(mockZoneService.create).toHaveBeenCalled();
-    expect(mockToastrService.error).toHaveBeenCalled();
-  }));
-
-  it('should not create new zone while user is unauthorized', fakeAsync(() => {
-    fixture.detectChanges();
-    tick();
-    fixture.detectChanges();
-    let dH4 = fixture.debugElement.queryAll(By.css('h4.card-title.text-center'));
-    let beforeCountH4 = dH4.length; // 5 zone cards and one for add zone card
-    let dP = fixture.debugElement.queryAll(By.css('div.card-body p.text-center'));
-    let beforeCountP = dP.length;
-
-    forbidden = true;
     component.create(component.modalFormElement);
 
     component.formGroup.get('id').setValue(null);
@@ -545,7 +519,7 @@ describe('ZoneComponent', () => {
     fixture.detectChanges();
     tick();
     fixture.detectChanges();
-    let dH2 = fixture.debugElement.query(By.css('h2'));
+    const dH2 = fixture.debugElement.query(By.css('h2'));
     expect(dH2.nativeElement.textContent).toContain('There are no data about zones');
     expect(mockZoneService.findAll).toHaveBeenCalled();
     expect(mockToastrService.error).toHaveBeenCalled();

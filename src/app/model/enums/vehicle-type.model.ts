@@ -1,5 +1,5 @@
-export enum VehicleType{
-    BUS = "BUS",
-    METRO = "METRO",
-    TRAM = "TRAM"
+export enum VehicleType {
+    BUS = 'BUS',
+    METRO = 'METRO',
+    TRAM = 'TRAM'
 }

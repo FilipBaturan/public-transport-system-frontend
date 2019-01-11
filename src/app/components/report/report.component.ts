@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { ReportService } from '../../core/services/report.service';
-import * as CanvasJS from './canvasjs.min';
+
+declare var CanvasJS: any;
 
 @Component({
   selector: 'app-report',
@@ -24,7 +25,6 @@ export class ReportComponent implements OnInit {
   monthlyChart: any;
 
   constructor(private toastrService: ToastrService, private reportService: ReportService) {
-    
    }
 
   ngOnInit() {

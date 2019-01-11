@@ -16,8 +16,6 @@ import { Image } from 'src/app/model/util.model';
 })
 export class WelcomeComponent implements OnInit {
 
-  pageTitle: string = "DOBRO DOSO KORISNIKU!!1!1"
-
   login: LogIn;
   usernameInvalid: boolean;
   passwordInvalid: boolean;
@@ -31,34 +29,34 @@ export class WelcomeComponent implements OnInit {
   constructor(private http: HttpClient, private uploadService: UploadService,
     private userService: UserService, private newsService: NewsService) {
     this.selectedFile = null;
-    this.image = new Image("", "");
+    this.image = {content: '', format: ''};
   }
 
   ngOnInit() {
-    this.login = new LogIn("", "");
+    this.login = new LogIn('', '');
     this.resetFlags();
     this.newsService.findAll().subscribe(
       result => {
         this.allNews = result;
         console.log(this.allNews);
       }
-    )
+    );
   }
 
   tryLogin(): void {
     this.resetFlags();
-    if (this.login.username == "") {
+    if (this.login.username === '') {
       this.usernameInvalid = true;
       this.dataFlag = true;
     }
-    if (this.login.password == "") {
+    if (this.login.password === '') {
       this.passwordInvalid = true;
       this.dataFlag = true;
     }
     if (!this.dataFlag) {
       this.userService.login(this.login).subscribe(
         user => {
-          console.log("Jeeeeee");
+          console.log('Jeeeeee');
         }
       );
     }
@@ -76,7 +74,7 @@ export class WelcomeComponent implements OnInit {
 
   onUpload() {
     const uploadData: FormData = new FormData();
-    uploadData.append("image", this.selectedFile, this.selectedFile.name);
+    uploadData.append('image', this.selectedFile, this.selectedFile.name);
     this.uploadService.uploadImage(uploadData).subscribe(
       res => { this.imagePath = res; console.log(res); },
       error => { console.log(error); });

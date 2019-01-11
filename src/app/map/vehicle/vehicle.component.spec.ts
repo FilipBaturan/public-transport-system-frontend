@@ -8,11 +8,10 @@ import { VehicleService } from 'src/app/core/services/vehicle.service';
 import { TransportLineService } from 'src/app/core/services/transport-line.service';
 import { ToastrService } from 'ngx-toastr';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { Vehicle, TransportLineIdentifier } from 'src/app/model/vehicle.model';
+import { Vehicle } from 'src/app/model/vehicle.model';
 import { VehicleType } from 'src/app/model/enums/vehicle-type.model';
 import { of, asyncScheduler, throwError } from 'rxjs';
 import { TransportLine } from 'src/app/model/transport-line.model';
-import { TransportLinePosition } from 'src/app/model/position.model';
 
 
 @Component({
@@ -45,22 +44,30 @@ describe('VehicleComponent', () => {
   beforeEach(fakeAsync(() => {
 
     dbVehicles = [
-      new Vehicle(1, 'bus1', VehicleType.BUS, new TransportLineIdentifier(1, 'B1')),
-      new Vehicle(2, 'tram2', VehicleType.TRAM, new TransportLineIdentifier(2, 'T1')),
-      new Vehicle(3, 'bus3', VehicleType.BUS, new TransportLineIdentifier(3, 'B2')),
-      new Vehicle(4, 'metro4', VehicleType.METRO, new TransportLineIdentifier(4, 'M1')),
-      new Vehicle(5, 'bus5', VehicleType.BUS, new TransportLineIdentifier(5, 'B1'))
+      { id: 1, name: 'bus1', vehicleType: VehicleType.BUS, currentLine: { id: 1, name: 'B1' } },
+      { id: 2, name: 'tram2', vehicleType: VehicleType.TRAM, currentLine: { id: 2, name: 'T1' } },
+      { id: 3, name: 'bus3', vehicleType: VehicleType.BUS, currentLine: { id: 3, name: 'B2' } },
+      { id: 4, name: 'metro4', vehicleType: VehicleType.METRO, currentLine: { id: 4, name: 'M1' } },
+      { id: 5, name: 'bus5', vehicleType: VehicleType.BUS, currentLine: { id: 5, name: 'B1' } }
     ];
 
     dbTransportLines = [
-      new TransportLine(1, 'T1', new TransportLinePosition(1, '420 153', true), [1, 2, 3], true, 'BUS', 1),
-      new TransportLine(2, 'T2', new TransportLinePosition(2, '85 12', true), [4, 5, 6], true, 'METRO', 2),
-      new TransportLine(3, 'T3', new TransportLinePosition(3, '16 75', true), [], true, 'TRAM', 1),
-      new TransportLine(4, 'T4', new TransportLinePosition(4, '34 96', true), [7, 8, 9], true, 'BUS', 3),
-      new TransportLine(5, 'T5', new TransportLinePosition(5, '27 34', true), [], true, 'METRO', 1)
+      { id: 1, name: 'T1',
+      positions: { id: 1, content: '420 153', active: true },
+      schedule: [1, 2, 3], active: true, vehicleType: VehicleType.BUS, zone: 1 }
+      ,
+      {id: 2, name: 'T2',
+      positions: {id: 2, content: '85 12', active: true},
+      schedule: [4, 5, 6], active: true, vehicleType: VehicleType.METRO, zone: 2},
+      {id: 3, name: 'T3', positions: {id: 3, content: '16 75', active: true},
+       schedule: [], active: true, vehicleType: VehicleType.TRAM, zone: 1},
+      {id: 4, name: 'T4', positions: {id: 4, content: '34 96', active: true},
+      schedule: [7, 8, 9], active: true, vehicleType: VehicleType.BUS, zone: 3},
+      {id: 5, name: 'T5', positions: {id: 5, content: '27 34', active: true},
+       schedule: [], active: true, vehicleType: VehicleType.METRO, zone: 1}
     ];
 
-    newVehicle = new Vehicle(6, 'bus6', 'BUS', new TransportLineIdentifier(7, 'B1'));
+    newVehicle = { id: 6, name: 'bus6', vehicleType: VehicleType.BUS, currentLine: { id: 7, name: 'B1' } };
 
 
     mockVehicleService = jasmine.createSpyObj({
@@ -138,16 +145,16 @@ describe('VehicleComponent', () => {
     tick();
     fixture.detectChanges();
     let dH4 = fixture.debugElement.queryAll(By.css('h4.card-title.text-center'));
-    let beforeCountH4 = dH4.length; // 5 vehicle cards and one for add vehicle card
+    const beforeCountH4 = dH4.length; // 5 vehicle cards and one for add vehicle card
     let dP = fixture.debugElement.queryAll(By.css('div.card-body p.text-center'));
-    let beforeCountP = dP.length;
+    const beforeCountP = dP.length;
 
     component.open(component.modalFormElement);
     component.onTypeChange('BUS');
 
     component.formGroup.get('id').setValue(null);
     component.formGroup.get('name').setValue(newVehicle.name);
-    component.formGroup.get('type').setValue(newVehicle.type);
+    component.formGroup.get('type').setValue(newVehicle.vehicleType);
     component.formGroup.get('currentLine').setValue(newVehicle.currentLine);
     component.onFormSubmit();
 
@@ -171,9 +178,9 @@ describe('VehicleComponent', () => {
     tick();
     fixture.detectChanges();
     let dH4 = fixture.debugElement.queryAll(By.css('h4.card-title.text-center'));
-    let beforeCountH4 = dH4.length; // 5 vehicle cards and one for add vehicle card
+    const beforeCountH4 = dH4.length; // 5 vehicle cards and one for add vehicle card
     let dP = fixture.debugElement.queryAll(By.css('div.card-body p.text-center'));
-    let beforeCountP = dP.length;
+    const beforeCountP = dP.length;
 
     component.open(component.modalFormElement);
     component.onTypeChange('BUS');
@@ -219,22 +226,30 @@ describe('VehicleComponent', () => {
   beforeEach(fakeAsync(() => {
 
     dbVehicles = [
-      new Vehicle(1, 'bus1', VehicleType.BUS, new TransportLineIdentifier(1, 'B1')),
-      new Vehicle(2, 'tram2', VehicleType.TRAM, new TransportLineIdentifier(2, 'T1')),
-      new Vehicle(3, 'bus3', VehicleType.BUS, new TransportLineIdentifier(3, 'B2')),
-      new Vehicle(4, 'metro4', VehicleType.METRO, new TransportLineIdentifier(4, 'M1')),
-      new Vehicle(5, 'bus5', VehicleType.BUS, new TransportLineIdentifier(5, 'B1'))
+      { id: 1, name: 'bus1', vehicleType: VehicleType.BUS, currentLine: { id: 1, name: 'B1' } },
+      { id: 2, name: 'tram2', vehicleType: VehicleType.TRAM, currentLine: { id: 2, name: 'T1' } },
+      { id: 3, name: 'bus3', vehicleType: VehicleType.BUS, currentLine: { id: 3, name: 'B2' } },
+      { id: 4, name: 'metro4', vehicleType: VehicleType.METRO, currentLine: { id: 4, name: 'M1' } },
+      { id: 5, name: 'bus5', vehicleType: VehicleType.BUS, currentLine: { id: 5, name: 'B1' } }
     ];
 
     dbTransportLines = [
-      new TransportLine(1, 'T1', new TransportLinePosition(1, '420 153', true), [1, 2, 3], true, 'BUS', 1),
-      new TransportLine(2, 'T2', new TransportLinePosition(2, '85 12', true), [4, 5, 6], true, 'METRO', 2),
-      new TransportLine(3, 'T3', new TransportLinePosition(3, '16 75', true), [], true, 'TRAM', 1),
-      new TransportLine(4, 'T4', new TransportLinePosition(4, '34 96', true), [7, 8, 9], true, 'BUS', 3),
-      new TransportLine(5, 'T5', new TransportLinePosition(5, '27 34', true), [], true, 'METRO', 1)
+      { id: 1, name: 'T1',
+      positions: { id: 1, content: '420 153', active: true },
+      schedule: [1, 2, 3], active: true, vehicleType: VehicleType.BUS, zone: 1 }
+      ,
+      {id: 2, name: 'T2',
+      positions: {id: 2, content: '85 12', active: true},
+      schedule: [4, 5, 6], active: true, vehicleType: VehicleType.METRO, zone: 2},
+      {id: 3, name: 'T3', positions: {id: 3, content: '16 75', active: true},
+       schedule: [], active: true, vehicleType: VehicleType.TRAM, zone: 1},
+      {id: 4, name: 'T4', positions: {id: 4, content: '34 96', active: true},
+      schedule: [7, 8, 9], active: true, vehicleType: VehicleType.BUS, zone: 3},
+      {id: 5, name: 'T5', positions: {id: 5, content: '27 34', active: true},
+       schedule: [], active: true, vehicleType: VehicleType.METRO, zone: 1}
     ];
 
-    newVehicle = new Vehicle(dbVehicles[0].id, 'bus6', 'BUS', new TransportLineIdentifier(7, 'B1'));
+    newVehicle = { id: dbVehicles[0].id, name: 'bus6', vehicleType: VehicleType.BUS, currentLine: { id: 7, name: 'B1' } };
 
     mockVehicleService = jasmine.createSpyObj({
       'findAll': of(dbVehicles, asyncScheduler),
@@ -273,9 +288,9 @@ describe('VehicleComponent', () => {
     tick();
     fixture.detectChanges();
     let dH4 = fixture.debugElement.queryAll(By.css('h4.card-title.text-center'));
-    let beforeCountH4 = dH4.length; // 5 vehicle cards and one for add vehicle card
+    const beforeCountH4 = dH4.length; // 5 vehicle cards and one for add vehicle card
     let dP = fixture.debugElement.queryAll(By.css('div.card-body p.text-center'));
-    let beforeCountP = dP.length;
+    const beforeCountP = dP.length;
 
     expect(mockVehicleService.findAll).toHaveBeenCalled();
     expect(mockTransportLineService.findAll).toHaveBeenCalled();
@@ -284,7 +299,7 @@ describe('VehicleComponent', () => {
 
     component.formGroup.get('id').setValue(newVehicle.id);
     component.formGroup.get('name').setValue(newVehicle.name);
-    component.formGroup.get('type').setValue(newVehicle.type);
+    component.formGroup.get('type').setValue(newVehicle.vehicleType);
     component.formGroup.get('currentLine').setValue(newVehicle.currentLine);
     component.onFormSubmit();
 
@@ -321,22 +336,30 @@ describe('VehicleComponent', () => {
   beforeEach(fakeAsync(() => {
 
     dbVehicles = [
-      new Vehicle(1, 'bus1', VehicleType.BUS, new TransportLineIdentifier(1, 'B1')),
-      new Vehicle(2, 'tram2', VehicleType.TRAM, new TransportLineIdentifier(2, 'T1')),
-      new Vehicle(3, 'bus3', VehicleType.BUS, new TransportLineIdentifier(3, 'B2')),
-      new Vehicle(4, 'metro4', VehicleType.METRO, new TransportLineIdentifier(4, 'M1')),
-      new Vehicle(5, 'bus5', VehicleType.BUS, new TransportLineIdentifier(5, 'B1'))
+      { id: 1, name: 'bus1', vehicleType: VehicleType.BUS, currentLine: { id: 1, name: 'B1' } },
+      { id: 2, name: 'tram2', vehicleType: VehicleType.TRAM, currentLine: { id: 2, name: 'T1' } },
+      { id: 3, name: 'bus3', vehicleType: VehicleType.BUS, currentLine: { id: 3, name: 'B2' } },
+      { id: 4, name: 'metro4', vehicleType: VehicleType.METRO, currentLine: { id: 4, name: 'M1' } },
+      { id: 5, name: 'bus5', vehicleType: VehicleType.BUS, currentLine: { id: 5, name: 'B1' } }
     ];
 
     dbTransportLines = [
-      new TransportLine(1, 'T1', new TransportLinePosition(1, '420 153', true), [1, 2, 3], true, 'BUS', 1),
-      new TransportLine(2, 'T2', new TransportLinePosition(2, '85 12', true), [4, 5, 6], true, 'METRO', 2),
-      new TransportLine(3, 'T3', new TransportLinePosition(3, '16 75', true), [], true, 'TRAM', 1),
-      new TransportLine(4, 'T4', new TransportLinePosition(4, '34 96', true), [7, 8, 9], true, 'BUS', 3),
-      new TransportLine(5, 'T5', new TransportLinePosition(5, '27 34', true), [], true, 'METRO', 1)
+      { id: 1, name: 'T1',
+      positions: { id: 1, content: '420 153', active: true },
+      schedule: [1, 2, 3], active: true, vehicleType: VehicleType.BUS, zone: 1 }
+      ,
+      {id: 2, name: 'T2',
+      positions: {id: 2, content: '85 12', active: true},
+      schedule: [4, 5, 6], active: true, vehicleType: VehicleType.METRO, zone: 2},
+      {id: 3, name: 'T3', positions: {id: 3, content: '16 75', active: true},
+       schedule: [], active: true, vehicleType: VehicleType.TRAM, zone: 1},
+      {id: 4, name: 'T4', positions: {id: 4, content: '34 96', active: true},
+      schedule: [7, 8, 9], active: true, vehicleType: VehicleType.BUS, zone: 3},
+      {id: 5, name: 'T5', positions: {id: 5, content: '27 34', active: true},
+       schedule: [], active: true, vehicleType: VehicleType.METRO, zone: 1}
     ];
 
-    newVehicle = new Vehicle(dbVehicles[0].id, 'bus6', 'BUS', null);
+    newVehicle = { id: dbVehicles[0].id, name: 'bus6', vehicleType: VehicleType.BUS, currentLine: null };
 
     mockVehicleService = {
       findAll() {
@@ -349,7 +372,7 @@ describe('VehicleComponent', () => {
         dbVehicles.splice(dbVehicles.length - 1);
         return of('', asyncScheduler);
       }
-    }
+    };
 
     spyOn(mockVehicleService, 'findAll').and.callThrough();
     spyOn(mockVehicleService, 'create').and.callThrough();
@@ -388,7 +411,7 @@ describe('VehicleComponent', () => {
     tick();
     fixture.detectChanges();
     let dH4 = fixture.debugElement.queryAll(By.css('h4.card-title.text-center'));
-    let beforeCountH4 = dH4.length; // 5 vehicle cards and one for add vehicle card
+    const beforeCountH4 = dH4.length; // 5 vehicle cards and one for add vehicle card
 
     component.deleteVehicle(dbVehicles[dbVehicles.length - 1].id);
 
@@ -407,16 +430,16 @@ describe('VehicleComponent', () => {
     tick();
     fixture.detectChanges();
     let dH4 = fixture.debugElement.queryAll(By.css('h4.card-title.text-center'));
-    let beforeCountH4 = dH4.length; // 5 vehicle cards and one for add vehicle card
+    const beforeCountH4 = dH4.length; // 5 vehicle cards and one for add vehicle card
     let dP = fixture.debugElement.queryAll(By.css('div.card-body p.text-center'));
-    let beforeCountP = dP.length;
+    const beforeCountP = dP.length;
 
     component.open(component.modalFormElement);
     component.onTypeChange('BUS');
 
     component.formGroup.get('id').setValue(null);
     component.formGroup.get('name').setValue(newVehicle.name);
-    component.formGroup.get('type').setValue(newVehicle.type);
+    component.formGroup.get('type').setValue(newVehicle.vehicleType);
     component.formGroup.get('currentLine').setValue(newVehicle.currentLine);
     component.onFormSubmit();
 
@@ -454,22 +477,30 @@ describe('VehicleComponent', () => {
   beforeEach(fakeAsync(() => {
 
     dbVehicles = [
-      new Vehicle(1, 'bus1', VehicleType.BUS, new TransportLineIdentifier(1, 'B1')),
-      new Vehicle(2, 'tram2', VehicleType.TRAM, new TransportLineIdentifier(2, 'T1')),
-      new Vehicle(3, 'bus3', VehicleType.BUS, new TransportLineIdentifier(3, 'B2')),
-      new Vehicle(4, 'metro4', VehicleType.METRO, new TransportLineIdentifier(4, 'M1')),
-      new Vehicle(5, 'bus5', VehicleType.BUS, new TransportLineIdentifier(5, 'B1'))
+      { id: 1, name: 'bus1', vehicleType: VehicleType.BUS, currentLine: { id: 1, name: 'B1' } },
+      { id: 2, name: 'tram2', vehicleType: VehicleType.TRAM, currentLine: { id: 2, name: 'T1' } },
+      { id: 3, name: 'bus3', vehicleType: VehicleType.BUS, currentLine: { id: 3, name: 'B2' } },
+      { id: 4, name: 'metro4', vehicleType: VehicleType.METRO, currentLine: { id: 4, name: 'M1' } },
+      { id: 5, name: 'bus5', vehicleType: VehicleType.BUS, currentLine: { id: 5, name: 'B1' } }
     ];
 
     dbTransportLines = [
-      new TransportLine(1, 'T1', new TransportLinePosition(1, '420 153', true), [1, 2, 3], true, 'BUS', 1),
-      new TransportLine(2, 'T2', new TransportLinePosition(2, '85 12', true), [4, 5, 6], true, 'METRO', 2),
-      new TransportLine(3, 'T3', new TransportLinePosition(3, '16 75', true), [], true, 'TRAM', 1),
-      new TransportLine(4, 'T4', new TransportLinePosition(4, '34 96', true), [7, 8, 9], true, 'BUS', 3),
-      new TransportLine(5, 'T5', new TransportLinePosition(5, '27 34', true), [], true, 'METRO', 1)
+      { id: 1, name: 'T1',
+      positions: { id: 1, content: '420 153', active: true },
+      schedule: [1, 2, 3], active: true, vehicleType: VehicleType.BUS, zone: 1 }
+      ,
+      {id: 2, name: 'T2',
+      positions: {id: 2, content: '85 12', active: true},
+      schedule: [4, 5, 6], active: true, vehicleType: VehicleType.METRO, zone: 2},
+      {id: 3, name: 'T3', positions: {id: 3, content: '16 75', active: true},
+       schedule: [], active: true, vehicleType: VehicleType.TRAM, zone: 1},
+      {id: 4, name: 'T4', positions: {id: 4, content: '34 96', active: true},
+      schedule: [7, 8, 9], active: true, vehicleType: VehicleType.BUS, zone: 3},
+      {id: 5, name: 'T5', positions: {id: 5, content: '27 34', active: true},
+       schedule: [], active: true, vehicleType: VehicleType.METRO, zone: 1}
     ];
 
-    newVehicle = new Vehicle(dbVehicles[0].id, 'bus6', 'BUS', null);
+    newVehicle = { id: dbVehicles[0].id, name: 'bus6', vehicleType: VehicleType.BUS, currentLine: { id: 7, name: 'B1' } };
 
     mockVehicleService = jasmine.createSpyObj({
       'findAll': of(dbVehicles, asyncScheduler),
@@ -508,16 +539,16 @@ describe('VehicleComponent', () => {
     tick();
     fixture.detectChanges();
     let dH4 = fixture.debugElement.queryAll(By.css('h4.card-title.text-center'));
-    let beforeCountH4 = dH4.length; // 5 vehicle cards and one for add vehicle card
+    const beforeCountH4 = dH4.length; // 5 vehicle cards and one for add vehicle card
     let dP = fixture.debugElement.queryAll(By.css('div.card-body p.text-center'));
-    let beforeCountP = dP.length;
+    const beforeCountP = dP.length;
 
     component.open(component.modalFormElement);
     component.onTypeChange('BUS');
 
     component.formGroup.get('id').setValue(null);
     component.formGroup.get('name').setValue(newVehicle.name);
-    component.formGroup.get('type').setValue(newVehicle.type);
+    component.formGroup.get('type').setValue(newVehicle.vehicleType);
     component.formGroup.get('currentLine').setValue(newVehicle.currentLine);
     component.onFormSubmit();
 
@@ -556,26 +587,34 @@ describe('VehicleComponent', () => {
   beforeEach(fakeAsync(() => {
 
     dbVehicles = [
-      new Vehicle(1, 'bus1', VehicleType.BUS, new TransportLineIdentifier(1, 'B1')),
-      new Vehicle(2, 'tram2', VehicleType.TRAM, new TransportLineIdentifier(2, 'T1')),
-      new Vehicle(3, 'bus3', VehicleType.BUS, new TransportLineIdentifier(3, 'B2')),
-      new Vehicle(4, 'metro4', VehicleType.METRO, new TransportLineIdentifier(4, 'M1')),
-      new Vehicle(5, 'bus5', VehicleType.BUS, new TransportLineIdentifier(5, 'B1'))
+      { id: 1, name: 'bus1', vehicleType: VehicleType.BUS, currentLine: { id: 1, name: 'B1' } },
+      { id: 2, name: 'tram2', vehicleType: VehicleType.TRAM, currentLine: { id: 2, name: 'T1' } },
+      { id: 3, name: 'bus3', vehicleType: VehicleType.BUS, currentLine: { id: 3, name: 'B2' } },
+      { id: 4, name: 'metro4', vehicleType: VehicleType.METRO, currentLine: { id: 4, name: 'M1' } },
+      { id: 5, name: 'bus5', vehicleType: VehicleType.BUS, currentLine: { id: 5, name: 'B1' } }
     ];
 
     dbTransportLines = [
-      new TransportLine(1, 'T1', new TransportLinePosition(1, '420 153', true), [1, 2, 3], true, 'BUS', 1),
-      new TransportLine(2, 'T2', new TransportLinePosition(2, '85 12', true), [4, 5, 6], true, 'METRO', 2),
-      new TransportLine(3, 'T3', new TransportLinePosition(3, '16 75', true), [], true, 'TRAM', 1),
-      new TransportLine(4, 'T4', new TransportLinePosition(4, '34 96', true), [7, 8, 9], true, 'BUS', 3),
-      new TransportLine(5, 'T5', new TransportLinePosition(5, '27 34', true), [], true, 'METRO', 1)
+      { id: 1, name: 'T1',
+      positions: { id: 1, content: '420 153', active: true },
+      schedule: [1, 2, 3], active: true, vehicleType: VehicleType.BUS, zone: 1 }
+      ,
+      {id: 2, name: 'T2',
+      positions: {id: 2, content: '85 12', active: true},
+      schedule: [4, 5, 6], active: true, vehicleType: VehicleType.METRO, zone: 2},
+      {id: 3, name: 'T3', positions: {id: 3, content: '16 75', active: true},
+       schedule: [], active: true, vehicleType: VehicleType.TRAM, zone: 1},
+      {id: 4, name: 'T4', positions: {id: 4, content: '34 96', active: true},
+      schedule: [7, 8, 9], active: true, vehicleType: VehicleType.BUS, zone: 3},
+      {id: 5, name: 'T5', positions: {id: 5, content: '27 34', active: true},
+       schedule: [], active: true, vehicleType: VehicleType.METRO, zone: 1}
     ];
 
-    newVehicle = new Vehicle(dbVehicles[0].id, 'bus6', 'BUS', null);
+    newVehicle = { id: dbVehicles[0].id, name: 'bus6', vehicleType: VehicleType.BUS, currentLine: { id: 7, name: 'B1' } };
 
     mockVehicleService = jasmine.createSpyObj({
       'findAll': of(dbVehicles, asyncScheduler),
-      'create': throwError({ status: 403 }, asyncScheduler)
+      'create': throwError({ status: 401 }, asyncScheduler)
     });
     mockTransportLineService = jasmine.createSpyObj({ 'findAll': of(dbTransportLines, asyncScheduler) });
 
@@ -610,16 +649,16 @@ describe('VehicleComponent', () => {
     tick();
     fixture.detectChanges();
     let dH4 = fixture.debugElement.queryAll(By.css('h4.card-title.text-center'));
-    let beforeCountH4 = dH4.length; // 5 vehicle cards and one for add vehicle card
+    const beforeCountH4 = dH4.length; // 5 vehicle cards and one for add vehicle card
     let dP = fixture.debugElement.queryAll(By.css('div.card-body p.text-center'));
-    let beforeCountP = dP.length;
+    const beforeCountP = dP.length;
 
     component.open(component.modalFormElement);
     component.onTypeChange('BUS');
 
     component.formGroup.get('id').setValue(null);
     component.formGroup.get('name').setValue(newVehicle.name);
-    component.formGroup.get('type').setValue(newVehicle.type);
+    component.formGroup.get('type').setValue(newVehicle.vehicleType);
     component.formGroup.get('currentLine').setValue(newVehicle.currentLine);
     component.onFormSubmit();
 
@@ -692,8 +731,5 @@ describe('VehicleComponent', () => {
     expect(mockVehicleService.findAll).toHaveBeenCalled();
     expect(mockTransportLineService.findAll).toHaveBeenCalled();
   }));
-
-  
-
 });
 

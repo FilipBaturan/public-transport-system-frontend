@@ -8,9 +8,8 @@ import { WelcomeComponent } from './welcome.component';
   template: '<div></div>',
 })
 class FakeNavBarComponent {
-  
   public mapCollapsed = true;
-  public accCollapsed = true; 
+  public accCollapsed = true;
 
   constructor() { }
 
@@ -22,9 +21,9 @@ describe('WelcomeComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ 
+      declarations: [
         WelcomeComponent,
-        FakeNavBarComponent 
+        FakeNavBarComponent
       ]
     });
   }));

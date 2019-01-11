@@ -10,8 +10,6 @@ import { ZoneService } from 'src/app/core/services/zone.service';
  * Provides zone managment
  *
  * @export
- * @class ZoneComponent
- * @implements {OnInit}
  */
 @Component({
   templateUrl: './zone.component.html',
@@ -22,7 +20,7 @@ export class ZoneComponent implements OnInit {
   public isCollapsed: boolean;
   public isValidFormSubmitted: boolean;
   public headerName: string;
-  public addImage: string = "src/assets/img/addZone.png";
+  public addImage = 'src/assets/img/addZone.png';
 
   private zones: Zone[];
   private selectedZoneLines: ZoneTransportLine[];
@@ -32,14 +30,13 @@ export class ZoneComponent implements OnInit {
   private modalForm: NgbModalRef;
   public formGroup: FormGroup;
 
-  @ViewChild("content") modalFormElement: ElementRef;
+  @ViewChild('content') modalFormElement: ElementRef;
 
   /**
    * Creates an instance of ZoneComponent.
-   * @param {ZoneService} zoneService REST service for zones
-   * @param {ToastrService} toastrService user notification service
-   * @param {NgbModal} modalService modal form service
-   * @memberof ZoneComponent
+   * @param ZoneService zoneService REST service for zones
+   * @param ToastrService toastrService user notification service
+   * @param NgbModal modalService modal form service
    */
   constructor(private zoneService: ZoneService,
     private toastrService: ToastrService,
@@ -53,13 +50,11 @@ export class ZoneComponent implements OnInit {
       Validators.minLength(1), Validators.maxLength(30)]),
       id: new FormControl(null, [])
     });
-    this.headerName = "Create Zone";
+    this.headerName = 'Create Zone';
   }
 
   /**
    * Fetchs zone data
-   *
-   * @memberof ZoneComponent
    */
   ngOnInit() {
     // fetch all zones
@@ -72,13 +67,12 @@ export class ZoneComponent implements OnInit {
    * Adds transport line to selected zone
    * for editing
    *
-   * @param {number} id target transport line id
-   * @param {*} content modal form content
-   * @memberof ZoneComponent
+   * @param number id target transport line id
+   * @param any content modal form content
    */
   addLine(id: number, content: any): void {
-    this.selectedZoneLines.push(this.availableLines.find(line => line.id == id));
-    this.availableLines = this.availableLines.filter(line => line.id != id);
+    this.selectedZoneLines.push(this.availableLines.find(line => line.id === id));
+    this.availableLines = this.availableLines.filter(line => line.id !== id);
     this.modalForm.close();
     this.open(content);
   }
@@ -86,8 +80,7 @@ export class ZoneComponent implements OnInit {
   /**
    * Provides create option for zone
    *
-   * @param {*} content modal form content
-   * @memberof ZoneComponent
+   * @param any content modal form content
    */
   create(content: any): void {
     this.id.setValue(null);
@@ -99,8 +92,7 @@ export class ZoneComponent implements OnInit {
   /**
    * Provides delete option for zone
    *
-   * @param {number} id target zone id
-   * @memberof ZoneComponent
+   * @param number id target zone id
    */
   deleteZone(id: number): void {
     this.zoneService.remove(id, this.zones);
@@ -109,19 +101,18 @@ export class ZoneComponent implements OnInit {
   /**
    * Provides edit option for zone
    *
-   * @param {number} id target zone id
-   * @param {*} content modal form content
-   * @memberof ZoneComponent
+   * @param number id target zone id
+   * @param any content modal form content
    */
   editZone(id: number, content: any): void {
-    this.headerName = "Edit Zone";
-    let zone: Zone = this.zones.find(z => z.id == id);
+    this.headerName = 'Edit Zone';
+    const zone: Zone = this.zones.find(z => z.id === id);
     this.id.setValue(zone.id);
-    this.name.setValue(zone.name)
-    let tempThis = this;
+    this.name.setValue(zone.name);
+    const _this = this;
     this.selectedZoneLines = new Array<ZoneTransportLine>();
-    zone.lines.forEach(line => tempThis.selectedZoneLines
-      .push(new ZoneTransportLine(line.id, line.name, line.vehicleType, line.active)));
+    zone.lines.forEach(line => _this.selectedZoneLines
+      .push({id: line.id, name: line.name, vehicleType: line.vehicleType, active: line.active}));
     this.filterAvailableLines();
     this.open(content);
   }
@@ -129,16 +120,14 @@ export class ZoneComponent implements OnInit {
   /**
    * Filters zones that are not in selected
    * zone for editing
-   *
-   * @memberof ZoneComponent
    */
   filterAvailableLines(): void {
     this.availableLines = [];
     for (const zone of this.zones) {
-      if (zone.id == 1) {
+      if (zone.id === 1) {
         for (const line of zone.lines) {
-          if (!this.selectedZoneLines.find(l => l.id == line.id)
-            && !this.availableLines.find(l => l.id == line.id)) {
+          if (!this.selectedZoneLines.find(l => l.id === line.id)
+            && !this.availableLines.find(l => l.id === line.id)) {
             this.availableLines.push(line);
           }
         }
@@ -148,9 +137,6 @@ export class ZoneComponent implements OnInit {
 
   /**
    * Submits modal form and update zone changes
-   *
-   * @returns {void}
-   * @memberof ZoneComponent
    */
   onFormSubmit(): void {
     this.isValidFormSubmitted = false;
@@ -159,21 +145,19 @@ export class ZoneComponent implements OnInit {
     }
     this.isValidFormSubmitted = true;
 
-    this.zoneService.create(new Zone(this.id.value, this.name.value, this.selectedZoneLines, true))
+    this.zoneService.create({id: this.id.value, name: this.name.value, lines: this.selectedZoneLines, active: true})
       .subscribe(() => {
         this.zoneService.findAll().subscribe(result => this.zones = result);
         this.modalForm.close();
-        this.toastrService.success("Zone successfully saved!");
+        this.toastrService.success('Zone successfully saved!');
         this.formGroup.reset();
-      }, err =>
-          err.status == 403 ? this.toastrService.error("Forbidden!") : this.toastrService.error(err.error));
+      }, err => this.toastrService.error(err));
   }
 
   /**
    * Opens modal form for zone
    *
-   * @param {*} content modal form content
-   * @memberof ZoneComponent
+   * @param any content modal form content
    */
   open(content: any): void {
     this.modalForm = this.modalService.open(content,
@@ -184,22 +168,21 @@ export class ZoneComponent implements OnInit {
    * Removes transport line from selected zone
    * for editing
    *
-   * @param {number} id target transport line id
-   * @param {*} content modal fomr content
-   * @memberof ZoneComponent
+   * @param number id target transport line id
+   * @param any content modal fomr content
    */
   removeLine(id: number, content: any): void {
-    this.availableLines.push(this.selectedZoneLines.find(line => line.id == id));
-    this.selectedZoneLines = this.selectedZoneLines.filter(line => line.id != id);
+    this.availableLines.push(this.selectedZoneLines.find(line => line.id === id));
+    this.selectedZoneLines = this.selectedZoneLines.filter(line => line.id !== id);
     this.modalForm.close();
     this.open(content);
   }
 
   private get name() {
-    return this.formGroup.get("name");
+    return this.formGroup.get('name');
   }
 
   private get id() {
-    return this.formGroup.get("id");
+    return this.formGroup.get('id');
   }
 }

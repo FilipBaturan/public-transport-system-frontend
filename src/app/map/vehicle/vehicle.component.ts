@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators, AbstractControl } from '@angular/forms';
 
 import { ToastrService } from 'ngx-toastr';
 import { Vehicle, VehicleSaver } from 'src/app/model/vehicle.model';
@@ -12,8 +12,6 @@ import { TransportLineService } from 'src/app/core/services/transport-line.servi
  * Provides vehicles management
  *
  * @export
- * @class VehicleComponent
- * @implements {OnInit}
  */
 @Component({
   templateUrl: './vehicle.component.html',
@@ -26,10 +24,10 @@ export class VehicleComponent implements OnInit {
   public filtredLinesByType: TransportLine[];
 
   // image paths
-  public busImage: string = "src/assets/img/bus.jpg";
-  public metroImage: string = "src/assets/img/metro.jpg";
-  public tramImage: string = "src/assets/img/tram.jpg";
-  public addImage: string = "src/assets/img/addVehicle.png";
+  public busImage = 'src/assets/img/bus.jpg';
+  public metroImage = 'src/assets/img/metro.jpg';
+  public tramImage = 'src/assets/img/tram.jpg';
+  public addImage = 'src/assets/img/addVehicle.png';
 
   // form attributes
   private modalForm: NgbModalRef;
@@ -37,15 +35,14 @@ export class VehicleComponent implements OnInit {
   public headerName: string;
   public formGroup: FormGroup;
 
-  @ViewChild("content") modalFormElement: ElementRef;
+  @ViewChild('content') modalFormElement: ElementRef;
 
   /**
    * Creates an instance of VehicleComponent.
-   * @param {VehicleService} vehicleService REST service for vehicle
-   * @param {TransportLineService} transportLineService REST service for transport line
-   * @param {ToastrService} toastrService user notification service
-   * @param {NgbModal} modalService modal form service
-   * @memberof VehicleComponent
+   * @param VehicleService vehicleService REST service for vehicle
+   * @param TransportLineService transportLineService REST service for transport line
+   * @param ToastrService toastrService user notification service
+   * @param NgbModal modalService modal form service
    */
   constructor(private vehicleService: VehicleService,
     private transportLineService: TransportLineService,
@@ -53,7 +50,7 @@ export class VehicleComponent implements OnInit {
     private modalService: NgbModal) {
     this.vehicles = new Array<Vehicle>();
     this.transportLines = new Array<TransportLine>();
-    this.filtredLinesByType = new Array<TransportLine>();
+    this.filtredLinesByType = [null];
 
     this.isValidFormSubmitted = null;
     this.formGroup = new FormGroup({
@@ -63,13 +60,11 @@ export class VehicleComponent implements OnInit {
       currentLine: new FormControl(null, []),
       id: new FormControl(null, [])
     });
-    this.headerName = "Create Vehicle";
+    this.headerName = 'Create Vehicle';
   }
 
   /**
    * Fetchs transport line and vehicle data
-   *
-   * @memberof VehicleComponent
    */
   ngOnInit() {
     // fetch all vehicles
@@ -80,21 +75,19 @@ export class VehicleComponent implements OnInit {
     // fetch all transport lines
     this.transportLineService.findAll().subscribe(response => {
       this.transportLines = response;
-      this.filtredLinesByType = response;
+      this.filtredLinesByType.push(...response);
     }, err => this.toastrService.error(err));
   }
 
   /**
    * Provides delete option for vehicle
    *
-   * @param {number} id target vehicle id
-   * @returns {void}
-   * @memberof VehicleComponent
+   * @param number id target vehicle id
    */
   deleteVehicle(id: number): void {
     for (let index = 0; index < this.vehicles.length; index++) {
       const vehicle = this.vehicles[index];
-      if (vehicle.id == id) {
+      if (vehicle.id === id) {
         this.vehicleService.remove(id, index, this.vehicles);
         return;
       }
@@ -104,27 +97,25 @@ export class VehicleComponent implements OnInit {
   /**
    * Provides edit option for vehicle
    *
-   * @param {number} id target vehicle id
-   * @param {*} content modal form content
-   * @memberof VehicleComponent
+   * @param number id target vehicle id
+   * @param any content modal form content
    */
   editVehicle(id: number, content: any): void {
-    let vehicle = this.vehicles.find(vehicle => vehicle.id == id);
+    const vehicle = this.vehicles.find(v => v.id === id);
     this.name.setValue(vehicle.name);
-    this.type.setValue(vehicle.type);
+    this.type.setValue(vehicle.vehicleType);
     this.currentLine.setValue(null);
-    this.onTypeChange(vehicle.type);
+    this.onTypeChange(vehicle.vehicleType);
     this.id.setValue(id);
 
-    this.headerName = "Edit Vehicle";
+    this.headerName = 'Edit Vehicle';
     this.open(content);
   }
 
   /**
    * Opens modal form for vehicle
    *
-   * @param {*} content modal form content
-   * @memberof VehicleComponent
+   * @param any content modal form content
    */
   open(content: any): void {
     this.modalForm = this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' });
@@ -132,9 +123,6 @@ export class VehicleComponent implements OnInit {
 
   /**
    * Submits modal form and update vehicle changes
-   *
-   * @returns {void}
-   * @memberof VehicleComponent
    */
   onFormSubmit(): void {
     this.isValidFormSubmitted = false;
@@ -144,51 +132,50 @@ export class VehicleComponent implements OnInit {
     this.isValidFormSubmitted = true;
     let currentLine = this.currentLine.value;
     if (currentLine !== null) {
-      currentLine = currentLine.id
+      currentLine = currentLine.id;
     }
     this.vehicleService.create(
-      new VehicleSaver(this.id.value, this.name.value, this.type.value, currentLine))
+      { id: this.id.value, name: this.name.value, vehicleType: this.type.value, currentLine: currentLine, active: true})
       .subscribe(result => {
-        let vehicle: Vehicle = result as Vehicle;
-        if (vehicle.id != this.id.value) {
+        const vehicle: Vehicle = result as Vehicle;
+        if (vehicle.id !== this.id.value) {
           this.vehicles.push(result);
         } else {
-          let index: number = this.vehicles.findIndex(v => v.id == vehicle.id);
+          const index: number = this.vehicles.findIndex(v => v.id === vehicle.id);
           this.vehicles[index] = vehicle;
         }
         this.id.setValue(null);
         this.modalForm.close();
-        this.toastrService.success("Vehicle successfully saved!");
+        this.toastrService.success('Vehicle successfully saved!');
         this.formGroup.reset();
-      }, err =>
-          err.status == 403 ? this.toastrService.error("Forbidden!") : this.toastrService.error(err.error));
+      }, err => this.toastrService.error(err));
   }
 
   /**
    * Filters available transport line by type in
    * type select box
    *
-   * @param {string} vehicleType target type of transport lines
-   * @memberof VehicleComponent
+   * @param string vehicleType target type of transport lines
    */
   onTypeChange(vehicleType: string): void {
     this.filtredLinesByType = this.transportLines
-      .filter(transportLine => transportLine.type == vehicleType);
+      .filter(transportLine => transportLine.vehicleType === vehicleType);
+    this.filtredLinesByType.unshift(null);
   }
 
   private get name() {
-    return this.formGroup.get("name");
+    return this.formGroup.get('name');
   }
 
   private get type() {
-    return this.formGroup.get("type");
+    return this.formGroup.get('type');
   }
 
   private get currentLine() {
-    return this.formGroup.get("currentLine");
+    return this.formGroup.get('currentLine');
   }
 
   private get id() {
-    return this.formGroup.get("id");
+    return this.formGroup.get('id');
   }
 }

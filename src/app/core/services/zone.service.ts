@@ -10,20 +10,18 @@ import { catchError } from 'rxjs/operators';
  * Provide REST service for vehicle
  *
  * @export
- * @class ZoneService
  */
 @Injectable({
   providedIn: 'root'
 })
 export class ZoneService {
 
-  private url: string = "/api/zone";
+  private url = '/api/zone';
 
   /**
    * Creates an instance of ZoneService.
-   * @param {HttpClient} http HTTP REST service
-   * @param {ToastrService} toastrService user notification service
-   * @memberof ZoneService
+   * @param HttpClient http HTTP REST service
+   * @param ToastrService toastrService user notification service
    */
   constructor(private http: HttpClient, private toastrService: ToastrService) {
   }
@@ -31,8 +29,7 @@ export class ZoneService {
   /**
    * Gets all available zones
    *
-   * @returns {Observable<Zone[]>} available zones
-   * @memberof ZoneService
+   * @returns available zones
    */
   findAll(): Observable<Zone[]> {
     return this.http.get<Zone[]>(this.url).pipe(catchError(this.handleException));
@@ -41,9 +38,8 @@ export class ZoneService {
   /**
    * Creates/Updates zone
    *
-   * @param {Zone} zone zone that needs to be crated/updated
-   * @returns {Observable<Zone>} created/updated zone
-   * @memberof ZoneService
+   * @param Zone zone zone that needs to be crated/updated
+   * @returns created/updated zone
    */
   create(zone: Zone): Observable<Zone> {
     return this.http.post<Zone>(this.url, zone).pipe(catchError(this.handleException));
@@ -52,12 +48,11 @@ export class ZoneService {
   /**
    * Remove target zone
    *
-   * @param {number} id target zone id
-   * @param {Zone[]} zones all available zones
-   * @memberof ZoneService
+   * @param number id target zone id
+   * @param Zone[] zones all available zones
    */
   remove(id: number, zones: Zone[]): void {
-    this.http.delete(this.url + "/" + id, { responseType: "text" as "text" }).
+    this.http.delete(this.url + '/' + id, { responseType: 'text' as 'text' }).
       subscribe(() => {
         let temp: Zone[];
         this.findAll().subscribe(result => {
@@ -67,26 +62,24 @@ export class ZoneService {
             zones[index] = zone;
           }
           zones.length = temp.length;
-          this.toastrService.success("Zone successfuly deleted!");
+          this.toastrService.success('Zone successfuly deleted!');
         });
       }, err =>
-      err.status == 403 ? this.toastrService.error("Forbidden!") : this.toastrService.error(err.error));
+      err.status === 401 ? this.toastrService.error('Forbidden!') : this.toastrService.error(err.error));
   }
 
   /**
    * Handles errors occured by REST service
    *
-   * @private
-   * @param {HttpErrorResponse} err HTTP reponse error
-   * @returns {Observable<never>} observable
-   * @memberof TransportLineService
+   * @param HttpErrorResponse err HTTP reponse error
+   * @returns observable
    */
   private handleException(err: HttpErrorResponse): Observable<never> {
     if (err.error) {
       if (err.error.message) {
         return throwError(err.error.message);
       } else if ((typeof err.error === 'string')
-        && !err.error.startsWith("Error occured")) {
+        && !err.error.startsWith('Error occured')) {
         return throwError(err.error);
       } else {
         return throwError('Server is down!');

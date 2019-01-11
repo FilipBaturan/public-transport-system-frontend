@@ -10,19 +10,17 @@ import { Station, StationCollection } from 'src/app/model/station.model';
  * Provide REST service for station
  *
  * @export
- * @class StationService
  */
 @Injectable({
   providedIn: 'root'
 })
 export class StationService {
 
-  private url: string = "/api/station";
+  private url = '/api/station';
 
   /**
    * Creates an instance of StationService.
-   * @param {HttpClient} http HTTP REST service
-   * @memberof StationService
+   * @param HttpClient http HTTP REST service
    */
   constructor(private http: HttpClient) {
   }
@@ -30,8 +28,7 @@ export class StationService {
   /**
    * Gets all available stations
    *
-   * @returns {Observable<Station[]>} all available stations
-   * @memberof StationService
+   * @returns all available stations
    */
   findAll(): Observable<Station[]> {
     return this.http.get<Station[]>(this.url).pipe(catchError(this.handleException));
@@ -40,12 +37,11 @@ export class StationService {
   /**
    * Replaces all old stations with new ones
    *
-   * @param {StationCollection} stations new or updated stations
-   * @returns {Observable<Station[]>} station collection observable
-   * @memberof StationService
+   * @param StationCollection stations new or updated stations
+   * @returns station collection observable
    */
   replaceStations(stations: StationCollection): Observable<Station[]> {
-    return this.http.post<Station[]>(this.url + "/replace", stations).pipe(
+    return this.http.post<Station[]>(this.url + '/replace', stations).pipe(
        catchError(this.handleException)
     );
   }
@@ -53,17 +49,15 @@ export class StationService {
   /**
    * Handles errors occured by REST service
    *
-   * @private
-   * @param {HttpErrorResponse} err HTTP reponse error
-   * @returns {Observable<never>} observable
-   * @memberof TransportLineService
+   * @param HttpErrorResponse err HTTP reponse error
+   * @returns observable
    */
   private handleException(err: HttpErrorResponse): Observable<never> {
     if (err.error) {
       if (err.error.message) {
         return throwError(err.error.message);
       } else if ((typeof err.error === 'string')
-        && !err.error.startsWith("Error occured")) {
+        && !err.error.startsWith('Error occured')) {
         return throwError(err.error);
       } else {
         return throwError('Server is down!');

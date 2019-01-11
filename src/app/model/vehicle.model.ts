@@ -1,40 +1,21 @@
-export class Vehicle {
+import { VehicleType } from './enums/vehicle-type.model';
+
+export interface Vehicle {
     id: number;
     name: string;
-    type: string;
+    vehicleType: VehicleType;
     currentLine: TransportLineIdentifier;
-
-    constructor(id: number, name: string, type: string,
-        currentLine: TransportLineIdentifier){
-        this.id = id;
-        this.name = name;
-        this.type = type;
-        this.currentLine = currentLine;
-    }
 }
 
-export class TransportLineIdentifier {
+export interface TransportLineIdentifier {
     id: number;
     name: string;
-
-    constructor(id: number, name: string){
-        this.id = id;
-        this.name = name;
-    }
 }
 
-export class VehicleSaver {
+export interface VehicleSaver {
     id: number;
     name: string;
-    type: string;
+    vehicleType: VehicleType;
     currentLine: number;
-    active: boolean
-
-    constructor(id: number, name: string, type: string,currentLine: number){
-        this.id = id;
-        this.name = name;
-        this.type = type;
-        this.currentLine = currentLine;
-        this.active = true;
-    }
+    active: boolean;
 }

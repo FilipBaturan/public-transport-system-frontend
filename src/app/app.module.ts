@@ -18,7 +18,6 @@ import { RouteMapperModule } from './route-mapper/route-mapper.module';
 
 
 @NgModule({
-  
   declarations: [
     AppComponent,
     NewsComponent,
