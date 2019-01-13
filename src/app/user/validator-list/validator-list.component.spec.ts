@@ -4,7 +4,7 @@ import { NO_ERRORS_SCHEMA, Component } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'; 
 import { ValidatorListComponent } from './validator-list.component';
 import { User } from '../../model/users/user.model';
-import { of, asyncScheduler } from 'rxjs';
+import { of, asyncScheduler, throwError } from 'rxjs';
 import { UserService } from '../../core/services/user.service';
 import { ToastrService } from 'ngx-toastr';
 
@@ -32,8 +32,8 @@ describe('ValidatorListComponent', () => {
   let dbValidators : User[];
   let emptyUserList: boolean;
 
-  let updateError : boolean;
-  let addError : boolean;
+  let updateError : number;
+  let addError : number;
 
   let newValidator : User;
   let existingUser: User;
@@ -41,8 +41,8 @@ describe('ValidatorListComponent', () => {
   beforeEach(fakeAsync(() => {
 
     emptyUserList = true;
-    updateError = false;
-    addError = false;
+    updateError = 200;
+    addError = 200;
 
     newValidator = new User(null, "new User Name", "new Pass", "new Name", "new Last Name",
      "new Email",  true, "123123");
@@ -72,22 +72,21 @@ describe('ValidatorListComponent', () => {
         }
       },
       updateValidator(){
-        if (updateError) {
-          return of({status: 404}, asyncScheduler);
-        }else {
+        if (updateError == 200) {
           return of({status: 200}, asyncScheduler);
-        }
+        }else 
+          return throwError({status: updateError}, asyncScheduler);
       },
       addValidator(){
-        if (addError) {
-          return of({status: 404}, asyncScheduler);
+        if (addError != 200) {
+          return throwError({status: addError}, asyncScheduler);
         }else {
           return of({status: 200}, asyncScheduler);
         }
       },
       getByUsername(){
         if (newValidator.username == "nonExistentUsername") {
-          return of(null, asyncScheduler);
+          return throwError({status: 404}, asyncScheduler);
         }else {
           return of(newValidator, asyncScheduler);
         }
@@ -99,7 +98,7 @@ describe('ValidatorListComponent', () => {
     spyOn(mockUserService, 'addValidator').and.callThrough();
    
     
-    mockToastrService = jasmine.createSpyObj(['success', 'error', 'info']);
+    mockToastrService = jasmine.createSpyObj(['success', 'error', 'info', 'warning']);
 
 
     TestBed.configureTestingModule({
@@ -174,13 +173,28 @@ describe('ValidatorListComponent', () => {
     tick();
     fixture.detectChanges();
 
-    expect(mockUserService.getValidators).toHaveBeenCalled();
-    expect(mockUserService.updateValidator).toHaveBeenCalled();
+    expect(mockToastrService.warning).toHaveBeenCalled();
 
   }));
 
-  it('should NOT block validator', fakeAsync(() => {
-    updateError = true;
+  it('should NOT block validator -> non existent id', fakeAsync(() => {
+    updateError = 404;
+    fixture.detectChanges();
+    tick();
+
+    component.blockValidator(dbValidators[1]);
+
+    tick();
+    fixture.detectChanges();
+
+    expect(mockUserService.getValidators).toHaveBeenCalled();
+    expect(mockUserService.updateValidator).toHaveBeenCalled();
+    expect(mockToastrService.error).toHaveBeenCalled();
+
+  }));
+
+  it('should NOT block validator -> wrong user type', fakeAsync(() => {
+    updateError = 409;
     fixture.detectChanges();
     tick();
 
@@ -196,7 +210,7 @@ describe('ValidatorListComponent', () => {
   }));
 
   it('should add validator', fakeAsync(() => {
-    addError = false;
+    addError = 200;
     fixture.detectChanges();
     tick();
 
@@ -213,7 +227,7 @@ describe('ValidatorListComponent', () => {
   }));
 
   it('should NOT add validator -> invalid username error', fakeAsync(() => {
-    addError = false;
+    addError = 200;
     fixture.detectChanges();
     tick();
 
@@ -229,8 +243,25 @@ describe('ValidatorListComponent', () => {
 
   }));
 
-  it('should NOT add validator', fakeAsync(() => {
-    addError = true;
+  it('should NOT add validator -> non existent id', fakeAsync(() => {
+    addError = 404;
+    fixture.detectChanges();
+    tick();
+
+    component.newUser = newValidator;
+    component.addValidator();
+
+    tick();
+    fixture.detectChanges();
+
+    expect(mockUserService.getValidators).toHaveBeenCalled();
+    expect(mockUserService.addValidator).toHaveBeenCalled();
+    expect(mockToastrService.error).toHaveBeenCalled();
+
+  }));
+
+  it('should NOT add validator -> wrong user type', fakeAsync(() => {
+    addError = 409;
     fixture.detectChanges();
     tick();
 
@@ -247,7 +278,7 @@ describe('ValidatorListComponent', () => {
   }));
 
   it('should update validator', fakeAsync(() => {
-    updateError = false;
+    updateError = 200;
     fixture.detectChanges();
     tick();
 
@@ -262,8 +293,8 @@ describe('ValidatorListComponent', () => {
 
   }));
 
-  it('should NOT update validator', fakeAsync(() => {
-    updateError = true;
+  it('should NOT update validator -> non existing id', fakeAsync(() => {
+    updateError = 404;
     fixture.detectChanges();
     tick();
 
@@ -277,6 +308,50 @@ describe('ValidatorListComponent', () => {
     expect(mockUserService.updateValidator).toHaveBeenCalled();
     expect(mockToastrService.error).toHaveBeenCalled();
 
+  }));
+
+  it('should NOT update validator -> wrong user type', fakeAsync(() => {
+    updateError = 409;
+    fixture.detectChanges();
+    tick();
+
+    component.newUser = existingUser;
+    component.addValidator();
+
+    tick();
+    fixture.detectChanges();
+
+    expect(mockUserService.getValidators).toHaveBeenCalled();
+    expect(mockUserService.updateValidator).toHaveBeenCalled();
+    expect(mockToastrService.error).toHaveBeenCalled();
+
+  }));  
+
+  it('should show adding form', fakeAsync(() => {
+    updateError = 404;
+    fixture.detectChanges();
+    tick();
+
+    component.showForm();
+
+    tick();
+    fixture.detectChanges();
+
+    expect(component.formShowed).toBeTruthy();
+  }));
+
+  it('should show change form', fakeAsync(() => {
+    updateError = 404;
+    fixture.detectChanges();
+    tick();
+
+    component.showChangeForm(dbValidators[1]);
+
+    tick();
+    fixture.detectChanges();
+
+    expect(component.formShowed).toBeTruthy();
+    expect(component.newUser).toBe(dbValidators[1]);
   }));
   
 });

@@ -1,31 +1,15 @@
-import { VehicleType } from "./enums/vehicle-type.model";
+import { VehicleType } from './enums/vehicle-type.model';
 
-export class Zone {
-
+export interface Zone {
     id: number;
     name: string;
     lines: ZoneTransportLine[];
     active: boolean;
-
-    constructor(id: number, name: string, lines: ZoneTransportLine[], active: boolean) {
-        this.id = id;
-        this.name = name;
-        this.lines = lines;
-        this.active = active;
-    }
 }
 
-export class ZoneTransportLine {
-    
+export interface ZoneTransportLine {
     id: number;
     name: string;
     vehicleType: VehicleType;
     active: boolean;
-
-    constructor(id: number, name:string, type: VehicleType, active: boolean) {
-        this.id = id;
-        this.name = name;
-        this.vehicleType = type;
-        this.active = active;
-    }
 }

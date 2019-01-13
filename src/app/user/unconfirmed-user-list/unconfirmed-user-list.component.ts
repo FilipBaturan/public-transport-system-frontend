@@ -26,37 +26,39 @@ export class UnconfirmedUserListComponent implements OnInit {
 
   acceptUser(user:User){
     this.userService.acceptUser(user).subscribe(
-      response => {
-        if (response.status != 200)
-          this.toastr.error("There was a problem with accepting this users document");
-        else
-        {
-          var index = this.unconfirmedUsers.indexOf(user);
-          const copiedData =  this.unconfirmedUsers.slice();
-          copiedData.splice(index, 1);
-          this.unconfirmedUsers = copiedData;
-        }
+      () => {
+       
+        var index = this.unconfirmedUsers.indexOf(user);
+        const copiedData =  this.unconfirmedUsers.slice();
+        copiedData.splice(index, 1);
+        this.unconfirmedUsers = copiedData;
         this.toastr.info("Documents succesfully accepted!")
       },
-      // => this.toastr.error("Could not accept user")
+      err => {
+        if(err.status == 404) 
+          this.toastr.error("User with given id does not exist")
+        else
+        this.toastr.error("There was a problem with accepting this users document");
+      }
     )
   }
 
   denyUser(user: User){
     this.userService.denyUser(user).subscribe(
       response => {
-        if (response.status != 200)
-          this.toastr.error("There was a problem with denying this users document");
-        else
-        {
-          var index = this.unconfirmedUsers.indexOf(user);
-          const copiedData =  this.unconfirmedUsers.slice();
-          copiedData.splice(index, 1);
-          this.unconfirmedUsers = copiedData;
-        }
+       
+        var index = this.unconfirmedUsers.indexOf(user);
+        const copiedData =  this.unconfirmedUsers.slice();
+        copiedData.splice(index, 1);
+        this.unconfirmedUsers = copiedData;
         this.toastr.info("Documents succesfully denied!")
       },
-      //err => this.toastr.error("Could not deny user")
+      err => {
+        if(err.status == 404) 
+          this.toastr.error("User with given id does not exist")
+        else
+        this.toastr.error("There was a problem with denying this users document");
+      }
     )
   }
 

@@ -1,27 +1,45 @@
 import { TestBed, fakeAsync } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing'
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 
 import { TransportLineService } from './transport-line.service';
 import { TransportLine, TransportLineCollection } from 'src/app/model/transport-line.model';
-import { TransportLinePosition } from 'src/app/model/position.model';
+import { VehicleType } from 'src/app/model/enums/vehicle-type.model';
 
 describe('TransportLineService', () => {
 
-  const url: string = '/api/transportLine';
+  const url = '/api/transportLine';
   let dbTransportLines: TransportLine[];
-  let newTransportLine: TransportLine = new TransportLine(7, 'T7',
-    new TransportLinePosition(7, '73 17', true), [], true, 'BUS', 1)
+  const newTransportLine: TransportLine = {
+    id: 7, name: 'T7',
+    positions: { id: 7, content: '73 17', active: true },
+    schedule: [], active: true, vehicleType: VehicleType.BUS, zone: 1
+  };
 
   let mockHttp: HttpTestingController;
   let service: TransportLineService;
 
   beforeEach(() => {
     dbTransportLines = [
-      new TransportLine(1, 'T1', new TransportLinePosition(1, '420 153', true), [1, 2, 3], true, 'BUS', 1),
-      new TransportLine(2, 'T2', new TransportLinePosition(2, '85 12', true), [4, 5, 6], true, 'METRO', 2),
-      new TransportLine(3, 'T3', new TransportLinePosition(3, '16 75', true), [], true, 'TRAM', 1),
-      new TransportLine(4, 'T4', new TransportLinePosition(4, '34 96', true), [7, 8, 9], true, 'BUS', 3),
-      new TransportLine(5, 'T5', new TransportLinePosition(5, '27 34', true), [], true, 'METRO', 1)
+      {
+        id: 1, name: 'T1', positions: { id: 1, content: '420 153', active: true }
+        , schedule: [1, 2, 3], active: true, vehicleType: VehicleType.BUS, zone: 1
+      },
+      {
+        id: 2, name: 'T2', positions: { id: 2, content: '85 12', active: true },
+        schedule: [4, 5, 6], active: true, vehicleType: VehicleType.METRO, zone: 2
+      },
+      {
+        id: 3, name: 'T3', positions: { id: 3, content: '16 75', active: true },
+        schedule: [], active: true, vehicleType: VehicleType.TRAM, zone: 1
+      },
+      {
+        id: 4, name: 'T4', positions: { id: 4, content: '34 96', active: true },
+        schedule: [7, 8, 9], active: true, vehicleType: VehicleType.BUS, zone: 3
+      },
+      {
+        id: 5, name: 'T5', positions: { id: 5, content: '27 34', active: true },
+        schedule: [], active: true, vehicleType: VehicleType.METRO, zone: 1
+      }
     ];
 
     TestBed.configureTestingModule({
@@ -99,14 +117,17 @@ describe('TransportLineService', () => {
   }));
 
   it('should create/update transport line', fakeAsync(() => {
-    let tl = new TransportLine(null, 'T7', new TransportLinePosition(null, '73 17', true), [], true, 'BUS', 1);
+    const tl = {
+      id: null, name: 'T7', positions: { id: null, content: '42.34 56.17', active: true },
+      schedule: [], active: true, vehicleType: VehicleType.BUS, zone: 1
+    };
     service.create(tl).subscribe(transportLine => {
       expect(transportLine.id).toEqual(newTransportLine.id);
       expect(transportLine.name).toEqual(newTransportLine.name);
       expect(transportLine.positions).toEqual(newTransportLine.positions);
       expect(transportLine.schedule).toEqual(newTransportLine.schedule);
       expect(transportLine.active).toEqual(newTransportLine.active);
-      expect(transportLine.type).toEqual(newTransportLine.type);
+      expect(transportLine.vehicleType).toEqual(newTransportLine.vehicleType);
       expect(transportLine.zone).toEqual(newTransportLine.zone);
     });
 
@@ -116,20 +137,38 @@ describe('TransportLineService', () => {
   }));
 
   it('should create new transport lines and update changed transport lines', fakeAsync(() => {
-    let collection: TransportLineCollection = new TransportLineCollection([
-      dbTransportLines[0],
-      dbTransportLines[2],
-      new TransportLine(dbTransportLines[4].id, 'T6', dbTransportLines[4].positions, dbTransportLines[4].schedule,
-        dbTransportLines[4].active, dbTransportLines[4].type, dbTransportLines[4].zone),
-      new TransportLine(null, 'T7', new TransportLinePosition(null, '73 17', true), [], true, 'BUS', 1)
-    ]);
+    const collection: TransportLineCollection = {
+      transportLines: [
+        dbTransportLines[0],
+        dbTransportLines[2],
+        {
+          id: dbTransportLines[4].id, name: dbTransportLines[4].name,
+          positions: {
+            id: dbTransportLines[4].positions.id,
+            content: dbTransportLines[4].positions.content,
+            active: dbTransportLines[4].positions.active
+          },
+          schedule: dbTransportLines[4].schedule,
+          active: dbTransportLines[4].active, vehicleType: dbTransportLines[4].vehicleType, zone: dbTransportLines[4].zone
+        },
+        {
+          id: null, name: 'T7', positions: { id: null, content: '73.72 42.19', active: true },
+          schedule: [], active: true, vehicleType: VehicleType.BUS, zone: 1
+        }
+      ]
+    };
 
-    let updatedCollection: TransportLineCollection = new TransportLineCollection([
-      collection[0],
-      collection[1],
-      collection[2],
-      new TransportLine(7, 'T7', new TransportLinePosition(7, '73 17', true), [], true, 'BUS', 1)
-    ]);
+    const updatedCollection: TransportLineCollection = {
+      transportLines: [
+        collection[0],
+        collection[1],
+        collection[2],
+        {
+          id: 7, name: 'T7', positions: { id: 7, content: '73 17', active: true },
+          schedule: [], active: true, type: VehicleType.BUS, zone: 1
+        }
+      ]
+    };
 
     service.replaceTransportLines(collection).subscribe(transportLines => {
       expect(transportLines.length).toBe(updatedCollection.transportLines.length);

@@ -106,15 +106,11 @@ export class UserService extends RestService<User> {
   }
 
   acceptUser(user: User){
-    return this.http.put<any>(this.url(['approveUser']), user).pipe(
-      catchError(this.handleException)
-    );
+    return this.http.put<any>(this.url(['approveUser']), user);
   }
 
   denyUser(user: User){
-    return this.http.put<any>(this.url(['denyUser']), user).pipe(
-      catchError(this.handleException)
-    );
+    return this.http.put<any>(this.url(['denyUser']), user);
   }
 
   getValidators(){
@@ -124,15 +120,11 @@ export class UserService extends RestService<User> {
   }
 
   updateValidator(user: User){
-    return this.http.put<any>(this.url(['updateValidator']), user).pipe(
-      catchError(this.handleException)
-    );
+    return this.http.put<any>(this.url(['updateValidator']), user);
   }
 
   addValidator(user: User){
-    return this.http.post<any>(this.url(['addValidator']), user).pipe(
-      catchError(this.handleException)
-    );
+    return this.http.post<any>(this.url(['addValidator']), user);
   }
 
   addOperator(user: User){

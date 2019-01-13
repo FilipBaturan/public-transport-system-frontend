@@ -1,12 +1,12 @@
 import { TestBed, fakeAsync } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing'
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 
 import { UploadService } from './upload.service';
 import { Image } from 'src/app/model/util.model';
 
 describe('UploadService', () => {
 
-  const url: string = "/api/image";
+  const url = '/api/image';
   let image: Image;
   let imagePath: string;
   let uploadData: FormData;
@@ -15,7 +15,7 @@ describe('UploadService', () => {
   let service: UploadService;
 
   beforeEach(() => {
-    image = new Image('QAcUGhvdG9zaG9wIDMuMAA4QklNBAQAAAAAAAD/4gxYSUNDX1BST0Z', 'png');
+    image = {content: 'QAcUGhvdG9zaG9wIDMuMAA4QklNBAQAAAAAAAD/4gxYSUNDX1BST0Z', format: 'png'};
     imagePath = 'image.png';
     uploadData = new FormData();
 

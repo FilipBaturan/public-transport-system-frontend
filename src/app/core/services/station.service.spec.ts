@@ -1,14 +1,13 @@
 import { TestBed, fakeAsync } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing'
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 
 import { StationService } from './station.service';
 import { Station, StationCollection } from 'src/app/model/station.model';
-import { StationPosition } from 'src/app/model/position.model';
 import { VehicleType } from 'src/app/model/enums/vehicle-type.model';
 
 describe('StationService', () => {
 
-  const url: string = '/api/station';
+  const url = '/api/station';
   let dbStations: Station[];
 
   let mockHttp: HttpTestingController;
@@ -16,11 +15,11 @@ describe('StationService', () => {
 
   beforeEach(() => {
     dbStations = [
-      new Station(1, "S1", new StationPosition(1, 45.23, 86.12, true), VehicleType.BUS, true),
-      new Station(2, "S2", new StationPosition(2, 14.72, 27.46, true), VehicleType.METRO, true),
-      new Station(3, "S3", new StationPosition(3, 73.96, 55.67, true), VehicleType.TRAM, true),
-      new Station(4, "S4", new StationPosition(4, 82.37, 43.58, true), VehicleType.BUS, true),
-      new Station(5, "S5", new StationPosition(5, 93.16, 71.35, true), VehicleType.METRO, true),
+      { id: 1, name: 'S1', position: { id: 1, latitude: 45.23, longitude: 86.12, active: true }, type: VehicleType.BUS, active: true },
+      { id: 2, name: 'S2', position: { id: 2, latitude: 14.72, longitude: 27.46, active: true }, type: VehicleType.METRO, active: true },
+      { id: 3, name: 'S3', position: { id: 3, latitude: 73.96, longitude: 55.67, active: true }, type: VehicleType.TRAM, active: true },
+      { id: 4, name: 'S4', position: { id: 4, latitude: 82.37, longitude: 43.58, active: true }, type: VehicleType.BUS, active: true },
+      { id: 5, name: 'S5', position: { id: 5, latitude: 93.16, longitude: 71.35, active: true }, type: VehicleType.METRO, active: true },
     ];
 
     TestBed.configureTestingModule({
@@ -97,22 +96,29 @@ describe('StationService', () => {
       { status: 400, statusText: 'Bad Request' });
   }));
 
-  it('should create new stations and update changed stations', fakeAsync(() =>{
-    let collection: StationCollection = new StationCollection([
-      dbStations[0],
-      dbStations[2],
-      new Station(dbStations[4].id, 'S6', dbStations[4].position, dbStations[4].type, dbStations[4].active),
-      new Station(null, 'S7', new StationPosition(null, 23.24, 74.86, true), VehicleType.BUS, true)
-    ]);
+  it('should create s and update changed stations', fakeAsync(() => {
+    const collection: StationCollection = {
+      stations: [
+        dbStations[0],
+        dbStations[2],
+        { id: dbStations[4].id, name: 'S6', position: dbStations[4].position, type: dbStations[4].type, active: dbStations[4].active },
+        {
+          id: null, name: 'S7', position: { id: null, latitude: 23.24, longitude: 74.86, active: true },
+          type: VehicleType.BUS, active: true
+        }
+      ]
+    };
 
-    let updatedCollection: StationCollection = new StationCollection([
-      collection[0],
-      collection[1],
-      collection[2],
-      new Station(7, 'S7', new StationPosition(7, 23.24, 74.86, true), VehicleType.BUS, true)
-    ]);
+    const updatedCollection: StationCollection = {
+      stations: [
+        collection[0],
+        collection[1],
+        collection[2],
+        { id: 7, name: 'S7', position: { id: 7, latitude: 23.24, longitude: 74.86, active: true }, type: VehicleType.BUS, active: true }
+      ]
+    };
 
-    service.replaceStations(collection).subscribe(stations =>{
+    service.replaceStations(collection).subscribe(stations => {
       expect(stations.length).toBe(updatedCollection.stations.length);
       expect(stations[0]).toEqual(updatedCollection.stations[0]);
       expect(stations[1]).toEqual(updatedCollection.stations[1]);

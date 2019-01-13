@@ -46,6 +46,7 @@ module.exports = function (config) {
       'assets/lib/src/handlers/Handler.Width.js',
       'assets/lib/src/handlers/Handler.Measure.js',
       'assets/lib/src/strings/English.js',
+      'assets/canvas/canvasjs.min.js'
     ]
   });
 };

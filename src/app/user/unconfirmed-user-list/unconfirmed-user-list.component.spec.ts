@@ -31,14 +31,14 @@ describe('UnconfirmedUserListComponent', () => {
   let component: UnconfirmedUserListComponent;
   let fixture: ComponentFixture<UnconfirmedUserListComponent>;
 
-  let denyError : boolean;
-  let acceptError : boolean;
+  let denyError : number;
+  let acceptError : number;
 
   beforeEach(fakeAsync(() => {
 
     emptyUserList = true;
-    denyError = false;
-    acceptError = false;
+    denyError = 200;
+    acceptError = 200;
 
     dbUnConfUsers = [
       new User(1, "un1", "111", "Name1", "Lastname1", "email1", true, "1111"),
@@ -57,15 +57,15 @@ describe('UnconfirmedUserListComponent', () => {
         }
       },
       acceptUser(){
-        if (acceptError) {
-          return of({status: 404}, asyncScheduler);
+        if (acceptError != 200) {
+          return throwError({status: acceptError}, asyncScheduler);
         }else {
           return of({status: 200}, asyncScheduler);
         }
       },
       denyUser(){
-        if (denyError) {
-          return of({ status: 404 }, asyncScheduler);
+        if (denyError != 200) {
+          return throwError({ status: denyError }, asyncScheduler);
         }else {
           return of({status: 200}, asyncScheduler);
         }
@@ -141,8 +141,24 @@ describe('UnconfirmedUserListComponent', () => {
 
   }));
 
-  it('should NOT deny user', fakeAsync(() => {
-    denyError = true;
+  it('should NOT deny user -> user id does not exist', fakeAsync(() => {
+    denyError = 404;
+    fixture.detectChanges();
+    tick();
+
+    component.denyUser(dbUnConfUsers[1]);
+
+    tick();
+    fixture.detectChanges();
+
+    expect(mockUserService.getUnconfirmedUsers).toHaveBeenCalled();
+    expect(mockUserService.denyUser).toHaveBeenCalled();
+    expect(mockToastrService.error).toHaveBeenCalled();
+
+  }));
+
+  it('should NOT deny user -> invalid users data', fakeAsync(() => {
+    denyError = 406;
     fixture.detectChanges();
     tick();
 
@@ -171,8 +187,24 @@ describe('UnconfirmedUserListComponent', () => {
 
   }));
 
-  it('should NOT accept user', fakeAsync(() => {
-    acceptError = true;
+  it('should NOT accept user -> user id not found', fakeAsync(() => {
+    acceptError = 404;
+    fixture.detectChanges();
+    tick();
+
+    component.acceptUser(dbUnConfUsers[1]);
+
+    tick();
+    fixture.detectChanges();
+
+    expect(mockUserService.getUnconfirmedUsers).toHaveBeenCalled();
+    expect(mockUserService.acceptUser).toHaveBeenCalled();
+    expect(mockToastrService.error).toHaveBeenCalled();
+
+  }));
+
+  it('should NOT accept user -> invalid data for user', fakeAsync(() => {
+    acceptError = 406;
     fixture.detectChanges();
     tick();
 

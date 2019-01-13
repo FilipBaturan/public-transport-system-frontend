@@ -16,15 +16,13 @@ export class ReportService extends RestService<any>  {
 
   getReport(startDate: string, endDate: string){
     return this.http.get<any>(this.url(['reprot/' + startDate + '/' +
-      endDate])).pipe(
-      catchError(this.handleException)
+      endDate])
     );
   }
 
   getVisitsPerWeek(startDate: string, endDate: string){
     return this.http.get<any>(this.url(['getVisitsPerWeek/' + startDate + '/' +
-      endDate])).pipe(
-      catchError(this.handleException)
+      endDate])
     );
   }
 

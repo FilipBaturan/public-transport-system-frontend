@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Zone } from 'src/app/model/zone.model';
-import { ZoneTransportLine } from 'src/app/model/users/zone-transport-line.model';
+import { ZoneTransportLine } from 'src/app/model/zone.model';
 import { Pricelist } from 'src/app/model/pricelist.model';
 import { Reservation } from 'src/app/model/reservation.model';
 import { Ticket } from 'src/app/model/ticket.model';
@@ -33,20 +33,20 @@ export class TicketsComponent implements OnInit {
   user: User;
   pricelistitemId: number;
 
-  constructor(private authService: AuthService, 
-              private zoneService: ZoneService, 
-              private pricelistService: PricelistService,
-              private reservationService: ReservationService) { }
+  constructor(private authService: AuthService,
+    private zoneService: ZoneService,
+    private pricelistService: PricelistService,
+    private reservationService: ReservationService) { }
 
   ngOnInit() {
     this.pricelistitemId = 0;
     this.reservation = new Reservation(0, [], 21);
     this.price = 0;
-    this.transportType = "BUS";
-    this.ageType = "REGULAR";
-    this.durationType = "ONETIME";
-    this.transportLineType = "One line";
-    console.log("usao")
+    this.transportType = 'BUS';
+    this.ageType = 'REGULAR';
+    this.durationType = 'ONETIME';
+    this.transportLineType = 'One line';
+    console.log('usao');
     this.authService.getCurrentUser().subscribe(
       result => {
         this.user = result;
@@ -62,71 +62,69 @@ export class TicketsComponent implements OnInit {
                 this.pricelist = pricelist;
                 console.log(this.pricelist);
               }
-            )
+            );
           }
-        )
+        );
       }
-    )
+    );
   }
 
-  zoneChange(zoneName: string): void{
-    for(const zone of this.zones){
-      if(zone.name === zoneName){
+  zoneChange(zoneName: string): void {
+    for (const zone of this.zones) {
+      if (zone.name === zoneName) {
         this.zone = zone;
         this.lines = this.zone.lines;
       }
     }
   }
 
-  lineChange(lineName: string): void{
-    for(const line of this.lines){
-      if(line.name === lineName){
+  lineChange(lineName: string): void {
+    for (const line of this.lines) {
+      if (line.name === lineName) {
         this.line = line.id;
       }
     }
   }
 
-  checkPrice(): void{
-    for(const pricelistitem of this.pricelist.items){
-      if(pricelistitem.item.type === this.durationType && pricelistitem.item.age === this.ageType
-         && pricelistitem.item.vehicleType === this.transportType && pricelistitem.item.zone === this.zone.id){ 
-          this.price += pricelistitem.item.cost;
-          this.pricelistitemId = pricelistitem.id;
-          return;
+  checkPrice(): void {
+    for (const pricelistitem of this.pricelist.items) {
+      if (pricelistitem.item.type === this.durationType && pricelistitem.item.age === this.ageType
+        && pricelistitem.item.vehicleType === this.transportType && pricelistitem.item.zone === this.zone.id) {
+        this.price += pricelistitem.item.cost;
+        this.pricelistitemId = pricelistitem.id;
+        return;
       }
     }
   }
 
-  check(): void{
-    let feedback = this.checkAndSetExpiryDate();
-    if(feedback === 0){
+  check(): void {
+    const feedback = this.checkAndSetExpiryDate();
+    if (feedback === 0) {
       this.checkPrice();
-      let t = new Ticket(this.purchaseDate, this.line, this.pricelistitemId, this.durationType);
+      const t = new Ticket(this.purchaseDate, this.line, this.pricelistitemId, this.durationType);
       this.reservation.tickets.push(t);
       console.log(this.reservation);
-    }
-    else if(feedback === 1){
-      console.log("Unesite datum!");
-    }
-    else if(feedback === 2){
-      console.log("Unesite validan datum!");
+    } else if (feedback === 1) {
+      console.log('Unesite datum!');
+    } else if (feedback === 2) {
+      console.log('Unesite validan datum!');
     }
   }
 
-  checkAndSetExpiryDate(): number{
-    if(!this.purchaseDate){
+  checkAndSetExpiryDate(): number {
+    if (!this.purchaseDate) {
       return 1;
     }
-    if(this.purchaseDate.getTime() < Date.now()){
+    if (this.purchaseDate.getTime() < Date.now()) {
       return 2;
     }
     return 0;
   }
 
-  reserve(): void{
-    this.reservationService.create<Reservation>(this.reservation, "reserve").subscribe(
+  reserve(): void {
+    this.reservationService.create<Reservation>(this.reservation, 'reserve').subscribe(
       result => {
-        console.log("Jeeeee");
+        console.log('Jeeeee');
       }
     );
   }
