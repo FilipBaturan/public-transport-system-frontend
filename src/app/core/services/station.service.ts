@@ -1,30 +1,77 @@
 import { Injectable } from '@angular/core';
-import { RestService } from './rest.service';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+
 import { ToastrService } from 'ngx-toastr';
 import { Observable, throwError } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
+import { catchError } from 'rxjs/operators';
 import { Station, StationCollection } from 'src/app/model/station.model';
 
+/**
+ * Provide REST service for station
+ *
+ * @export
+ * @class StationService
+ * @extends {RestService<Station>} REST service template
+ */
 @Injectable({
   providedIn: 'root'
 })
-export class StationService extends RestService<Station> {
+export class StationService {
 
-  private stationURL: string = "/api/station"
+  private url: string = "/api/station";
 
-  constructor(http: HttpClient, toastr: ToastrService) {
-    super(http, ["/api/station"], toastr);
+  /**
+   * Creates an instance of StationService.
+   * @param {HttpClient} http HTTP REST service
+   * @memberof StationService
+   */
+  constructor(private http: HttpClient) {
   }
 
+  /**
+   * Gets all available stations
+   *
+   * @returns {Observable<Station[]>} all available stations
+   * @memberof StationService
+   */
+  findAll(): Observable<Station[]> {
+    return this.http.get<Station[]>(this.url).pipe(catchError(this.handleException));
+  }
+
+  /**
+   * Replaces all old stations with new ones
+   *
+   * @param {StationCollection} stations new or updated stations
+   * @returns {Observable<Station[]>} station collection observable
+   * @memberof StationService
+   */
   replaceStations(stations: StationCollection): Observable<Station[]> {
-    return this.http.post<Station[]>(this.stationURL + "/replace", stations).pipe(
+    return this.http.post<Station[]>(this.url + "/replace", stations).pipe(
        catchError(this.handleException)
     );
   }
 
-  private handleException(err: HttpErrorResponse) {
-    return throwError(err.message);
+  /**
+   * Handles errors occured by REST service
+   *
+   * @private
+   * @param {HttpErrorResponse} err HTTP reponse error
+   * @returns {Observable<never>} observable
+   * @memberof TransportLineService
+   */
+  private handleException(err: HttpErrorResponse): Observable<never> {
+    if (err.error) {
+      if (err.error.message) {
+        return throwError(err.error.message);
+      } else if ((typeof err.error === 'string')
+        && !err.error.startsWith("Error occured")) {
+        return throwError(err.error);
+      } else {
+        return throwError('Server is down!');
+      }
+    } else {
+      return throwError('Client side error!');
+    }
   }
 
 }

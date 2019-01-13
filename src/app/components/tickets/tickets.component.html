@@ -1,7 +1,8 @@
 <div>
     <button (click)="chooseType('DAILY')">Daily tickets</button>
     <button (click)="chooseType('MONTHLY')">Monthly tickets</button>
-    <button (click)="chooseType('ANNUAL')">Annual tickets</button>
+    <button (click)="chooseType('ANNUAL')">Annual tickets</button><br>
+    <p>Reservation of {{durationType}} ticket.</p>
     <div class="dailyReservation" *ngIf="dailySelected">
         <p>Transport type</p>
         <select [(ngModel)]="transportType">
@@ -18,6 +19,7 @@
             <option>ONETIME</option>
             <option>DAILY</option>
         </select>
+
         <div *ngIf="transportLineType === 'One line'">
             <p>Line</p>
             <select (change)="lineChange($event.target.value)">
@@ -69,6 +71,6 @@
                 </select>
         </div>
     </div>
-    <button (click)="check()">Reserve</button>
+    <button [hidden]="this.reservation.tickets.length > 0 && (annualSelected || monthlySelected)" (click)="check()">Reserve</button>
     <button (click)="reserve()">Finish</button>
 </div>

@@ -10,7 +10,7 @@ export class User {
     telephone: string;
 
     constructor(id: number, username: string, password: string, name: string,
-        lastName: string, email: string, isActive: boolean, phoneNumber: string){
+        lastName: string, email: string, isActive: boolean, phoneNumber: string) {
             this.id = id;
             this.username = username;
             this.password = password;
@@ -20,6 +20,5 @@ export class User {
             this.active = isActive;
             this.telephone = phoneNumber;
         }
-
 
 }

@@ -18,6 +18,8 @@ export class UnconfirmedUserListComponent implements OnInit {
 
   ngOnInit() {
 
+    this.unconfirmedUsers = [];
+
     this.userService.getUnconfirmedUsers().subscribe(
       response => {this.unconfirmedUsers = response; 
         this.checkUsersLength();

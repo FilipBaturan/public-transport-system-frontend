@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+
 import { interval } from 'rxjs';
-import { TransportLineViewer, TransportLineCollection } from '../model/transport-line.model';
+import { TransportLineViewer, TransportLineCollection } from '../../model/transport-line.model';
 import { Station, StationCollection } from 'src/app/model/station.model';
-import { StationPosition, TransportLinePosition } from 'src/app/model/position.model';
 import { VehicleType } from 'src/app/model/enums/vehicle-type.model';
 import { TransportLine } from 'src/app/model/transport-line.model';
 import { ToastrService } from 'ngx-toastr';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { StationService } from 'src/app/core/services/station.service';
 import { TransportLineService } from 'src/app/core/services/transport-line.service';
@@ -18,8 +18,16 @@ declare var L: any;
 
 const refresher = interval(2000);
 
+/**
+ * Provides options for transport lines, vehicles, and 
+ * stations management 
+ * Provides real time vehicle movement simulation
+ *
+ * @export
+ * @class MapComponent
+ * @implements {OnInit}
+ */
 @Component({
-  selector: 'app-map',
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.css']
 })
@@ -49,12 +57,22 @@ export class MapComponent implements OnInit {
 
   // form attributes
   private formGroup: FormGroup;
-  private isValidFormSubmitted: boolean;
   private modalForm: NgbModalRef;
+  public isValidFormSubmitted: boolean;
 
-  constructor(private stationService: StationService, 
+  /**
+   * Creates an instance of MapComponent.
+   * @param {StationService} stationService REST service for stations
+   * @param {TransportLineService} transportLineService REST service for transport lines
+   * @param {UserService} userService REST service for user
+   * @param {ToastrService} toastrService user notification service
+   * @param {NgbModal} modalService modal form service
+   * @param {MapService} mapService map service
+   * @memberof MapComponent
+   */
+  constructor(public userService: UserService,
+    private stationService: StationService,
     private transportLineService: TransportLineService,
-    private userService: UserService,
     private toastrService: ToastrService,
     private modalService: NgbModal,
     private mapService: MapService) {
@@ -120,17 +138,23 @@ export class MapComponent implements OnInit {
     this.mapViewStations = {};
     this.stationCounter = 0;
     this.transportLineViewers = [];
-    this.tempTransportLines = []; 
+    this.tempTransportLines = [];
 
     // form init
     this.isValidFormSubmitted = null;
     this.formGroup = new FormGroup({
       name: new FormControl('', [Validators.required,
-         Validators.minLength(1), Validators.maxLength(30)]),
+      Validators.minLength(1), Validators.maxLength(30)]),
       type: new FormControl(null, [Validators.required])
     });
   }
 
+  /**
+   * Fetchs transport line, vehicle, station, zone data
+   * Sets map configuration
+   *
+   * @memberof MapComponent
+   */
   ngOnInit() {
 
     this.mapBB = new MapBBCode({
@@ -162,7 +186,7 @@ export class MapComponent implements OnInit {
         this.showRoute(tl.id);
       }
     });
-    
+
 
     var b1 = L.marker([45.26377, 19.82895], { icon: this.busIcon }).addTo(this.mapViewer.map).bindPopup("<p>bus1</p>");
     var m1 = L.marker([45.24398, 19.82504], { icon: this.metroIcon }).addTo(this.mapViewer.map).bindPopup("<p>metro1</p>");
@@ -170,11 +194,17 @@ export class MapComponent implements OnInit {
     //refresher.subscribe(() => this.b1.setLatLng(this.positions[(++this.bus1PositionIndex) % this.positions.length]));
   }
 
+  /**
+   * Opens map editor and saves updates
+   *
+   * @memberof MapComponent
+   */
   edit(): void {
     var tempThis = this;          // temploral reference to this object
     var original = document.getElementById("original");
     original.style.display = "none";
-    this.mapEditorStations = this.deepCopyStations();
+    this.mapEditorStations = this.mapService.deepCopyStations(this.stations, this.busStationIcon,
+      this.metroStationIcon, this.tramStationIcon);
     this.mapBB.editor("edit", this.bbCode, this.mapEditorStations, this.stationCounter, {
       "bus": this.busStationIcon,
       "metro": this.metroStationIcon,
@@ -182,73 +212,126 @@ export class MapComponent implements OnInit {
     }, function (res: string) {
       original.style.display = "block";
       if (res !== null) {
-        tempThis.applyTransportRoutesChanges(res);
+        tempThis.mapService.applyTransportRoutesChanges(res, tempThis.transportLines,
+          tempThis.tempTransportLines);
         tempThis.transportLineService.replaceTransportLines(
           new TransportLineCollection(tempThis.tempTransportLines)).subscribe(
             response => {
               tempThis.bbCode = "[map][/map]";
               tempThis.transportLines = response;
               tempThis.transportLineViewers = [];
-              if (!tempThis.transportLines.length){
+              if (!tempThis.transportLines.length) {
                 tempThis.mapViewer.updateBBCode(tempThis.bbCode);
-              }else{
+              } else {
                 for (let index = 0; index < tempThis.transportLines.length; index++) {
                   const tl = tempThis.transportLines[index];
                   tempThis.transportLineViewers.push(new TransportLineViewer(tl.id, tl.name, tl.positions, tl.schedule, tl.active,
                     tl.type, tl.zone, true));
-                    tempThis.showRoute(tl.id);
+                  tempThis.showRoute(tl.id);
                 }
               }
-              
-            }, error => error != undefined ? 
-            this.toastrService.error(error) : 
-            this.toastrService.error("Error happend, could not save changes for lines!"));
-        tempThis.placeStations();
+
+            }, error => error != undefined ?
+              tempThis.toastrService.error(error) :
+              tempThis.toastrService.error("Error happend, could not save changes for lines!"));
+        tempThis.stationCounter = tempThis.mapService.placeStations(tempThis.mapViewer,
+          tempThis.mapViewStations, tempThis.mapEditorStations, tempThis.stations, tempThis.stationCounter);
         tempThis.stationService.replaceStations(new StationCollection(tempThis.stations)).subscribe(
           stations => {
             tempThis.stations = stations;
             tempThis.drawStations();
-          }, error => error != undefined ? 
-            this.toastrService.error(error) : 
-            this.toastrService.error("Error happend, could not save changes for stations!"));
+          }, error => error != undefined ?
+            tempThis.toastrService.error(error) :
+            tempThis.toastrService.error("Error happend, could not save changes for stations!"));
       }
     });
   }
 
+  /**
+   * Provides edit option for transport line
+   *
+   * @param {number} id transport line id
+   * @param {*} content modal form content
+   * @memberof MapComponent
+   */
   editRoute(id: number, content: any): void {
     this.editTransprotLine = this.transportLines.find(v => v.id == id);
-      this.name.setValue(this.editTransprotLine.name);
-      this.type.setValue(this.editTransprotLine.type);
-      this.open(content);
-    
+    this.name.setValue(this.editTransprotLine.name);
+    this.type.setValue(this.editTransprotLine.type);
+    this.open(content);
+
   }
 
+  /**
+   * Sumbits modal form and update transport
+   * line changes
+   *
+   * @returns {void}
+   * @memberof MapComponent
+   */
   onFormSubmit(): void {
     this.isValidFormSubmitted = false;
     if (this.formGroup.invalid) {
-       return;
+      return;
     }
     this.isValidFormSubmitted = true;
+    let nameToReplace: string = this.editTransprotLine.name;
+    this.editTransprotLine.positions.content = this.editTransprotLine
+      .positions.content.replace(nameToReplace, this.name.value);
     this.editTransprotLine.name = this.name.value;
     this.editTransprotLine.type = this.type.value;
-    this.transportLineService.create(this.editTransprotLine).subscribe(result=> {
-            let transportLine: TransportLine = result as TransportLine;
-            let index: number = this.transportLines.findIndex(t => t.id == transportLine.id);
-            let trannsprotViewer: TransportLineViewer = this.transportLineViewers
-              .find(t => t.id == transportLine.id);
-            this.transportLines[index] = transportLine;
-            trannsprotViewer.name = transportLine.name;
-            trannsprotViewer.type = transportLine.type;
-            this.modalForm.close();
-            this.toastrService.success("Transport line successfully saved!");
-            this.formGroup.reset();
-         });
-  }
-  open(content: any) {
-    this.modalForm = this.modalService.open(content, 
-      {ariaLabelledBy: 'modal-basic-title', size: "sm"});
+    this.transportLineService.create(this.editTransprotLine).subscribe(result => {
+      let transportLine: TransportLine = result as TransportLine;
+      let index: number = this.transportLines.findIndex(t => t.id == transportLine.id);
+      let trannsprotViewer: TransportLineViewer = this.transportLineViewers
+        .find(t => t.id == transportLine.id);
+      this.transportLines[index] = transportLine;
+      trannsprotViewer.name = transportLine.name;
+      trannsprotViewer.type = transportLine.type;
+      this.modalForm.close();
+      this.bbCode = this.bbCode.replace(nameToReplace, transportLine.name);
+      this.mapViewer.updateBBCode(this.bbCode);
+      this.toastrService.success("Transport line successfully saved!");
+      this.formGroup.reset();
+    });
   }
 
+  /**
+   * Opens modal form for transport line
+   *
+   * @param {*} content modal form content
+   * @memberof MapComponent
+   */
+  open(content: any): void {
+    this.modalForm = this.modalService.open(content,
+      { ariaLabelledBy: 'modal-basic-title', size: "sm" });
+  }
+
+  /**
+   * Shows/Hides transport line on map
+   *
+   * @param {number} id transport line id
+   * @memberof MapComponent
+   */
+  toogleShowRoute(id: number): void {
+    let transportRoute: TransportLineViewer = this.transportLineViewers
+      .filter(transportRoute => { return transportRoute.id === id })[0];
+    if (transportRoute.active) {
+      this.hideRoute(id);
+      transportRoute.active = false;
+    }
+    else {
+      this.showRoute(id);
+      transportRoute.active = true;
+    }
+  }
+
+  /**
+   * Draws stations on map
+   *
+   * @private
+   * @memberof MapComponent
+   */
   private drawStations(): void {
     let icon_type: any;
     this.stations.forEach(station => {
@@ -266,204 +349,17 @@ export class MapComponent implements OnInit {
     });
   }
 
-  private placeStations(): void {
-    // remove all stations on map
-    for (const key in this.mapViewStations) {
-      if (this.mapViewStations.hasOwnProperty(key)) {
-        this.mapViewer.map.removeLayer(this.mapViewStations[key]);
-      }
-    }
-    // update station counter
-    this.stationCounter += Object.keys(this.mapEditorStations).length;
-    // place new station on map
-    this.mapViewStations = {};
-    this.stations = new Array<Station>();
-    let type: string = "";
-    let name: string = "";
-    let latitude: number = 0;
-    let longitude: number = 0;
-    for (const key in this.mapEditorStations) {
-      if (this.mapEditorStations.hasOwnProperty(key)) {
-        const element = this.mapEditorStations[key];
-        [type, name] = element.options.title.split("-");
-        ({lat: latitude, lng: longitude} = element.getLatLng());
-        this.stations.push(new Station(null, name, new StationPosition(null, latitude, longitude, true),
-          VehicleType[type.toUpperCase()], true));
-      }
-    }
-  }
-
-  private applyTransportRoutesChanges(code: string): void {
-    if (/^\[map(=.+)?\]\[\/map\]/.test(code)){
-      return
-    }
-    this.transportLineViewers = [];
-    this.tempTransportLines = [];
-    let index: number;
-    while (true) {
-      index = code.indexOf(";", index + 1);
-      if (index === -1) {
-        break;
-      } else {
-        if (code[index - 1] != ")") {
-          code = code.slice(0, index).concat("(blue|gener@ted" + index + ");" + code.substr(index + 1));
-        } else {
-          let name: string;
-          ({ code, name, index } = this.generateNameToContent(code, index, true));
-          let old: TransportLine = this.findTransportLine(name);
-          if (old != null){
-            this.tempTransportLines.push(new TransportLine(old.id, name,
-              new TransportLinePosition(old.positions.id, this.parsePositions(code, index), true),
-              old.schedule, true, old.type, old.zone));
-          }else{
-            this.tempTransportLines.push(new TransportLine(null, name,
-              new TransportLinePosition(null, this.parsePositions(code, index), true),
-              new Array<number>(), true, "BUS", 1));
-          }
-          
-        }
-      }
-    }
-    index = code.lastIndexOf("[");
-    if (code[index - 1] != ")") {
-      code = code.slice(0, index).concat("(blue|gener@ted" + index + ")[" + code.substr(index + 1));
-      this.tempTransportLines.push(new TransportLine(null, "gener@ted" + index,
-       new TransportLinePosition(null, this.parsePositions(code, code.lastIndexOf("[")), true),
-       new Array<number>(), true, "BUS", 1));
-    } else {
-      let name: string;
-      ({ code, name, index } = this.generateNameToContent(code, index, false));
-      let old: TransportLine = this.findTransportLine(name);
-          if (old != null){
-            this.tempTransportLines.push(new TransportLine(old.id, name,
-              new TransportLinePosition(old.positions.id, this.parsePositions(code, code.lastIndexOf("[")),
-               true), old.schedule, true, old.type, old.zone));
-          }else{
-            this.tempTransportLines.push(new TransportLine(null, name,
-              new TransportLinePosition(null, this.parsePositions(code, code.lastIndexOf("[")), true),
-              new Array<number>(), true, "BUS", 1));
-          }
-    }
-  }
-
-  private findTransportLine(transportLineName:string): TransportLine {
-      for (const transportLine of this.transportLines) {
-        if (transportLine.name == transportLineName){
-          return transportLine;
-        }
-      }
-      return null;
-  }
-
-  private generateNameToContent(code: string, index: number, skip: boolean): ParsedData {
-    let i: number = 0;
-    while (true) {
-      if (code[index - 1 - i] == "(") {
-        break;
-      }
-      ++i;
-    }
-    let data: string = code.slice(index - i, index - 1);
-    let color: string;
-    let name: string;
-    let width: string;
-
-    if (data.indexOf("|") === -1) {
-      color = "blue"; name = "gener@ted" + index; width = "";
-    } else {
-      color = data.split("|")[0].split(",")[0];
-      width = data.split("|")[0].split(",")[1] || "";
-      name = data.split("|")[1];
-      if (name == "") {
-        name = "gener@ted" + index;
-      } else {
-        skip = false;
-      }
-      if (width == "" && color != "") {
-        code = code.slice(0, index - i).concat(color + "|" + name + code.substr(index - 1));
-      } else if (width != "" && color != "") {
-        code = code.slice(0, index - i).concat(color + "," + width + "|" + name + code.substr(index - 1));
-      } else if (width != "" && color == "") {
-        code = code.slice(0, index - i).concat(width + "|" + name + code.substr(index - 1));
-      }
-      if (skip) {
-        index = code.indexOf(";", index + 1);
-      }
-    }
-    return new ParsedData(code, name, index);
-  }
-
-  private parsePositions(code: string, index: number): string {
-    let beginTerminalIndex: number = index;
-    let i: number = 1;
-    while (true) {
-      if (code[index - i] == ";" || code[index - i] == "]") {
-        break;
-      }
-      ++i; --beginTerminalIndex;
-    }
-    return code.substring(beginTerminalIndex, index);
-  }
-
-  private deepCopyStations(): any {
-    var clone = {};
-
-    let icon_type: any;
-    this.stations.forEach(station => {
-      if (station.type === VehicleType.BUS) {
-        icon_type = this.busStationIcon;
-      } else if (station.type === VehicleType.METRO) {
-        icon_type = this.metroStationIcon;
-      } else {
-        icon_type = this.tramStationIcon;
-      }
-      clone[station.id] = L.marker(
-        [station.position.latitude, station.position.longitude], {
-          icon: icon_type,
-          clickable: true,
-          draggable: true,
-          title: station.type + "-" + station.name
-        }).bindPopup('<label>Name: </label><input type="text" style="width: 90px;" id="' + station.id + 
-				  '" value="' + station.name + '"><br /><br /> <input type="button" value="Delete" onclick="mapStationOperations.removeStation('+ 
-				  station.id + ')"/>' + '<input type="button" value="Rename" onclick="mapStationOperations.renameStation(' + 
-				  station.id + ',\'' + station.id + '\',\'' + station.type.toLowerCase() + '\')"/>');
-    });
-    return clone;
-  }
-
-  toogleShowRoute(id: number): void {
-    let transportRoute : TransportLineViewer = this.transportLineViewers
-    .filter(transportRoute => {return transportRoute.id === id})[0];
-    if (transportRoute.active) {
-      this.hideRoute(id);
-      transportRoute.active = false;
-    }
-    else {
-      this.showRoute(id);
-      transportRoute.active = true;
-    }
-  }
-
-  private showRoute(id: number): void {
-    let code: string = this.bbCode + "";
-    let suffix: string = "";
-    let routeCode: string = this.transportLineViewers
-    .filter(transportRoute => {return transportRoute.id === id})[0].positions.content;
-    let index: number = this.bbCode.lastIndexOf("[");
-    if (code.indexOf(";") === -1 && code[index - 1] != ")") { // routes are not shown
-      suffix = routeCode + code.substr(index);
-    } else {
-      suffix = ";" + routeCode + code.substr(index);
-    }
-    code = code.slice(0, index).concat(suffix);
-    this.bbCode = code;
-    this.mapViewer.updateBBCode(this.bbCode);
-  }
-
+  /**
+   * Hides target transport line on map
+   *
+   * @private
+   * @param {number} id transport line id
+   * @memberof MapComponent
+   */
   private hideRoute(id: number): void {
     let code: string = this.bbCode + "";
     let nameIndex: number = code.indexOf(this.transportLineViewers
-      .filter(transportRoute => {return transportRoute.id === id})[0].name);
+      .filter(transportRoute => { return transportRoute.id === id })[0].name);
     let beginTerminalSymbloIndex: number = nameIndex;
     let endTerminalSymbolIndex: number = code.indexOf(";", nameIndex);
     if (endTerminalSymbolIndex === -1) {
@@ -477,6 +373,8 @@ export class MapComponent implements OnInit {
         beginTerminalSymbloIndex += 2;
         endTerminalSymbolIndex += 2;
         break;
+      } else if (i > code.length) {
+        return;
       }
       ++i; --beginTerminalSymbloIndex;
     }
@@ -487,24 +385,34 @@ export class MapComponent implements OnInit {
     this.mapViewer.updateBBCode(this.bbCode);
   }
 
+  /**
+   * Show target transport line on map
+   *
+   * @private
+   * @param {number} id transport line id
+   * @memberof MapComponent
+   */
+  private showRoute(id: number): void {
+    let code: string = this.bbCode + "";
+    let suffix: string = "";
+    let routeCode: string = this.transportLineViewers
+      .filter(transportRoute => { return transportRoute.id === id })[0].positions.content;
+    let index: number = this.bbCode.lastIndexOf("[");
+    if (code.indexOf(";") === -1 && code[index - 1] != ")") { // routes are not shown
+      suffix = routeCode + code.substr(index);
+    } else {
+      suffix = ";" + routeCode + code.substr(index);
+    }
+    code = code.slice(0, index).concat(suffix);
+    this.bbCode = code;
+    this.mapViewer.updateBBCode(this.bbCode);
+  }
+
   private get name() {
     return this.formGroup.get("name");
-   }
-  
+  }
+
   private get type() {
     return this.formGroup.get("type");
-   }
-}
-
-class ParsedData {
-
-  code: string;
-  name: string;
-  index: number;
-
-  constructor(code: string, name: string, index: number) {
-    this.code = code;
-    this.name = name;
-    this.index = index;
   }
 }

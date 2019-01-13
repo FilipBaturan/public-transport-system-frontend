@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { SharedModule } from '../shared/shared.module';
 import { AuthComponent } from './auth/auth.component';
 import { RegUserListComponent } from './reg-user-list/reg-user-list.component';
@@ -23,17 +22,7 @@ import { RouterModule } from '@angular/router';
   ],
   imports: [
     CommonModule,
-    SharedModule,
-    RouterModule.forChild([
-      { path: 'userTickets/:id', component: UserTicketsComponent},
-      { path: 'signin', component: AuthComponent},
-      { path: 'signup', component: SignupComponent},
-      { path: 'unconfirmedUsers', component: UnconfirmedUserListComponent},
-      { path: 'userProfile', component: UserProfileComponent},
-      { path: 'validators', component: ValidatorListComponent},
-      { path: 'registeredUsers', component: RegUserListComponent},
-      { path: 'profile', component: UserProfileComponent},
-    ]),
+    SharedModule
   ],
   exports: [
     AuthComponent,

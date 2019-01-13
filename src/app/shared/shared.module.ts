@@ -18,7 +18,8 @@ import { AngularMultiSelectModule } from 'angular2-multiselect-dropdown';
   ],
   imports: [
     CommonModule,
-    RouterModule
+    RouterModule,
+    NgbModule
   ],
   exports: [
     FormsModule,

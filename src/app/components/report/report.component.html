@@ -1,68 +1,46 @@
-<div style="margin-left: 20px" ng-controller = "reportController" >
+<div style="margin-left: 20px" >
 
-    <h1>Ticket earnings report</h1> 
+    <div class = "mainDiv">
 
-        <p>Number of ticekts sold:</p>
+        <h1>Ticket earnings report</h1> 
+
+        <p *ngIf="totalTicketsSold != -1" ><b>Number of ticekts sold: {{totalTicketsSold}}</b></p>
+
+        <h3>Earnings between {{startDate}} and {{endDate}}</h3>
+
+        <div id = "datePickerDiv">
+            <div class="form-group" style="display: inline-block; margin-left: 20px">
+                    <label style="display: block">Select first day</label>
+                    <input type="date" [ngModel]="startDate | date:'yyyy-MM-dd'" 
+                    class="form-control" style="width: 200px;" (ngModelChange)="startDate = $event"/>
+                </div>
+                    
+                
+                <div class="form-group" style="display: inline-block; margin-left: 20px">
+                    <label style="display: block">Select last day</label>
+                    <input type="date" [ngModel]="endDate | date:'yyyy-MM-dd'" class="form-control"
+                    style="width: 200px;" (ngModelChange)="endDate = $event"/>
+                </div>
+        
+                <button id = "getReportButton" (click)="getPricePerPeriod()">Show price report</button>
+        </div>
+       
+        <div class = "noChart" [hidden]="monthlyData.length != 0">
+            <h3>There are no tickets sold in the period you chose</h3>
+        </div>
+
+        <div class="chartDiv" [hidden]= "weeklyData.length == 0">
+
+            <div id="weeklyChartContainer" ></div>
     
-        <div style="margin-top: 50px" >
-
-          <h3>Earnings</h3>
-
-          <div class="form-group" style="display: inline-block; margin-left: 20px">
-              <label style="display: block">Select first day</label>
-              <input type="date" [ngModel]="startDate | date:'yyyy-MM-dd'" 
-              class="form-control" style="width: 200px;" (ngModelChange)="startDate = $event"/>
-          </div>
-              
-      
-              
-          <div class="form-group" style="display: inline-block; margin-left: 20px">
-              <label style="display: block">Select last day</label>
-              <input type="date" [ngModel]="endDate | date:'yyyy-MM-dd'" class="form-control"
-               style="width: 200px;" (ngModelChange)="endDate = $event"/>
-          </div>
-
-          <button ng-show="showEarningsButton" (click)="getPricePerPeriod()">Show price report</button>
-  
-          <div ng-show = "Earnings">
-              <p>Earnings between {{date1}} and {{date2}}</p>
-              <p>{{totalEarnings}}</p>
-          </div>
-         
-
-      </div>
-
-        <div  style="margin-top: 15px">
-
-          <div style="float: left;">
-
-              <div  ng-show="showWeekly">
-                  <h3>Weekly visits</h3>
-                  <div>
-                      <div id="chartDivWeekly" style="margin-bottom: 20px"></div>
-                      <button style="margin: 5px">{{showButton === true ? 'Show chart' : 'hide chart'}}</button>
-                  </div>
-
-              </div>
-
-          </div>
-
-          <div>
-              <div ng-show="showMonthly" >
-                  <h3>Monthly visits</h3>
-                  <div>
-                      <div id="chartDivMonthly"></div>
-                      <button style="margin: 5px"
-                      ng-click="hideMohthlyChart()">Hide chart</button>
-                  </div>
-                  
-              </div>
-          </div>
-
-
+        </div>
+    
+        <div class="chartDiv" [hidden]="monthlyData.length == 0">
+            
+            <div id="monthlyChartContainer" ></div>
+            
         </div>
         
-        
-
-
+    </div>
+    
 </div>

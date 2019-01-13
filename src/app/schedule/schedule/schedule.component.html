@@ -1,36 +1,34 @@
-<angular2-multiselect [data]="dayOfWeekDropdown" 
-[(ngModel)]="selectedItem" 
-[settings]="dayOfWeekDropdownSettings" 
-(onSelect)="onDayOfWeekSelect($event)" 
-(onDeSelect)="onDayOfWeekDeSelect($event)"></angular2-multiselect>
+<div class="wrapper">
+    <app-nav-bar></app-nav-bar>
+    <div id="content">
+        <angular2-multiselect [data]="dayOfWeekDropdown" [(ngModel)]="selectedItem" [settings]="dayOfWeekDropdownSettings"
+            (onSelect)="onDayOfWeekSelect($event)" (onDeSelect)="onDayOfWeekDeSelect($event)"></angular2-multiselect>
 
 
-<angular2-multiselect [data]="transportLineDropdown" 
-[(ngModel)]="selectedItems" 
-[settings]="transportLineDropdownSettings" 
-(onSelect)="onItemSelect($event)" 
-(onDeSelect)="onItemDeSelect($event)"></angular2-multiselect>
+        <angular2-multiselect [data]="transportLineDropdown" [(ngModel)]="selectedItems" [settings]="transportLineDropdownSettings"
+            (onSelect)="onItemSelect($event)" (onDeSelect)="onItemDeSelect($event)"></angular2-multiselect>
 
-<table mat-table [dataSource]="dataSource" matSort>
+        <table mat-table [dataSource]="dataSource" matSort>
 
-    <!-- Position Column -->
-    <ng-container matColumnDef="{{column}}" *ngFor="let column of displayedColumns">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> {{column}} </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element[column]}} </mat-cell>
-    </ng-container>
+            <!-- Position Column -->
+            <ng-container matColumnDef="{{column}}" *ngFor="let column of displayedColumns">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{column}} </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element[column]}} </mat-cell>
+            </ng-container>
 
-    <!-- <ng-container matColumnDef="{{column}}" *ngFor="let column of daysOfWeekArray"> 
-        <th mat-header-cell *matHeaderCellDef> {{column}} </th>
-    </ng-container> -->
+            <!-- <ng-container matColumnDef="{{column}}" *ngFor="let column of daysOfWeekArray"> 
+                <th mat-header-cell *matHeaderCellDef> {{column}} </th>
+            </ng-container> -->
 
 
-    <mat-header-row *matHeaderRowDef="columnsToDisplay"></mat-header-row>
-    
-    <!-- <tr mat-header-row *matHeaderRowDef="daysOfWeekArray"
-      class="example-second-header-row">
-    </tr> -->
-    
-    <mat-row *matRowDef="let row; columns: columnsToDisplay;"></mat-row>
-</table>
+            <mat-header-row *matHeaderRowDef="columnsToDisplay"></mat-header-row>
 
+            <!-- <tr mat-header-row *matHeaderRowDef="daysOfWeekArray"
+              class="example-second-header-row">
+            </tr> -->
 
+            <mat-row *matRowDef="let row; columns: columnsToDisplay;"></mat-row>
+        </table>
+
+    </div>
+</div>

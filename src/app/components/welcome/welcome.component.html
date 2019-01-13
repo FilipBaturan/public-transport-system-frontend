@@ -1,31 +1,36 @@
-<div class="card">
-    <div *ngFor="let news of allNews">
-        <app-news></app-news>
-    </div>
-    <app-auth></app-auth>
-    <div class="card-header">
-        {{pageTitle}}
-    </div>
-
-    <div class="card-body">
-        <div class="container-fluid">
-            <div class="text-center">
-                <img src="https://ocdn.eu/pulscms-transforms/1/NUBk9lMaHR0cDovL29jZG4uZXUvaW1hZ2VzL3B1bHNjbXMvTldRN01EQV8vNWQ4NjA5YjYzYjAxMTZjZThkMTFkZWQ5YmNhMDgzZjQuanBlZ5GTAs0EsACBoTAB" class="img-responsive center-block" style="max-height:300px;padding-bottom:50px"
-                />
+<div class="wrapper">
+    <app-nav-bar></app-nav-bar>
+    <div id="content">
+        <div class="card">
+            <div class="container">
+                <div class="row">
+                    <div class="col-7">
+                        <app-news></app-news>
+                    </div>
+                    <div class="col-2"></div>
+                    <div class="col-3">
+                        <app-auth></app-auth>
+                    </div>
+                </div>
             </div>
+            <div class="card-body">
+                <div class="container-fluid">
+                    <div class="text-center">
+                        <img src="https://ocdn.eu/pulscms-transforms/1/NUBk9lMaHR0cDovL29jZG4uZXUvaW1hZ2VzL3B1bHNjbXMvTldRN01EQV8vNWQ4NjA5YjYzYjAxMTZjZThkMTFkZWQ5YmNhMDgzZjQuanBlZ5GTAs0EsACBoTAB" class="img-responsive center-block" style="max-height:300px;padding-bottom:50px"
+                        />
+                    </div>
 
-            <div class=" text-center ">Developed by:</div>
-            <div class="text-center ">
-                <h3>Filip Baturan</h3>
-                <button [routerLink]="[ '/signup'] ">Sign up</button>
+
+                    <div class="text-center ">
+                        <button [routerLink]="['/signup'] ">Sign up</button>
+                    </div>
+
+                    <input id="upload" type="file" (change)="onFileSelected($event)">
+                    <button (click)="onUpload()">Upload</button>
+                    <button (click)="onLoad()">Load</button>
+                    <img alt="testSlika" src="data:image/png;base64,{{image.content}}">
+                </div>
             </div>
-
-            <app-map></app-map>
-
-            <input id="upload" type="file" (change)="onFileSelected($event)">
-            <button (click)="onUpload()">Upload</button>
-            <button (click)="onLoad()">Load</button>
-            <img alt="testSlika" src="data:image/png;base64,{{image.content}}">
         </div>
     </div>
 </div>
