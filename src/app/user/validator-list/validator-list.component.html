@@ -3,7 +3,7 @@
 <div id = "mainDiv">
   <div class="example-container mat-elevation-z8">
 
-    <table *ngIf="validators.length != 0" mat-table [dataSource]="validators">
+    <table id = "validatorsTable" *ngIf="validators.length != 0" mat-table [dataSource]="validators">
   
       <!--- Note that these columns can be defined in any order.
             The actual rendered columns are set as a property on the row definition" -->
@@ -66,7 +66,7 @@
       <span>New validator</span>
     </mat-toolbar>
      
-      <form class="my-form">
+      <form id = "addForm" class="my-form">
         <mat-card-content>
           <form class="my-form">
               <mat-form-field class="full-width">
@@ -81,7 +81,7 @@
                   </mat-form-field>
                   <mat-form-field class="full-width">
                     <mat-label>Username</mat-label>
-                    <input  matInput  placeholder="Address" name="address"
+                    <input  matInput  placeholder="Username" name="username"
                     [(ngModel)]="newUser.username"  required>
                   </mat-form-field>
                   <mat-form-field class="full-width">
@@ -89,17 +89,12 @@
                     <input  matInput  placeholder="Email" name="email" [(ngModel)]="newUser.email">
                   </mat-form-field>
                   <mat-form-field class="full-width">
-                      <mat-label>Password</mat-label>
-                      <input  matInput  placeholder="Password" name = "password" 
-                      [(ngModel)]="newUser.password">
-                    </mat-form-field>
-                  <mat-form-field class="full-width">
                     <mat-label>Telephone</mat-label>
                     <input  matInput  placeholder="Telephone" name = "telephone"
                      [(ngModel)]="newUser.telephone">
                   </mat-form-field>
                   <mat-card-actions>
-                      <button mat-raised-button (click)="addValidator()" color="primary">
+                      <button id = "formAddButton" mat-raised-button (click)="addValidator()" color="primary">
                         Add validator
                       </button>
                    </mat-card-actions>

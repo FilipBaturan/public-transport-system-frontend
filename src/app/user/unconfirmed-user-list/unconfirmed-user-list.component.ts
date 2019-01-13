@@ -12,7 +12,6 @@ export class UnconfirmedUserListComponent implements OnInit {
 
   displayedColumns: string[] = ['firstName', 'lastName', 'userName', 'email','docs', 'accept', 'deny']
   unconfirmedUsers: User[];
-  noUsers: boolean;
 
   constructor(private userService: UserService, private toastr: ToastrService) { }
 
@@ -21,24 +20,25 @@ export class UnconfirmedUserListComponent implements OnInit {
     this.unconfirmedUsers = [];
 
     this.userService.getUnconfirmedUsers().subscribe(
-      response => {this.unconfirmedUsers = response; 
-        this.checkUsersLength();
-      }
+      response => {this.unconfirmedUsers = response; }
     )
   }
 
   acceptUser(user:User){
     this.userService.acceptUser(user).subscribe(
-      response => {
-        if (response == false)
-          this.toastr.info("There was a problem with accepting this users document");
-        else
-        {
-          var index = this.unconfirmedUsers.indexOf(user);
-          this.unconfirmedUsers.splice(index, 1);
-        }
+      () => {
+       
+        var index = this.unconfirmedUsers.indexOf(user);
+        const copiedData =  this.unconfirmedUsers.slice();
+        copiedData.splice(index, 1);
+        this.unconfirmedUsers = copiedData;
         this.toastr.info("Documents succesfully accepted!")
-        this.checkUsersLength();
+      },
+      err => {
+        if(err.status == 404) 
+          this.toastr.error("User with given id does not exist")
+        else
+        this.toastr.error("There was a problem with accepting this users document");
       }
     )
   }
@@ -46,24 +46,21 @@ export class UnconfirmedUserListComponent implements OnInit {
   denyUser(user: User){
     this.userService.denyUser(user).subscribe(
       response => {
-        if (response == false)
-        this.toastr.info("There was a problem with denying this users document");
-        else
-        {
-          var index = this.unconfirmedUsers.indexOf(user);
-          this.unconfirmedUsers.splice(index, 1);
-        }
+       
+        var index = this.unconfirmedUsers.indexOf(user);
+        const copiedData =  this.unconfirmedUsers.slice();
+        copiedData.splice(index, 1);
+        this.unconfirmedUsers = copiedData;
         this.toastr.info("Documents succesfully denied!")
-        this.checkUsersLength();
+      },
+      err => {
+        if(err.status == 404) 
+          this.toastr.error("User with given id does not exist")
+        else
+        this.toastr.error("There was a problem with denying this users document");
       }
     )
   }
 
-  checkUsersLength(){
-    if (this.unconfirmedUsers.length == 0)
-      this.noUsers = true;
-    else
-      this.noUsers = false;
-  }
 
 }
