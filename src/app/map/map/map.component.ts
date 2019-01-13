@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 import { TransportLineViewer } from '../../model/transport-line.model';
@@ -51,9 +51,11 @@ export class MapComponent implements OnInit, OnDestroy {
   private vehicles: object;
 
   // form attributes
-  private formGroup: FormGroup;
   private modalForm: NgbModalRef;
   public isValidFormSubmitted: boolean;
+  public formGroup: FormGroup;
+
+  @ViewChild('content') modalFormElement: ElementRef;
 
   /**
    * Creates an instance of MapComponent.
@@ -186,14 +188,14 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // this.mapService.disconnect();
+    this.mapService.disconnect();
   }
 
   /**
    * Opens map editor and saves updates
    */
   edit(): void {
-    // this.mapService.disconnect();
+    this.mapService.disconnect();
     const _this = this; // temploral reference to this object
     const original = document.getElementById('original');
     original.style.display = 'none';
@@ -350,8 +352,6 @@ export class MapComponent implements OnInit, OnDestroy {
         beginTerminalSymbloIndex += 2;
         endTerminalSymbolIndex += 2;
         break;
-      } else if (i > code.length) {
-        return;
       }
       ++i; --beginTerminalSymbloIndex;
     }

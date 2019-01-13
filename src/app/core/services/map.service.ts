@@ -39,7 +39,7 @@ export class MapService {
    * @param TransportLine[] tempTransportLines temploral collection of transprot lines
    */
   applyTransportRoutesChanges(code: string, transportLines: TransportLine[],
-    tempTransportLines: TransportLine[], ): void {
+    tempTransportLines: TransportLine[]): void {
     if (/^\[map(=.+)?\]\[\/map\]/.test(code)) {
       return;
     }
