@@ -15,6 +15,8 @@ import { UserModule } from './user/user.module';
 import { ScheduleModule } from './schedule/schedule.module';
 import { CoreModule } from './core/core.module';
 import { RouteMapperModule } from './route-mapper/route-mapper.module';
+import { HttpClientModule } from '@angular/common/http';
+import { NewsAdministrationComponent } from './components/news-administration/news-administration.component';
 
 
 @NgModule({
@@ -23,9 +25,11 @@ import { RouteMapperModule } from './route-mapper/route-mapper.module';
     NewsComponent,
     WelcomeComponent,
     ReportComponent,
-    TicketsComponent
+    TicketsComponent,
+    NewsAdministrationComponent
   ],
   imports: [
+    HttpClientModule,
     BrowserModule,
     BrowserAnimationsModule,
     ToastrModule.forRoot(),

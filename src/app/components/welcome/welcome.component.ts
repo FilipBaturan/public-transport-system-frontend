@@ -20,7 +20,6 @@ export class WelcomeComponent implements OnInit {
   usernameInvalid: boolean;
   passwordInvalid: boolean;
   dataFlag: boolean;
-  allNews: News[];
 
   private selectedFile: File;
   private imagePath: string;
@@ -30,20 +29,13 @@ export class WelcomeComponent implements OnInit {
     private userService: UserService, private newsService: NewsService) {
     this.selectedFile = null;
     this.image = {content: '', format: ''};
-  }
+   }
 
   ngOnInit() {
     this.login = new LogIn('', '');
-    this.resetFlags();
-    this.newsService.findAll().subscribe(
-      result => {
-        this.allNews = result;
-        console.log(this.allNews);
-      }
-    );
   }
 
-  tryLogin(): void {
+    tryLogin(): void {
     this.resetFlags();
     if (this.login.username === '') {
       this.usernameInvalid = true;
@@ -55,9 +47,7 @@ export class WelcomeComponent implements OnInit {
     }
     if (!this.dataFlag) {
       this.userService.login(this.login).subscribe(
-        user => {
-          console.log('Jeeeeee');
-        }
+        user => { }
       );
     }
   }

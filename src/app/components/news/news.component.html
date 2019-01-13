@@ -1,7 +1,12 @@
 <div>
-    <div *ngFor="let news of allNews">
-        <p>{{news.title}}</p>
-        <p>{{news.content}}</p>
-        <p>{{news.date}}</p>
+    <h3>NEWS</h3>
+    <div class="news">
+        <div *ngFor="let news of allNews" class="card" style="width: 45rem;">
+            <div class="card-body">
+                <h5 class="card-title">{{news.title}}</h5>
+                <p class="card-text">{{news.content}}</p>
+                <p class="card-footer">{{news.date|date: 'dd.MM.yyyy HH:mm'}}</p>
+            </div>
+        </div>
     </div>
 </div>

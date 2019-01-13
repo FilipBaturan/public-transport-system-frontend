@@ -15,3 +15,15 @@ export class News{
         this.date = date;
     }
 }
+
+export class NewsToAdd{
+    title: string;
+    content: string;
+    operator: number;
+
+    constructor(title: string, content: string, operator: number){
+        this.title = title;
+        this.content = content;
+        this.operator = operator;
+    }
+}

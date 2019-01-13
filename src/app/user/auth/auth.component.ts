@@ -12,7 +12,7 @@ import { UserService } from 'src/app/core/services/user.service';
 })
 export class AuthComponent implements OnInit {
 
-  user: User = new User(0, "", "", "", "", "", true, "");
+  user: User = new User(0, '', '', '', '', '', true, '');
 
 
   constructor(private userService: UserService,
@@ -20,7 +20,8 @@ export class AuthComponent implements OnInit {
     private router: Router,
     private toastr: ToastrService) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+  }
 
   signin(): void {
     this.userService.authenticate(this.user).subscribe(
@@ -28,8 +29,7 @@ export class AuthComponent implements OnInit {
         this.toastr.success(`Welcome ${this.user.username}`);
         this.router.navigate(['home']);
       },
-      err => { });
+      err => { this.toastr.warning('Nisi se ulogovao'); });
   }
-  
 
 }

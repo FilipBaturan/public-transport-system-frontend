@@ -22,7 +22,7 @@ export class UserService extends RestService<User> {
   }
 
   authenticate(body: User): Observable<Authentication> {
-    return this.http.post<Authentication>(this.url(["auth"]), body).pipe(
+    return this.http.post<Authentication>(this.url(['auth']), body).pipe(
       tap(res => {
         localStorage.setItem(authenticatedUser, JSON.stringify({
           user: res.user,
@@ -39,7 +39,7 @@ export class UserService extends RestService<User> {
     return this.http.post<any>(this.url(['auth']), user);
   }
 
-  logout(){
+  logout() {
     localStorage.removeItem(authenticatedUser);
   }
 
@@ -96,7 +96,7 @@ export class UserService extends RestService<User> {
     return authenticatedUser
       && authenticatedUser.roles
       && authenticatedUser.roles.indexOf('VALIDATOR') > -1;
-  }  
+  }
 
   getUnconfirmedUsers() {
     console.log(this.url(['unvalidatedUsers']));
@@ -105,53 +105,53 @@ export class UserService extends RestService<User> {
     );
   }
 
-  acceptUser(user: User){
+  acceptUser(user: User) {
     return this.http.put<any>(this.url(['approveUser']), user);
   }
 
-  denyUser(user: User){
+  denyUser(user: User) {
     return this.http.put<any>(this.url(['denyUser']), user);
   }
 
-  getValidators(){
+  getValidators() {
     return this.http.get<any>(this.url(['getValidators'])).pipe(
       catchError(this.handleException)
     );
   }
 
-  updateValidator(user: User){
+  updateValidator(user: User) {
     return this.http.put<any>(this.url(['updateValidator']), user);
   }
 
-  addValidator(user: User){
+  addValidator(user: User) {
     return this.http.post<any>(this.url(['addValidator']), user);
   }
 
-  addOperator(user: User){
+  addOperator(user: User) {
     return this.http.post<User>(this.url(['addOperator']), user).pipe(
       catchError(this.handleError<boolean>())
     );
   }
 
-  getOperators(){
+  getOperators() {
     return this.http.get<User[]>(this.url(['getOperators'])).pipe(
       catchError(this.handleError<User[]>())
     );
   }
 
-  updateOperator(user: User){
+  updateOperator(user: User) {
     return this.http.put<User>(this.url(['updateOperator']), user).pipe(
       catchError(this.handleError<boolean>())
     );
   }
 
-  getRegUsers(){
+  getRegUsers() {
     return this.http.get<any>(this.url(['registeredUsers'])).pipe(
       catchError(this.handleException)
     );
   }
 
-  getByUsername(username: String){
+  getByUsername(username: String) {
     return this.http.get<any>(this.url(['getByUsername/' + username])).pipe(
       catchError(this.handleException)
     );
@@ -162,7 +162,7 @@ export class UserService extends RestService<User> {
       if (response.error.message) {
         return throwError(response.error.message);
       } else if ((typeof response.error === 'string')
-        && !response.error.startsWith("Error occured")) {
+        && !response.error.startsWith('Error occured')) {
         return throwError(response.error);
       } else {
         return throwError('Server is down!');

@@ -9,8 +9,7 @@
             <a [routerLink]="['/welcome']">Home</a>
         </li>
         <li>
-            <a [routerLink]="" (click)="mapCollapsed = !mapCollapsed" [attr.aria-expanded]="!mapCollapsed"
-                aria-controls="homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Map</a>
+            <a [routerLink]="" (click)="mapCollapsed = !mapCollapsed" [attr.aria-expanded]="!mapCollapsed" aria-controls="homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Map</a>
             <ul class="collapse list-unstyled" id="homeSubmenu" [ngbCollapse]="mapCollapsed">
                 <li>
                     <a [routerLink]="['/map']">Routes</a>
@@ -20,6 +19,9 @@
                 </li>
                 <li>
                     <a [routerLink]="['/vehicles']">Vehicles</a>
+                </li>
+                <li>
+                    <a [routerLink]="['/newsAdministration']">News</a>
                 </li>
             </ul>
         </li>
@@ -33,23 +35,22 @@
             <a [routerLink]="['/updateSchedules']">Update Schedules</a>
         </li>
         <li>
-            <a id = "reportLink" [routerLink]="['/reports']">Reports</a>
+            <a id="reportLink" [routerLink]="['/reports']">Reports</a>
         </li>
         <li>
-            <a [routerLink]="" id = "usersField" (click)="accCollapsed = !accCollapsed" [attr.aria-expanded]="!accCollapsed"
-                aria-controls="pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Account</a>
+            <a [routerLink]="" id="usersField" (click)="accCollapsed = !accCollapsed" [attr.aria-expanded]="!accCollapsed" aria-controls="pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Account</a>
             <ul class="collapse list-unstyled" id="pageSubmenu" [ngbCollapse]="accCollapsed">
                 <li>
-                    <a [routerLink]="">Profile</a>
+                    <a [routerLink]="['/userProfile']">Profile</a>
                 </li>
                 <li>
-                    <a id = "unconfirmedUsersLink" [routerLink]="['/unconfirmedUsers']">Unconfirmed Users</a>
+                    <a id="unconfirmedUsersLink" [routerLink]="['/unconfirmedUsers']">Unconfirmed Users</a>
                 </li>
                 <li>
-                    <a id = "regUsersLink" [routerLink]="['/registeredUsers']">Registered Users</a>
+                    <a id="regUsersLink" [routerLink]="['/registeredUsers']">Registered Users</a>
                 </li>
                 <li>
-                    <a id = "validatorsLink" [routerLink]="['/validators']">Validators</a>
+                    <a id="validatorsLink" [routerLink]="['/validators']">Validators</a>
                 </li>
                 <li>
                     <a [routerLink]="['/operators']">Operators</a>
