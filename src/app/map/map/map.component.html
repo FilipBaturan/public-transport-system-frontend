@@ -5,8 +5,8 @@
     <div id="edit"></div> <br/>
     <div *ngIf="transportLineViewers && transportLineViewers.length">
       <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-        <button class="btn btn-primary mr-2" *ngIf="userService.isOperater() && stations && transportLines" (click)="edit()">Edit</button>
-        <div *ngFor="let route of transportLineViewers" class="btn-group mr-2" role="group">
+        <button class="btn btn-primary mb-2 mr-2" *ngIf="userService.isOperater() && stations && transportLines" (click)="edit()">Edit</button>
+        <div *ngFor="let route of transportLineViewers" class="btn-group mb-2 mr-2" role="group">
           <button class="btn btn-primary view" (click)="toogleShowRoute(route.id)">{{route.name}}</button>
           <button *ngIf="userService.isOperater()" class="btn btn-primary edit" (click)="editRoute(route.id, content)">
             <i class="fas fa-edit"></i></button>
@@ -16,10 +16,8 @@
   </div>
 </div>
 
-
-
 <ng-template #content let-modal>
-  <div class="modal-header">
+  <div class="modal-header text-white bg-primary">
     <h4 class="modal-title" id="modal-basic-title">Edit Transport Line</h4>
     <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
       <span aria-hidden="true">&times;</span>
@@ -28,27 +26,27 @@
   <div class="modal-body">
     <form [formGroup]="formGroup">
       <div class="form-group">
-        <label for="name">Name</label>
-        <input type="text" placeholder="DTR1" formControlName="name" /> <br />
+        <label for="name">Name:</label>
+        <input type="text" placeholder="DTR1" class="form-control" formControlName="name" />
         <div *ngIf="name.errors && isValidFormSubmitted != null && !isValidFormSubmitted">
-          <span *ngIf="name.errors.minlength">
+          <span *ngIf="name.errors.minlength" class="text-danger">
             Transport line name must be at least 1 characters long!
           </span>
-          <span *ngIf="name.errors.maxlength">
+          <span *ngIf="name.errors.maxlength" class="text-danger">
             Transport line name must be maximum 30 characters long!
           </span>
-          <span *ngIf="name.errors.required">
+          <span *ngIf="name.errors.required" class="text-danger">
             Transport line name is required!
           </span>
         </div>
         <label for="type">Type: </label>
-        <select class="dropdown-select" formControlName="type">
+        <select class="dropdown-select" class="form-control col-md-6" formControlName="type">
           <option value="BUS">Bus</option>
           <option value="METRO">Metro</option>
           <option value="TRAM">Tram</option>
         </select>
         <div *ngIf="type.errors && isValidFormSubmitted != null && !isValidFormSubmitted">
-          <span *ngIf="type.errors.required">
+          <span *ngIf="type.errors.required" class="text-danger">
             Transport line type is required!
           </span>
         </div>
@@ -56,6 +54,6 @@
     </form>
   </div>
   <div class="modal-footer">
-    <button type="submit" class="btn btn-outline-dark" (click)="onFormSubmit()">Save</button>
+    <button type="submit" class="btn btn-success" (click)="onFormSubmit()">Save</button>
   </div>
 </ng-template>

@@ -9,7 +9,6 @@ import * as SockJS from 'sockjs-client';
 import { TrackedVehicle } from 'src/app/model/vehicle.model';
 
 
-
 /**
  * Provides wide range of utilities for map component
  * @export
