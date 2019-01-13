@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { FormControl, FormGroup, Validators, AbstractControl } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { ToastrService } from 'ngx-toastr';
-import { Vehicle, VehicleSaver } from 'src/app/model/vehicle.model';
+import { Vehicle } from 'src/app/model/vehicle.model';
 import { TransportLine } from 'src/app/model/transport-line.model';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { VehicleService } from 'src/app/core/services/vehicle.service';
@@ -103,9 +103,9 @@ export class VehicleComponent implements OnInit {
   editVehicle(id: number, content: any): void {
     const vehicle = this.vehicles.find(v => v.id === id);
     this.name.setValue(vehicle.name);
-    this.type.setValue(vehicle.vehicleType);
+    this.type.setValue(vehicle.type);
     this.currentLine.setValue(null);
-    this.onTypeChange(vehicle.vehicleType);
+    this.onTypeChange(vehicle.type);
     this.id.setValue(id);
 
     this.headerName = 'Edit Vehicle';
@@ -135,7 +135,7 @@ export class VehicleComponent implements OnInit {
       currentLine = currentLine.id;
     }
     this.vehicleService.create(
-      { id: this.id.value, name: this.name.value, vehicleType: this.type.value, currentLine: currentLine, active: true})
+      { id: this.id.value, name: this.name.value, type: this.type.value, currentLine: currentLine, active: true})
       .subscribe(result => {
         const vehicle: Vehicle = result as Vehicle;
         if (vehicle.id !== this.id.value) {
@@ -159,7 +159,7 @@ export class VehicleComponent implements OnInit {
    */
   onTypeChange(vehicleType: string): void {
     this.filtredLinesByType = this.transportLines
-      .filter(transportLine => transportLine.vehicleType === vehicleType);
+      .filter(transportLine => transportLine.type === vehicleType);
     this.filtredLinesByType.unshift(null);
   }
 

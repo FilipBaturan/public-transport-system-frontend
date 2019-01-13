@@ -12,7 +12,7 @@ describe('TransportLineService', () => {
   const newTransportLine: TransportLine = {
     id: 7, name: 'T7',
     positions: { id: 7, content: '73 17', active: true },
-    schedule: [], active: true, vehicleType: VehicleType.BUS, zone: 1
+    schedule: [], active: true, type: VehicleType.BUS, zone: 1
   };
 
   let mockHttp: HttpTestingController;
@@ -22,23 +22,23 @@ describe('TransportLineService', () => {
     dbTransportLines = [
       {
         id: 1, name: 'T1', positions: { id: 1, content: '420 153', active: true }
-        , schedule: [1, 2, 3], active: true, vehicleType: VehicleType.BUS, zone: 1
+        , schedule: [1, 2, 3], active: true, type: VehicleType.BUS, zone: 1
       },
       {
         id: 2, name: 'T2', positions: { id: 2, content: '85 12', active: true },
-        schedule: [4, 5, 6], active: true, vehicleType: VehicleType.METRO, zone: 2
+        schedule: [4, 5, 6], active: true, type: VehicleType.METRO, zone: 2
       },
       {
         id: 3, name: 'T3', positions: { id: 3, content: '16 75', active: true },
-        schedule: [], active: true, vehicleType: VehicleType.TRAM, zone: 1
+        schedule: [], active: true, type: VehicleType.TRAM, zone: 1
       },
       {
         id: 4, name: 'T4', positions: { id: 4, content: '34 96', active: true },
-        schedule: [7, 8, 9], active: true, vehicleType: VehicleType.BUS, zone: 3
+        schedule: [7, 8, 9], active: true, type: VehicleType.BUS, zone: 3
       },
       {
         id: 5, name: 'T5', positions: { id: 5, content: '27 34', active: true },
-        schedule: [], active: true, vehicleType: VehicleType.METRO, zone: 1
+        schedule: [], active: true, type: VehicleType.METRO, zone: 1
       }
     ];
 
@@ -119,7 +119,7 @@ describe('TransportLineService', () => {
   it('should create/update transport line', fakeAsync(() => {
     const tl = {
       id: null, name: 'T7', positions: { id: null, content: '42.34 56.17', active: true },
-      schedule: [], active: true, vehicleType: VehicleType.BUS, zone: 1
+      schedule: [], active: true, type: VehicleType.BUS, zone: 1
     };
     service.create(tl).subscribe(transportLine => {
       expect(transportLine.id).toEqual(newTransportLine.id);
@@ -127,7 +127,7 @@ describe('TransportLineService', () => {
       expect(transportLine.positions).toEqual(newTransportLine.positions);
       expect(transportLine.schedule).toEqual(newTransportLine.schedule);
       expect(transportLine.active).toEqual(newTransportLine.active);
-      expect(transportLine.vehicleType).toEqual(newTransportLine.vehicleType);
+      expect(transportLine.type).toEqual(newTransportLine.type);
       expect(transportLine.zone).toEqual(newTransportLine.zone);
     });
 
@@ -149,11 +149,11 @@ describe('TransportLineService', () => {
             active: dbTransportLines[4].positions.active
           },
           schedule: dbTransportLines[4].schedule,
-          active: dbTransportLines[4].active, vehicleType: dbTransportLines[4].vehicleType, zone: dbTransportLines[4].zone
+          active: dbTransportLines[4].active, type: dbTransportLines[4].type, zone: dbTransportLines[4].zone
         },
         {
           id: null, name: 'T7', positions: { id: null, content: '73.72 42.19', active: true },
-          schedule: [], active: true, vehicleType: VehicleType.BUS, zone: 1
+          schedule: [], active: true, type: VehicleType.BUS, zone: 1
         }
       ]
     };

@@ -11,9 +11,9 @@ describe('ZoneService', () => {
   const url = '/api/zone';
   let dbZones: Zone[];
   const zone: Zone = {id: 4, name: 'Beach', lines: [
-    {id: 10, name: 'B1', vehicleType: VehicleType.BUS, active: true},
-    {id: 11, name: 'B2', vehicleType: VehicleType.METRO, active: true},
-    {id: 12, name: 'B3', vehicleType: VehicleType.BUS, active: true}
+    {id: 10, name: 'B1', type: VehicleType.BUS, active: true},
+    {id: 11, name: 'B2', type: VehicleType.METRO, active: true},
+    {id: 12, name: 'B3', type: VehicleType.BUS, active: true}
   ], active: true};
 
   let mockToastrService: any;
@@ -24,23 +24,23 @@ describe('ZoneService', () => {
     dbZones = [
       {
         id: 1, name: 'DownTown', lines: [
-          { id: 1, name: 'D1', vehicleType: VehicleType.BUS, active: true },
-          { id: 2, name: 'D2', vehicleType: VehicleType.METRO, active: true },
-          { id: 3, name: 'D3', vehicleType: VehicleType.BUS, active: true }
+          { id: 1, name: 'D1', type: VehicleType.BUS, active: true },
+          { id: 2, name: 'D2', type: VehicleType.METRO, active: true },
+          { id: 3, name: 'D3', type: VehicleType.BUS, active: true }
         ], active: true
       },
       {
         id: 2, name: 'Metro Station', lines: [
-          { id: 4, name: 'M1', vehicleType: VehicleType.BUS, active: true },
-          { id: 5, name: 'M2', vehicleType: VehicleType.METRO, active: true },
-          { id: 6, name: 'M3', vehicleType: VehicleType.METRO, active: true }
+          { id: 4, name: 'M1', type: VehicleType.BUS, active: true },
+          { id: 5, name: 'M2', type: VehicleType.METRO, active: true },
+          { id: 6, name: 'M3', type: VehicleType.METRO, active: true }
         ], active: true
       },
       {
         id: 3, name: 'Train Station', lines: [
-          { id: 7, name: 'T1', vehicleType: VehicleType.TRAM, active: true },
-          { id: 8, name: 'T2', vehicleType: VehicleType.TRAM, active: true },
-          { id: 9, name: 'T3', vehicleType: VehicleType.METRO, active: true }
+          { id: 7, name: 'T1', type: VehicleType.TRAM, active: true },
+          { id: 8, name: 'T2', type: VehicleType.TRAM, active: true },
+          { id: 9, name: 'T3', type: VehicleType.METRO, active: true }
         ], active: true
       }
     ];

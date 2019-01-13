@@ -7,7 +7,7 @@ export interface TransportLine {
     schedule: number[];
     positions: TransportLinePosition;
     active: boolean;
-    vehicleType: VehicleType;
+    type: VehicleType;
     zone: number;
 }
 

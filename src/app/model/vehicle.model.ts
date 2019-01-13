@@ -3,7 +3,7 @@ import { VehicleType } from './enums/vehicle-type.model';
 export interface Vehicle {
     id: number;
     name: string;
-    vehicleType: VehicleType;
+    type: VehicleType;
     currentLine: TransportLineIdentifier;
 }
 
@@ -15,7 +15,16 @@ export interface TransportLineIdentifier {
 export interface VehicleSaver {
     id: number;
     name: string;
-    vehicleType: VehicleType;
+    type: VehicleType;
     currentLine: number;
+    active: boolean;
+}
+
+export interface TrackedVehicle {
+    id: number;
+    name: string;
+    vehicleType: VehicleType;
+    latitude: number;
+    longitude: number;
     active: boolean;
 }

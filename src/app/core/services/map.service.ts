@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 
 import { Station } from 'src/app/model/station.model';
-import { StationPosition, TransportLinePosition } from 'src/app/model/position.model';
 import { VehicleType } from 'src/app/model/enums/vehicle-type.model';
 import { TransportLine } from 'src/app/model/transport-line.model';
 import { ParsedData } from 'src/app/model/util.model';
+import * as Stomp from '@stomp/stompjs';
+import * as SockJS from 'sockjs-client';
+import { TrackedVehicle } from 'src/app/model/vehicle.model';
 
 
 
@@ -17,11 +19,16 @@ import { ParsedData } from 'src/app/model/util.model';
 })
 export class MapService {
 
+  private stompClient: Stomp.CompatClient;
+  private endpoint: string;
 
   /**
    * Creates an instance of MapService.
    */
-  constructor() { }
+  constructor() {
+    this.endpoint = 'http://localhost:8080/gkz-stomp-endpoint';
+    this.stompClient = Stomp.Stomp.over(new SockJS(this.endpoint));
+  }
 
   /**
    * Updates map code with transprot lines changes
@@ -50,13 +57,17 @@ export class MapService {
           ({ code, name, index } = this.generateNameToContent(code, index, true));
           const old: TransportLine = this.findTransportLine(name, transportLines);
           if (old != null) {
-            tempTransportLines.push({id: old.id, name: name,
-              positions: {id: old.positions.id, content: this.parsePositions(code, index), active: true},
-              schedule: old.schedule, active: true, vehicleType: old.vehicleType, zone: old.zone});
+            tempTransportLines.push({
+              id: old.id, name: name,
+              positions: { id: old.positions.id, content: this.parsePositions(code, index), active: true },
+              schedule: old.schedule, active: true, type: old.type, zone: old.zone
+            });
           } else {
-            tempTransportLines.push({id: null, name: name,
-              positions: {id: null, content: this.parsePositions(code, index), active: true},
-              schedule: [], active: true, vehicleType: VehicleType.BUS, zone: 1});
+            tempTransportLines.push({
+              id: null, name: name,
+              positions: { id: null, content: this.parsePositions(code, index), active: true },
+              schedule: [], active: true, type: VehicleType.BUS, zone: 1
+            });
           }
 
         }
@@ -65,22 +76,59 @@ export class MapService {
     index = code.lastIndexOf('[');
     if (code[index - 1] !== ')') {
       code = code.slice(0, index).concat('(blue|gener@ted' + index + ')[' + code.substr(index + 1));
-      tempTransportLines.push({id: null, name: 'gener@ted' + index,
-        positions: {id: null, content: this.parsePositions(code, code.lastIndexOf('[')), active: true},
-        schedule: [], active: true, vehicleType: VehicleType.BUS, zone: 1});
+      tempTransportLines.push({
+        id: null, name: 'gener@ted' + index,
+        positions: { id: null, content: this.parsePositions(code, code.lastIndexOf('[')), active: true },
+        schedule: [], active: true, type: VehicleType.BUS, zone: 1
+      });
     } else {
       let name: string;
       ({ code, name, index } = this.generateNameToContent(code, index, false));
       const old: TransportLine = this.findTransportLine(name, transportLines);
       if (old != null) {
-        tempTransportLines.push({id: old.id, name: name,
-          positions: {id: old.positions.id, content: this.parsePositions(code, code.lastIndexOf('[')),
-          active: true}, schedule: old.schedule, active: true, vehicleType: old.vehicleType, zone: old.zone});
+        tempTransportLines.push({
+          id: old.id, name: name,
+          positions: {
+            id: old.positions.id, content: this.parsePositions(code, code.lastIndexOf('[')),
+            active: true
+          }, schedule: old.schedule, active: true, type: old.type, zone: old.zone
+        });
       } else {
-        tempTransportLines.push({id: null, name: name,
-          positions: {id: null, content: this.parsePositions(code, code.lastIndexOf('[')), active: true},
-          schedule: [], active: true, vehicleType: VehicleType.BUS, zone: 1});
+        tempTransportLines.push({
+          id: null, name: name,
+          positions: { id: null, content: this.parsePositions(code, code.lastIndexOf('[')), active: true },
+          schedule: [], active: true, type: VehicleType.BUS, zone: 1
+        });
       }
+    }
+  }
+
+  /**
+   * Connects to web socket for vehicles tracking
+   *
+   * @param object vehicles on map
+   * @param any mapViewer map viewer
+   * @param any busIcon icon for bus
+   * @param any metroIcon icon for metro
+   * @param any tramIcon icon for tram
+   */
+  connect(vehicles: object, mapViewer: any, busIcon: any, metroIcon: any, tramIcon: any) {
+      const _this = this;
+      this.stompClient.connect({}, function () {
+        _this.stompClient.subscribe('/topic/hi', function (updatedVehicles) {
+          _this.updateVehicles(vehicles, JSON.parse(updatedVehicles.body), mapViewer,
+            busIcon, metroIcon, tramIcon);
+        });
+      });
+  }
+
+  /**
+   * Disconnects from web socket
+   *
+   */
+  disconnect() {
+    if (this.stompClient != null) {
+      this.stompClient.disconnect();
     }
   }
 
@@ -163,7 +211,7 @@ export class MapService {
         index = code.indexOf(';', index + 1);
       }
     }
-    return {code: code, name: name, index: index};
+    return { code: code, name: name, index: index };
   }
 
   /**
@@ -195,10 +243,40 @@ export class MapService {
       const element = mapEditorStations[key];
       [type, name] = element.options.title.split('-');
       ({ lat: latitude, lng: longitude } = element.getLatLng());
-      stations.push({id: null, name: name, position: {id: null, latitude: latitude, longitude: longitude, active: true},
-       type: VehicleType[type.toUpperCase()], active: true});
+      stations.push({
+        id: null, name: name, position: { id: null, latitude: latitude, longitude: longitude, active: true },
+        type: VehicleType[type.toUpperCase()], active: true
+      });
     }
     return stationCounter;
+  }
+
+  /**
+   * Updates vehicles position on map
+   *
+   * @param object vehicles on map
+   * @param TrackedVehicle[] updatedVehicles vehicles with updated position
+   * @param any mapViewer map viewer
+   * @param any busIcon icon for bus
+   * @param any metroIcon icon for metro
+   * @param any tramIcon icon for tram
+   */
+  updateVehicles(vehicles: object, updatedVehicles: TrackedVehicle[],
+    mapViewer: any, busIcon: any, metroIcon: any, tramIcon: any): void {
+    for (const id in vehicles) {
+        mapViewer.map.removeLayer(vehicles[id]);
+    }
+    Object.keys(vehicles).forEach(key => { delete vehicles[key]; });
+    updatedVehicles.forEach(vehicle => {
+      let iconType: any;
+      if (vehicle.vehicleType === VehicleType.BUS) {
+        iconType = busIcon;
+      } else {
+        vehicle.vehicleType === VehicleType.METRO ? iconType = metroIcon : iconType = tramIcon;
+      }
+      vehicles[vehicle.id] = L.marker([vehicle.latitude, vehicle.longitude], { icon: iconType })
+        .addTo(mapViewer.map).bindPopup('<p>' + vehicle.name + '</p>');
+    });
   }
 
   /**

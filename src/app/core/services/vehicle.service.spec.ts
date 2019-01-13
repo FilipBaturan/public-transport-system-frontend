@@ -11,7 +11,7 @@ describe('VehicleService', () => {
 
   const url = '/api/vehicle';
   let dbVehicles: Vehicle[];
-  const vehicleSaver: VehicleSaver = { id: 6, name: 'bus6', vehicleType: VehicleType.BUS, currentLine: 1, active: true };
+  const vehicleSaver: VehicleSaver = { id: 6, name: 'bus6', type: VehicleType.BUS, currentLine: 1, active: true };
 
   let mockToastrService: any;
   let mockHttp: HttpTestingController;
@@ -19,11 +19,11 @@ describe('VehicleService', () => {
 
   beforeEach(() => {
     dbVehicles = [
-      { id: 1, name: 'bus1', vehicleType: VehicleType.BUS, currentLine: { id: 1, name: 'B1' } },
-      { id: 2, name: 'tram2', vehicleType: VehicleType.TRAM, currentLine: { id: 2, name: 'T1' } },
-      { id: 3, name: 'bus3', vehicleType: VehicleType.BUS, currentLine: { id: 3, name: 'B2' } },
-      { id: 4, name: 'metro4', vehicleType: VehicleType.METRO, currentLine: { id: 4, name: 'M1' } },
-      { id: 5, name: 'bus5', vehicleType: VehicleType.BUS, currentLine: { id: 5, name: 'B1' } }
+      { id: 1, name: 'bus1', type: VehicleType.BUS, currentLine: { id: 1, name: 'B1' } },
+      { id: 2, name: 'tram2', type: VehicleType.TRAM, currentLine: { id: 2, name: 'T1' } },
+      { id: 3, name: 'bus3', type: VehicleType.BUS, currentLine: { id: 3, name: 'B2' } },
+      { id: 4, name: 'metro4', type: VehicleType.METRO, currentLine: { id: 4, name: 'M1' } },
+      { id: 5, name: 'bus5', type: VehicleType.BUS, currentLine: { id: 5, name: 'B1' } }
     ];
 
     mockToastrService = jasmine.createSpyObj(['success', 'error']);
@@ -109,7 +109,7 @@ describe('VehicleService', () => {
     service.create(vehicleSaver).subscribe(vehicle => {
       expect(vehicle.id).toEqual(vehicleSaver.id);
       expect(vehicle.name).toEqual(vehicleSaver.name);
-      expect(vehicle.vehicleType).toEqual(vehicleSaver.vehicleType);
+      expect(vehicle.type).toEqual(vehicleSaver.type);
       expect(vehicle.currentLine.id).toEqual(vehicleSaver.currentLine);
     });
 
@@ -117,7 +117,7 @@ describe('VehicleService', () => {
     expect(req.request.method).toBe('POST');
     req.flush({
       id: vehicleSaver.id, name: vehicleSaver.name,
-      vehicleType: vehicleSaver.vehicleType,
+      type: vehicleSaver.type,
       currentLine: { id: vehicleSaver.currentLine, name: 'B1' }
     });
     expect(req.request.body).toBe(vehicleSaver);

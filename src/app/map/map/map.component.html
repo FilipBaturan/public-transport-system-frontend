@@ -1,11 +1,11 @@
 <div class="wrapper">
   <app-nav-bar></app-nav-bar>
   <div id="content">
-    <button *ngIf="userService.isOperater() && stations && transportLines" (click)="edit()">Edit</button>
     <div id="original"></div>
-    <div id="edit"></div>
+    <div id="edit"></div> <br/>
     <div *ngIf="transportLineViewers && transportLineViewers.length">
       <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+        <button class="btn btn-primary mr-2" *ngIf="userService.isOperater() && stations && transportLines" (click)="edit()">Edit</button>
         <div *ngFor="let route of transportLineViewers" class="btn-group mr-2" role="group">
           <button class="btn btn-primary view" (click)="toogleShowRoute(route.id)">{{route.name}}</button>
           <button *ngIf="userService.isOperater()" class="btn btn-primary edit" (click)="editRoute(route.id, content)">

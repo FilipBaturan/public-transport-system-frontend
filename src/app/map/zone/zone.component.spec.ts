@@ -8,7 +8,7 @@ import { ZoneComponent } from './zone.component';
 import { ZoneService } from 'src/app/core/services/zone.service';
 import { ToastrService } from 'ngx-toastr';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { Zone, ZoneTransportLine } from 'src/app/model/zone.model';
+import { Zone } from 'src/app/model/zone.model';
 import { VehicleType } from 'src/app/model/enums/vehicle-type.model';
 import { of, asyncScheduler, throwError } from 'rxjs';
 
@@ -55,28 +55,28 @@ describe('ZoneComponent', () => {
     dbZones = [
       {
         id: 1, name: 'Z1', lines: [
-          { id: 1, name: 'T1', vehicleType: VehicleType.BUS, active: true },
-          { id: 4, name: 'T4', vehicleType: VehicleType.BUS, active: true }
+          { id: 1, name: 'T1', type: VehicleType.BUS, active: true },
+          { id: 4, name: 'T4', type: VehicleType.BUS, active: true }
         ], active: true
       },
       { id: 2, name: 'Z2', lines: [], active: true },
       {
         id: 3, name: 'Z3', lines: [
-          { id: 3, name: 'T3', vehicleType: VehicleType.METRO, active: true },
-          { id: 5, name: 'T5', vehicleType: VehicleType.BUS, active: true },
-          { id: 6, name: 'T6', vehicleType: VehicleType.TRAM, active: true }
+          { id: 3, name: 'T3', type: VehicleType.METRO, active: true },
+          { id: 5, name: 'T5', type: VehicleType.BUS, active: true },
+          { id: 6, name: 'T6', type: VehicleType.TRAM, active: true }
         ], active: true
       },
       {
         id: 4, name: 'Z4', lines: [
-          { id: 2, name: 'T2', vehicleType: VehicleType.TRAM, active: true }
+          { id: 2, name: 'T2', type: VehicleType.TRAM, active: true }
         ], active: true
       }
     ];
 
     newZone = {
       id: 5, name: 'Z5', lines: [
-        { id: 7, name: 'T7', vehicleType: VehicleType.METRO, active: true }]
+        { id: 7, name: 'T7', type: VehicleType.METRO, active: true }]
       , active: true
     };
 
