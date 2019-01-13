@@ -32,33 +32,39 @@
             <a [routerLink]="['/schedule']">Schedule</a>
         </li>
         <li>
-            <a [routerLink]="['/reports']">Reports</a>
+            <a [routerLink]="['/updateSchedules']">Update Schedules</a>
         </li>
         <li>
-            <a [routerLink]="" (click)="accCollapsed = !accCollapsed" [attr.aria-expanded]="!accCollapsed" aria-controls="pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Account</a>
+            <a id="reportLink" [routerLink]="['/reports']">Reports</a>
+        </li>
+        <li>
+            <a [routerLink]="" id="usersField" (click)="accCollapsed = !accCollapsed" [attr.aria-expanded]="!accCollapsed" aria-controls="pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Account</a>
             <ul class="collapse list-unstyled" id="pageSubmenu" [ngbCollapse]="accCollapsed">
                 <li>
                     <a [routerLink]="['/userProfile']">Profile</a>
                 </li>
                 <li>
-                    <a [routerLink]="['/unconfirmedUsers']">Unconfirmed Users</a>
+                    <a id="unconfirmedUsersLink" [routerLink]="['/unconfirmedUsers']">Unconfirmed Users</a>
                 </li>
                 <li>
-                    <a [routerLink]="['/registeredUsers']">Registered Users</a>
+                    <a id="regUsersLink" [routerLink]="['/registeredUsers']">Registered Users</a>
                 </li>
                 <li>
-                    <a [routerLink]="['/validators']">Validators</a>
+                    <a id="validatorsLink" [routerLink]="['/validators']">Validators</a>
+                </li>
+                <li>
+                    <a [routerLink]="['/operators']">Operators</a>
                 </li>
             </ul>
         </li>
     </ul>
 
     <ul class="list-unstyled CTAs">
-        <li>
+        <li *ngIf="!userService.isAuthenticated()">
             <a [routerLink]="" class="singIn">Sign In</a>
         </li>
-        <li>
-            <a [routerLink]="" class="logout">Log Out</a>
+        <li *ngIf="userService.isAuthenticated()">
+            <a [routerLink]="" class="logout" (click)="logout()">Log Out</a>
         </li>
     </ul>
 </nav>

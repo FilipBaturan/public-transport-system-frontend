@@ -64,7 +64,13 @@ export class ScheduleComponent implements OnInit {
               obj[key] = departure;
               temp.push(obj);
             }else{
-              temp[index][key] = departure;
+              if (temp[index])
+                temp[index][key] = departure;
+              else{
+                let obj = this.setupObj(response);
+                obj[key] = departure;
+                temp.push(obj);
+              }
             }index++;
           });
           this.tableArr = temp;
@@ -74,6 +80,24 @@ export class ScheduleComponent implements OnInit {
       },
       (err) => console.error(err)
     );
+  }
+
+  setupObj(schedules){
+
+    let obj = {};
+
+    schedules.forEach(element => {
+      let tl = element.transportLine.name;
+      let workday = tl + "-WORKDAY";
+      let saturday = tl + "-SATURDAY";
+      let sunday = tl + "-SUNDAY";
+
+      obj[workday] = "";
+      obj[saturday] = "";
+      obj[sunday] = "";
+    });
+    
+    return obj;
   }
 
   setupTransportLineSelect(){
@@ -122,9 +146,7 @@ export class ScheduleComponent implements OnInit {
   }
 
   filterSchedules(transportLine: string, dayOfWeek: DayOfWeek){
-    console.log(dayOfWeek)
     let dow = this.getStringFromEnum(dayOfWeek);
-    console.log(dow);
     let bla = String(transportLine+"-"+dow);
     this.columnsToDisplay.push(bla);
     console.log(transportLine+"-"+dow);
@@ -157,6 +179,7 @@ export class ScheduleComponent implements OnInit {
 
   onDayOfWeekSelect(item){
     let dow = this.getDayOfWeekEnum(item.itemName);
+    this.columnsToDisplay = [];
     this.selectedItems = [];
     //this.transportLineDropdownSettings["disabled"] = false;
     console.log(this.transportLineDropdownSettings);

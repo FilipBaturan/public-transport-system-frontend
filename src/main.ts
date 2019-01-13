@@ -6,6 +6,7 @@ import { environment } from './environments/environment';
 
 declare var MapBBCode: any;
 declare var L: any;
+declare var CanvasJS: any;
 
 if (environment.production) {
   enableProdMode();

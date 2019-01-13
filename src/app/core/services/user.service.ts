@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { RestService } from './rest.service';
 import { User } from 'src/app/model/users/user.model';
@@ -37,6 +37,10 @@ export class UserService extends RestService<User> {
 
   login(user: LogIn): Observable<any> {
     return this.http.post<any>(this.url(['auth']), user);
+  }
+
+  logout() {
+    localStorage.removeItem(authenticatedUser);
   }
 
   signout(): void {
@@ -92,54 +96,80 @@ export class UserService extends RestService<User> {
     return authenticatedUser
       && authenticatedUser.roles
       && authenticatedUser.roles.indexOf('VALIDATOR') > -1;
-  }  
+  }
 
   getUnconfirmedUsers() {
-    return this.http.get<User[]>(this.url(['unvalidatedUsers'])).pipe(
+    console.log(this.url(['unvalidatedUsers']));
+    return this.http.get<any>(this.url(['unvalidatedUsers'])).pipe(
+      catchError(this.handleException)
+    );
+  }
+
+  acceptUser(user: User) {
+    return this.http.put<any>(this.url(['approveUser']), user);
+  }
+
+  denyUser(user: User) {
+    return this.http.put<any>(this.url(['denyUser']), user);
+  }
+
+  getValidators() {
+    return this.http.get<any>(this.url(['getValidators'])).pipe(
+      catchError(this.handleException)
+    );
+  }
+
+  updateValidator(user: User) {
+    return this.http.put<any>(this.url(['updateValidator']), user);
+  }
+
+  addValidator(user: User) {
+    return this.http.post<any>(this.url(['addValidator']), user);
+  }
+
+  addOperator(user: User) {
+    return this.http.post<User>(this.url(['addOperator']), user).pipe(
+      catchError(this.handleError<boolean>())
+    );
+  }
+
+  getOperators() {
+    return this.http.get<User[]>(this.url(['getOperators'])).pipe(
       catchError(this.handleError<User[]>())
     );
   }
 
-  acceptUser(user: User){
-    return this.http.put<User>(this.url(['approveUser']), user).pipe(
+  updateOperator(user: User) {
+    return this.http.put<User>(this.url(['updateOperator']), user).pipe(
       catchError(this.handleError<boolean>())
     );
   }
 
-  denyUser(user: User){
-    return this.http.put<User>(this.url(['denyUser']), user).pipe(
-      catchError(this.handleError<boolean>())
+  getRegUsers() {
+    return this.http.get<any>(this.url(['registeredUsers'])).pipe(
+      catchError(this.handleException)
     );
   }
 
-  getValidators(){
-    return this.http.get<User[]>(this.url(['getValidators'])).pipe(
-      catchError(this.handleError<User[]>())
+  getByUsername(username: String) {
+    return this.http.get<any>(this.url(['getByUsername/' + username])).pipe(
+      catchError(this.handleException)
     );
   }
 
-  updateValidator(user: User){
-    return this.http.put<User>(this.url(['updateValidator']), user).pipe(
-      catchError(this.handleError<boolean>())
-    );
-  }
-
-  addValidator(user: User){
-    return this.http.post<User>(this.url(['addValidator']), user).pipe(
-      catchError(this.handleError<boolean>())
-    );
-  }
-
-  getRegUsers(){
-    return this.http.get<User[]>(this.url(['registeredUsers'])).pipe(
-      catchError(this.handleError<User[]>())
-    );
-  }
-
-  getByUsername(username: String){
-    return this.http.get<User>(this.url(['getByUsername/' + username])).pipe(
-      catchError(this.handleError<User>())
-    );
+  private handleException(response: HttpErrorResponse): Observable<never> {
+    if (response.error) {
+      if (response.error.message) {
+        return throwError(response.error.message);
+      } else if ((typeof response.error === 'string')
+        && !response.error.startsWith('Error occured')) {
+        return throwError(response.error);
+      } else {
+        return throwError('Server is down!');
+      }
+    } else {
+      return throwError('Client side error!');
+    }
   }
 
 }

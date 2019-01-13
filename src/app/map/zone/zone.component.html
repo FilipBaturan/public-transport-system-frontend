@@ -1,12 +1,10 @@
 <div class="wrapper">
   <app-nav-bar></app-nav-bar>
   <div id="content">
-    <button class="btn btn-lg btn-outline-primary" (click)="create(content)">Add</button>
-
     <ng-container *ngIf="zones && zones.length; then zonesExist; else zonesNotExist"></ng-container>
     <ng-template #zonesExist>
       <div class="row card-deck">
-        <div *ngFor="let zone of zones" class="col-sm-4 mb-3 d-flex align-items-stretch">
+        <div *ngFor="let zone of zones" class="col-sm-3 mb-3 d-flex align-items-stretch">
           <div class="card text-white bg-primary">
             <div class="card-body">
               <h4 class="card-title text-center">{{zone.name}}</h4>
@@ -15,6 +13,14 @@
             <div class="card-footer text-center">
               <button class="btn btn-success w-50" (click)="editZone(zone.id, content)">Edit</button>
               <button class="btn btn-danger w-50" (click)="deleteZone(zone.id)">Delete</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-3 mb-3 d-flex align-items-stretch addCard" (click)="create(content)">
+          <div class="card text-white bg-primary">
+            <div class="card-body">
+              <h4 class="card-title text-center">Add a Zone</h4>
+              <img class="card-img-top addIcon pl-4 pr-4" [src]="addImage" alt="Add a Zone">
             </div>
           </div>
         </div>

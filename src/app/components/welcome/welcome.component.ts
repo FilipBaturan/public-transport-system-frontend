@@ -1,13 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { LogIn } from 'src/app/model/login.model';
-
 import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs/operators';
 
 import { News } from 'src/app/model/news.model';
 import { UploadService } from 'src/app/core/services/upload.service';
 import { UserService } from 'src/app/core/services/user.service';
 import { NewsService } from 'src/app/core/services/news.service';
+import { Image } from 'src/app/model/util.model';
 
 
 @Component({
@@ -23,20 +22,20 @@ export class WelcomeComponent implements OnInit {
   dataFlag: boolean;
 
   private selectedFile: File;
-  private imagePath: String;
+  private imagePath: string;
   private image: Image;
 
   constructor(private http: HttpClient, private uploadService: UploadService,
     private userService: UserService, private newsService: NewsService) {
     this.selectedFile = null;
-    this.image = new Image('', '');
+    this.image = {content: '', format: ''};
    }
 
   ngOnInit() {
     this.login = new LogIn('', '');
   }
 
-  tryLogin(): void {
+    tryLogin(): void {
     this.resetFlags();
     if (this.login.username === '') {
       this.usernameInvalid = true;
@@ -48,9 +47,7 @@ export class WelcomeComponent implements OnInit {
     }
     if (!this.dataFlag) {
       this.userService.login(this.login).subscribe(
-        user => {
-           console.log('Jeeeeee');
-        }
+        user => { }
       );
     }
   }
@@ -68,26 +65,15 @@ export class WelcomeComponent implements OnInit {
   onUpload() {
     const uploadData: FormData = new FormData();
     uploadData.append('image', this.selectedFile, this.selectedFile.name);
-    this.http.post('/api/image', uploadData, {responseType: 'text'})
-    .subscribe(
-      res => {this.imagePath = res; },
-      error => {console.log(error); });
+    this.uploadService.uploadImage(uploadData).subscribe(
+      res => { this.imagePath = res; console.log(res); },
+      error => { console.log(error); });
   }
 
   onLoad() {
-    this.http.get<Image>('api/image/' + this.imagePath).subscribe(
-      res => {this.image = res; },
-      error => {console.log(error); }
+    this.uploadService.getImage(this.imagePath).subscribe(
+      res => { this.image = res; },
+      error => { console.log(error); }
     );
-  }
-}
-
-class Image {
-  content: any;
-  format: string;
-
-  constructor(content: any, format: string) {
-    this.content = content;
-    this.format = format;
   }
 }

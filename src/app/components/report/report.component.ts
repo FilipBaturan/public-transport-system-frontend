@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { ReportService } from '../../core/services/report.service';
-import * as CanvasJS from './canvasjs.min';
+import { HttpResponse } from '@angular/common/http';
+
+declare var CanvasJS: any;
 
 @Component({
   selector: 'app-report',
@@ -13,7 +15,6 @@ export class ReportComponent implements OnInit {
   totalTicketsSold: number = -1;
   startDate: string = "2018-01-01";
   endDate: string = "2018-12-12";
-  map : Map<string, number>;
   visitsPerWeek: any[];
   showButton: boolean;
   showWeeklyChart: boolean;
@@ -24,7 +25,6 @@ export class ReportComponent implements OnInit {
   monthlyChart: any;
 
   constructor(private toastrService: ToastrService, private reportService: ReportService) {
-    
    }
 
   ngOnInit() {
@@ -70,12 +70,6 @@ export class ReportComponent implements OnInit {
     this.monthlyChart.render();
   }
 
-  refreshCharts()
-  {
-   
-    //
-  }
-
   getPricePerPeriod(){
 
     this.showWeeklyChart = true;
@@ -95,12 +89,7 @@ export class ReportComponent implements OnInit {
       else
       {
         this.reportService.getReport(this.startDate, this.endDate).subscribe(
-          response => {
-            this.map = response; 
-            for(const key in this.map ) {
-              console.log(key + " => " + this.map[key])
-            }
-
+          () => {
             this.reportService.getVisitsPerWeek(this.startDate, this.endDate).subscribe(
               response => {
                 
@@ -117,21 +106,21 @@ export class ReportComponent implements OnInit {
 
                 this.reportService.getVisitsPerMonth(this.startDate, this.endDate).subscribe(
                   response => {              
-                    //this.visitsPerWeek = response; 
                     for(const key in response) {
                       this.monthlyData.push({y: response[key], label: key })
                       counter += response[key];
                     }
-                   
                     this.monthlyChart.render();
                   }
                 );
-              }
-            );
-          }
-        ) 
-      };
-    }
+              },
+              err => { this.toastrService.error("Invalid date format!"); }
+            )
+          },
+          err => { this.toastrService.error("Invalid date format!"); }
+        )
+      }
+    };
   }
 
   formWeek(dateString:string)

@@ -20,7 +20,6 @@ import { NewsAdministrationComponent } from './components/news-administration/ne
 
 
 @NgModule({
-
   declarations: [
     AppComponent,
     NewsComponent,
@@ -39,7 +38,7 @@ import { NewsAdministrationComponent } from './components/news-administration/ne
     SharedModule,
     UserModule,
     ScheduleModule,
-    RouteMapperModule
+    RouteMapperModule,
   ],
   exports: [RouterModule],
   providers: [],

@@ -4,10 +4,12 @@ import { RouterModule } from '@angular/router';
 
 import { ScheduleComponent } from './schedule/schedule.component';
 import { SharedModule } from '../shared/shared.module';
+import { ScheduleUpdateComponent } from './schedule-update/schedule-update.component';
 
 @NgModule({
   declarations: [
-    ScheduleComponent
+    ScheduleComponent,
+    ScheduleUpdateComponent
   ],
   imports: [
     CommonModule,

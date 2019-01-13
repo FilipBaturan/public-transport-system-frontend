@@ -7,6 +7,8 @@ import { AuthService } from 'src/app/core/services/auth.service';
 import { ZoneService } from 'src/app/core/services/zone.service';
 import { PricelistService } from 'src/app/core/services/pricelist.service';
 import { ReservationService } from 'src/app/core/services/reservation.service';
+import { MatCheckboxModule, MatCardModule, MatDatepickerModule, MatNativeDateModule, MatProgressSpinnerModule, MatMenuModule, MatIconModule, MatToolbarModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatSortModule, MatTableModule } from '@angular/material';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 @Component({
@@ -39,7 +41,22 @@ describe('TicketsComponent', () => {
 
     TestBed.configureTestingModule({
       imports: [
-        FormsModule
+        FormsModule,
+        MatCheckboxModule,
+        MatCardModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatProgressSpinnerModule,
+        MatMenuModule,
+        MatIconModule,
+        MatToolbarModule,
+        MatButtonModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatSelectModule,
+        MatSortModule,
+        MatTableModule,
+        BrowserAnimationsModule
       ],
       declarations: [
         TicketsComponent,

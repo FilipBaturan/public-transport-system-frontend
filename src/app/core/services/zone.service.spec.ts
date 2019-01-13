@@ -1,21 +1,20 @@
 import { TestBed, fakeAsync } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing'
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 
 import { ZoneService } from './zone.service';
 import { ToastrService } from 'ngx-toastr';
 import { Zone } from 'src/app/model/zone.model';
-import { ZoneTransportLine } from 'src/app/model/zone.model';
 import { VehicleType } from 'src/app/model/enums/vehicle-type.model';
 
 describe('ZoneService', () => {
 
-  const url: string = '/api/zone';
+  const url = '/api/zone';
   let dbZones: Zone[];
-  let zone: Zone = new Zone(4, 'Beach', [
-    new ZoneTransportLine(10, 'B1', VehicleType.BUS, true),
-    new ZoneTransportLine(11, 'B2', VehicleType.METRO, true),
-    new ZoneTransportLine(12, 'B3', VehicleType.BUS, true)
-  ], true);
+  const zone: Zone = {id: 4, name: 'Beach', lines: [
+    {id: 10, name: 'B1', vehicleType: VehicleType.BUS, active: true},
+    {id: 11, name: 'B2', vehicleType: VehicleType.METRO, active: true},
+    {id: 12, name: 'B3', vehicleType: VehicleType.BUS, active: true}
+  ], active: true};
 
   let mockToastrService: any;
   let mockHttp: HttpTestingController;
@@ -23,21 +22,27 @@ describe('ZoneService', () => {
 
   beforeEach(() => {
     dbZones = [
-      new Zone(1, 'DownTown', [
-        new ZoneTransportLine(1, 'D1', VehicleType.BUS, true),
-        new ZoneTransportLine(2, 'D2', VehicleType.METRO, true),
-        new ZoneTransportLine(3, 'D3', VehicleType.BUS, true)
-      ], true),
-      new Zone(2, 'Metro Station', [
-        new ZoneTransportLine(4, 'M1', VehicleType.BUS, true),
-        new ZoneTransportLine(5, 'M2', VehicleType.METRO, true),
-        new ZoneTransportLine(6, 'M3', VehicleType.METRO, true)
-      ], true),
-      new Zone(3, 'Train Station', [
-        new ZoneTransportLine(7, 'T1', VehicleType.TRAM, true),
-        new ZoneTransportLine(8, 'T2', VehicleType.TRAM, true),
-        new ZoneTransportLine(9, 'T3', VehicleType.METRO, true)
-      ], true)
+      {
+        id: 1, name: 'DownTown', lines: [
+          { id: 1, name: 'D1', vehicleType: VehicleType.BUS, active: true },
+          { id: 2, name: 'D2', vehicleType: VehicleType.METRO, active: true },
+          { id: 3, name: 'D3', vehicleType: VehicleType.BUS, active: true }
+        ], active: true
+      },
+      {
+        id: 2, name: 'Metro Station', lines: [
+          { id: 4, name: 'M1', vehicleType: VehicleType.BUS, active: true },
+          { id: 5, name: 'M2', vehicleType: VehicleType.METRO, active: true },
+          { id: 6, name: 'M3', vehicleType: VehicleType.METRO, active: true }
+        ], active: true
+      },
+      {
+        id: 3, name: 'Train Station', lines: [
+          { id: 7, name: 'T1', vehicleType: VehicleType.TRAM, active: true },
+          { id: 8, name: 'T2', vehicleType: VehicleType.TRAM, active: true },
+          { id: 9, name: 'T3', vehicleType: VehicleType.METRO, active: true }
+        ], active: true
+      }
     ];
 
     mockToastrService = jasmine.createSpyObj(['success', 'error']);
@@ -130,33 +135,36 @@ describe('ZoneService', () => {
 
     const req = mockHttp.expectOne(url);
     expect(req.request.method).toBe('POST');
-    req.flush(new Zone(zone.id, zone.name, zone.lines, zone.active));
+    req.flush({ id: zone.id, name: zone.name, lines: zone.lines, active: zone.active });
+    expect(req.request.body).toBe(zone);
   }));
 
   it('should delete zone', fakeAsync(() => {
 
-    service.remove(1,dbZones);
+    service.remove(1, dbZones);
 
     const req1 = mockHttp.expectOne(url + '/' + 1);
     expect(req1.request.method).toBe('DELETE');
     req1.flush('Zone successfully removed!');
+    expect(req1.request.responseType).toBe('text');
 
     const req2 = mockHttp.expectOne(url);
     expect(req2.request.method).toBe('GET');
-    req2.flush(dbZones.splice(0,1));
+    req2.flush(dbZones.splice(0, 1));
     expect(mockToastrService.success).toHaveBeenCalled();
   }));
 
   it('should receive forbidden error for unauthorized deletion', fakeAsync(() => {
-    let length = dbZones.length;
-    let z = dbZones[0];
+    const length = dbZones.length;
+    const z = dbZones[0];
 
-    service.remove(1,dbZones);
+    service.remove(1, dbZones);
 
     const req = mockHttp.expectOne(url + '/' + 1);
     expect(req.request.method).toBe('DELETE');
-    req.flush({ message: 'Forbidden!'},
-      { status: 403, statusText: 'Unauthorazied' });
+    req.flush({ message: 'Forbidden!' },
+      { status: 401, statusText: 'Unauthorazied' });
+    expect(req.request.responseType).toBe('text');
 
     expect(dbZones.length).toBe(length);
     expect(dbZones[0]).toEqual(z);
@@ -164,15 +172,16 @@ describe('ZoneService', () => {
   }));
 
   it('should receive zone does not exist error', fakeAsync(() => {
-    let length = dbZones.length;
-    let z = dbZones[0];
+    const length = dbZones.length;
+    const z = dbZones[0];
 
-    service.remove(1,dbZones);
+    service.remove(1, dbZones);
 
     const req = mockHttp.expectOne(url + '/' + 1);
     expect(req.request.method).toBe('DELETE');
-    req.flush({ message: 'Zone does not exist!'},
-    { status: 400, statusText: 'Bad Request' });
+    req.flush({ message: 'Zone does not exist!' },
+      { status: 400, statusText: 'Bad Request' });
+    expect(req.request.responseType).toBe('text');
 
     expect(dbZones.length).toBe(length);
     expect(dbZones[0]).toEqual(z);

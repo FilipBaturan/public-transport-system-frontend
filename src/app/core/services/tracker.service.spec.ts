@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
-import { TicketsService } from './tickets.service';
+import { TrackerService } from './tracker.service';
 
-describe('TicketsService', () => {
+describe('TrackerService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: TicketsService = TestBed.get(TicketsService);
+    const service: TrackerService = TestBed.get(TrackerService);
     expect(service).toBeTruthy();
   });
 });

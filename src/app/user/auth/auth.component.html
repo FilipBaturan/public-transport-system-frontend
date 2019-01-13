@@ -1,4 +1,4 @@
-<form class="form" (ngSubmit)="signin()" #signinForm="ngForm">
+<form *ngIf="!userService.isAuthenticated()" class="form" (ngSubmit)="signin()" #signinForm="ngForm">
     <h2 class="form-heading">Sign in</h2>
 
     <label>Username</label>

@@ -77,7 +77,7 @@ export abstract class RestService<T> {
         url += queryParams[i] + '/';
       }
     }
-
+    console.log(url);
     return url;
   }
 
