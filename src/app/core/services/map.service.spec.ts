@@ -1,12 +1,25 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed, fakeAsync, ComponentFixture, tick } from '@angular/core/testing';
 
 import { MapService } from './map.service';
 import { Station } from 'src/app/model/station.model';
-import { StationPosition, TransportLinePosition } from 'src/app/model/position.model';
 import { VehicleType } from 'src/app/model/enums/vehicle-type.model';
 import { TransportLine } from 'src/app/model/transport-line.model';
+import { of, asyncScheduler } from 'rxjs';
+import { TrackedVehicle } from 'src/app/model/vehicle.model';
+import { Component } from '@angular/core';
 
+declare var MapBBCode: any;
 declare var L: any;
+
+@Component({
+  selector: 'app-map',
+  template: '<div id=original></div>',
+})
+class FakeMapComponent {
+
+  constructor() { }
+
+}
 
 describe('MapService', () => {
 
@@ -14,12 +27,37 @@ describe('MapService', () => {
     map: { removeLayer(layer: any) { } }
   };
 
+  const busIcon = L.icon({
+    iconUrl: 'bus.png', shadowUrl: 'marker-shadow.png', iconSize: [33, 50], shadowSize: [50, 64],
+    iconAnchor: [18, 54], shadowAnchor: [4, 62], popupAnchor: [0, -46]
+  });
+  const metroIcon = L.icon({
+    iconUrl: 'metro.png', shadowUrl: 'marker-shadow.png', iconSize: [33, 50], shadowSize: [50, 64],
+    iconAnchor: [20, 54], shadowAnchor: [4, 62], popupAnchor: [0, -46]
+  });
+  const tramIcon = L.icon({
+    iconUrl: 'tram.png', shadowUrl: 'marker-shadow.png', iconSize: [33, 50], shadowSize: [50, 64],
+    iconAnchor: [23, 57], shadowAnchor: [4, 62], popupAnchor: [-2, -46]
+  });
+
+  let trackedVehicles: TrackedVehicle[];
   let service: MapService;
 
   beforeEach(() => {
 
-    TestBed.configureTestingModule({});
+    trackedVehicles = [
+      { id: 1, name: 'V1', vehicleType: VehicleType.BUS, latitude: 45.32, longitude: 74.16, active: true },
+      { id: 2, name: 'V2', vehicleType: VehicleType.BUS, latitude: 23.71, longitude: 36.43, active: true },
+      { id: 3, name: 'V3', vehicleType: VehicleType.BUS, latitude: 53.27, longitude: 63.82, active: true }
+    ];
 
+    TestBed.configureTestingModule({
+      declarations: [
+        FakeMapComponent
+      ]
+    });
+
+    TestBed.createComponent(FakeMapComponent);
     service = TestBed.get(MapService);
   });
 
@@ -129,11 +167,11 @@ describe('MapService', () => {
     const transportLines: TransportLine[] = [
       {
         id: 1, name: 'R1', positions: { id: 1, content: '420 153', active: true },
-        schedule: [1, 2, 3], active: true, vehicleType: VehicleType.BUS, zone: 1
+        schedule: [1, 2, 3], active: true, type: VehicleType.BUS, zone: 1
       },
       {
         id: 3, name: 'V5', positions: { id: 3, content: '16 75', active: true },
-        schedule: [], active: true, vehicleType: VehicleType.TRAM, zone: 1
+        schedule: [], active: true, type: VehicleType.TRAM, zone: 1
       }
     ];
     const tempTransportLines: TransportLine[] = [];
@@ -155,11 +193,11 @@ describe('MapService', () => {
     const transportLines: TransportLine[] = [
       {
         id: 1, name: 'G7', positions: { id: 1, content: '420 153', active: true }, schedule: [1, 2, 3],
-        active: true, vehicleType: VehicleType.BUS, zone: 1
+        active: true, type: VehicleType.BUS, zone: 1
       },
       {
         id: 3, name: 'V5', positions: { id: 3, content: '16 75', active: true },
-        schedule: [], active: true, vehicleType: VehicleType.TRAM, zone: 1
+        schedule: [], active: true, type: VehicleType.TRAM, zone: 1
       }
     ];
     const tempTransportLines: TransportLine[] = [];
@@ -179,11 +217,11 @@ describe('MapService', () => {
     const transportLines: TransportLine[] = [
       {
         id: 1, name: 'G7', positions: { id: 1, content: '420 153', active: true },
-        schedule: [1, 2, 3], active: true, vehicleType: VehicleType.BUS, zone: 1
+        schedule: [1, 2, 3], active: true, type: VehicleType.BUS, zone: 1
       },
       {
         id: 4, name: 'M3', positions: { id: 4, content: '34 96', active: true }, schedule: [7, 8, 9],
-        active: true, vehicleType: VehicleType.BUS, zone: 3
+        active: true, type: VehicleType.BUS, zone: 3
       }
     ];
     const tempTransportLines: TransportLine[] = [];
@@ -193,4 +231,28 @@ describe('MapService', () => {
     expect(tempTransportLines[0].name).toBe('M3');
   });
 
+  // it('should receive updated vehicles', () => {
+
+  //   const temp = new MapBBCode({
+  //     defaultPosition: [45.2519, 19.837],
+  //     defaultZoom: 15,
+  //     letterIconLength: 5,
+  //     editorHeight: 600,
+  //     preferStandardLayerSwitcher: false,
+  //     // tslint:disable-next-line:no-shadowed-variable
+  //     createLayers: function (L) {
+  //       return [
+  //         MapBBCode.prototype.createOpenStreetMapLayer(),
+  //         L.tileLayer('http://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png', { name: 'CycleMap' })
+  //       ];
+  //     }
+  //   });
+  //   const mapViewer = temp.show('original', '[map][/map]');
+
+  //   service.connect({ 1: {}} , mapViewer, busIcon, metroIcon, tramIcon);
+  //   // tick();
+  //   service.disconnect();
+  //   // expect(mockStompClient.connect).toHaveBeenCalled();
+
+  // });
 });

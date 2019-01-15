@@ -112,7 +112,7 @@ export class ZoneComponent implements OnInit {
     const _this = this;
     this.selectedZoneLines = new Array<ZoneTransportLine>();
     zone.lines.forEach(line => _this.selectedZoneLines
-      .push({id: line.id, name: line.name, vehicleType: line.vehicleType, active: line.active}));
+      .push({id: line.id, name: line.name, type: line.type, active: line.active}));
     this.filterAvailableLines();
     this.open(content);
   }

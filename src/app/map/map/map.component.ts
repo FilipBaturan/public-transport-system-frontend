@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 
-import { TransportLineViewer, TransportLineCollection } from '../../model/transport-line.model';
-import { Station, StationCollection } from 'src/app/model/station.model';
+import { TransportLineViewer } from '../../model/transport-line.model';
+import { Station } from 'src/app/model/station.model';
 import { VehicleType } from 'src/app/model/enums/vehicle-type.model';
 import { TransportLine } from 'src/app/model/transport-line.model';
 import { ToastrService } from 'ngx-toastr';
@@ -11,7 +11,6 @@ import { StationService } from 'src/app/core/services/station.service';
 import { TransportLineService } from 'src/app/core/services/transport-line.service';
 import { UserService } from 'src/app/core/services/user.service';
 import { MapService } from 'src/app/core/services/map.service';
-import { TrackerService } from 'src/app/core/services/tracker.service';
 
 declare var MapBBCode: any;
 declare var L: any;
@@ -27,8 +26,7 @@ declare var L: any;
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.css']
 })
-export class MapComponent implements OnInit {
-
+export class MapComponent implements OnInit, OnDestroy {
   // map atributes
   private mapBB: any;
   private mapViewer: any;
@@ -50,11 +48,14 @@ export class MapComponent implements OnInit {
   private transportLineViewers: TransportLineViewer[];
   private tempTransportLines: TransportLine[];
   private editTransprotLine: TransportLine;
+  private vehicles: object;
 
   // form attributes
-  private formGroup: FormGroup;
   private modalForm: NgbModalRef;
   public isValidFormSubmitted: boolean;
+  public formGroup: FormGroup;
+
+  @ViewChild('content') modalFormElement: ElementRef;
 
   /**
    * Creates an instance of MapComponent.
@@ -71,8 +72,7 @@ export class MapComponent implements OnInit {
     private transportLineService: TransportLineService,
     private toastrService: ToastrService,
     private modalService: NgbModal,
-    private mapService: MapService,
-    private trackerService: TrackerService) {
+    private mapService: MapService) {
     // map init
     this.bbCode = '[map][/map]';
     this.imagePath = 'assets/lib/dist/lib/images/';
@@ -136,6 +136,7 @@ export class MapComponent implements OnInit {
     this.stationCounter = 0;
     this.transportLineViewers = [];
     this.tempTransportLines = [];
+    this.vehicles = {};
 
     // form init
     this.isValidFormSubmitted = null;
@@ -178,23 +179,23 @@ export class MapComponent implements OnInit {
       for (let index = 0; index < this.transportLines.length; index++) {
         const tl = this.transportLines[index];
         this.transportLineViewers.push({id: tl.id, name: tl.name, positions: tl.positions, schedule: tl.schedule,
-           active: tl.active, vehicleType:  tl.vehicleType, zone: tl.zone, visible: true});
+           active: tl.active, type:  tl.type, zone: tl.zone, visible: true});
         this.showRoute(tl.id);
       }
     }, err => this.toastrService.error(err));
 
-    // this.trackerService.start();
+    this.mapService.connect(this.vehicles, this.mapViewer, this.busIcon, this.metroIcon, this.tramIcon);
+  }
 
-    const b1 = L.marker([45.26377, 19.82895], { icon: this.busIcon }).addTo(this.mapViewer.map).bindPopup('<p>bus1</p>');
-    const m1 = L.marker([45.24398, 19.82504], { icon: this.metroIcon }).addTo(this.mapViewer.map).bindPopup('<p>metro1</p>');
-    const t1 = L.marker([45.25229, 19.83685], { icon: this.tramIcon }).addTo(this.mapViewer.map).bindPopup('<p>tram</p>');
-    // refresher.subscribe(() => this.b1.setLatLng(this.positions[(++this.bus1PositionIndex) % this.positions.length]));
+  ngOnDestroy(): void {
+    this.mapService.disconnect();
   }
 
   /**
    * Opens map editor and saves updates
    */
   edit(): void {
+    this.mapService.disconnect();
     const _this = this; // temploral reference to this object
     const original = document.getElementById('original');
     original.style.display = 'none';
@@ -221,25 +222,22 @@ export class MapComponent implements OnInit {
                 for (let index = 0; index < _this.transportLines.length; index++) {
                   const tl = _this.transportLines[index];
                   _this.transportLineViewers.push({id: tl.id, name: tl.name, positions: tl.positions, schedule: tl.schedule,
-                    active: tl.active, vehicleType: tl.vehicleType, zone: tl.zone, visible: true});
+                    active: tl.active, type: tl.type, zone: tl.zone, visible: true});
                   _this.showRoute(tl.id);
                 }
               }
 
-            }, error => error !== undefined ?
-              _this.toastrService.error(error) :
-              _this.toastrService.error('Error happend, could not save changes for lines!'));
+            }, error => _this.toastrService.error(error));
         _this.stationCounter = _this.mapService.placeStations(_this.mapViewer,
           _this.mapViewStations, _this.mapEditorStations, _this.stations, _this.stationCounter);
         _this.stationService.replaceStations({stations: _this.stations}).subscribe(
           stations => {
             _this.stations = stations;
             _this.drawStations();
-          }, error => error !== undefined ?
-            _this.toastrService.error(error) :
-            _this.toastrService.error('Error happend, could not save changes for stations!'));
+          }, error => _this.toastrService.error(error));
       }
     });
+    this.mapService.connect(this.vehicles, this.mapViewer, this.busIcon, this.metroIcon, this.tramIcon);
   }
 
   /**
@@ -251,9 +249,8 @@ export class MapComponent implements OnInit {
   editRoute(id: number, content: any): void {
     this.editTransprotLine = this.transportLines.find(v => v.id === id);
     this.name.setValue(this.editTransprotLine.name);
-    this.type.setValue(this.editTransprotLine.vehicleType);
+    this.type.setValue(this.editTransprotLine.type);
     this.open(content);
-
   }
 
   /**
@@ -269,7 +266,7 @@ export class MapComponent implements OnInit {
     this.editTransprotLine.positions.content = this.editTransprotLine
       .positions.content.replace(nameToReplace, this.name.value);
     this.editTransprotLine.name = this.name.value;
-    this.editTransprotLine.vehicleType = this.type.value;
+    this.editTransprotLine.type = this.type.value;
     this.transportLineService.create(this.editTransprotLine).subscribe(result => {
       const transportLine: TransportLine = result as TransportLine;
       const index: number = this.transportLines.findIndex(t => t.id === transportLine.id);
@@ -277,7 +274,7 @@ export class MapComponent implements OnInit {
         .find(t => t.id === transportLine.id);
       this.transportLines[index] = transportLine;
       trannsprotViewer.name = transportLine.name;
-      trannsprotViewer.vehicleType = transportLine.vehicleType;
+      trannsprotViewer.type = transportLine.type;
       this.modalForm.close();
       this.bbCode = this.bbCode.replace(nameToReplace, transportLine.name);
       this.mapViewer.updateBBCode(this.bbCode);
@@ -355,8 +352,6 @@ export class MapComponent implements OnInit {
         beginTerminalSymbloIndex += 2;
         endTerminalSymbolIndex += 2;
         break;
-      } else if (i > code.length) {
-        return;
       }
       ++i; --beginTerminalSymbloIndex;
     }

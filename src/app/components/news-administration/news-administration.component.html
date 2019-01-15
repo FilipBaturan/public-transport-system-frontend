@@ -1,13 +1,9 @@
-<div class="wrapper">
-    <app-nav-bar></app-nav-bar>
-    <div id="content">
-        <div>
-            <p>Adding news</p>
-            <br>
-            <p>Title</p>
-            <input>
-            <p>Content</p>
-            <input>
-        </div>
-    </div>
+<div>
+    <p>Adding news</p>
+    <br>
+    <p>Title</p>
+    <input [value]="title" (input)="title=$event.target.value">
+    <p>Content</p>
+    <input [value]="content" (input)="content=$event.target.value">
+    <button (click)="addNews()">Save</button>
 </div>

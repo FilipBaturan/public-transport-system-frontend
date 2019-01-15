@@ -9,6 +9,8 @@ import { AuthService } from 'src/app/core/services/auth.service';
 import { ZoneService } from 'src/app/core/services/zone.service';
 import { PricelistService } from 'src/app/core/services/pricelist.service';
 import { ReservationService } from 'src/app/core/services/reservation.service';
+import { ToastrService } from 'ngx-toastr';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-tickets',
@@ -32,25 +34,32 @@ export class TicketsComponent implements OnInit {
   line: number;
   user: User;
   pricelistitemId: number;
+  dailySelected: boolean;
+  monthlySelected: boolean;
+  annualSelected: boolean;
 
   constructor(private authService: AuthService,
-    private zoneService: ZoneService,
-    private pricelistService: PricelistService,
-    private reservationService: ReservationService) { }
+              private zoneService: ZoneService,
+              private pricelistService: PricelistService,
+              private reservationService: ReservationService,
+              private toastr: ToastrService,
+              private router: Router) { }
 
   ngOnInit() {
+    this.dailySelected = true;
+    this.monthlySelected = false;
+    this.annualSelected = false;
     this.pricelistitemId = 0;
-    this.reservation = new Reservation(0, [], 21);
+    this.reservation = new Reservation(0, [], 0);
     this.price = 0;
     this.transportType = 'BUS';
     this.ageType = 'REGULAR';
     this.durationType = 'ONETIME';
     this.transportLineType = 'One line';
-    console.log('usao');
     this.authService.getCurrentUser().subscribe(
       result => {
         this.user = result;
-        console.log(this.user);
+        this.reservation.owner = this.user.id;
         this.zoneService.findAll().subscribe(
           zones => {
             this.zones = zones;
@@ -60,13 +69,33 @@ export class TicketsComponent implements OnInit {
             this.pricelistService.getActivePricelist().subscribe(
               pricelist => {
                 this.pricelist = pricelist;
-                console.log(this.pricelist);
               }
             );
           }
         );
       }
     );
+  }
+
+  chooseType(type: string): void {
+    if (type === 'DAILY') {
+      this.dailySelected = true;
+      this.monthlySelected = false;
+      this.annualSelected = false;
+      this.durationType = 'ONETIME';
+    } else if (type === 'MONTHLY') {
+      this.dailySelected = false;
+      this.monthlySelected = true;
+      this.annualSelected = false;
+      this.durationType = 'MONTHLY';
+      this.purchaseDate = new Date(Date.now());
+    } else if (type === 'ANNUAL') {
+      this.dailySelected = false;
+      this.monthlySelected = false;
+      this.annualSelected = true;
+      this.durationType = 'ANNUAL';
+      this.purchaseDate = new Date(Date.now());
+    }
   }
 
   zoneChange(zoneName: string): void {
@@ -89,42 +118,43 @@ export class TicketsComponent implements OnInit {
   checkPrice(): void {
     for (const pricelistitem of this.pricelist.items) {
       if (pricelistitem.item.type === this.durationType && pricelistitem.item.age === this.ageType
-        && pricelistitem.item.vehicleType === this.transportType && pricelistitem.item.zone === this.zone.id) {
-        this.price += pricelistitem.item.cost;
-        this.pricelistitemId = pricelistitem.id;
-        return;
+         && pricelistitem.item.vehicleType === this.transportType && pricelistitem.item.zone === this.zone.id) {
+          this.price += pricelistitem.item.cost;
+          this.pricelistitemId = pricelistitem.id;
+          return;
       }
     }
   }
 
   check(): void {
-    const feedback = this.checkAndSetExpiryDate();
+    const feedback = this.checkPurchaseDate();
     if (feedback === 0) {
       this.checkPrice();
       const t = new Ticket(this.purchaseDate, this.line, this.pricelistitemId, this.durationType);
       this.reservation.tickets.push(t);
-      console.log(this.reservation);
+      this.toastr.success('Uspesno ste dodali kartu u rezervaciju');
     } else if (feedback === 1) {
-      console.log('Unesite datum!');
+      this.toastr.warning('Odaberite datum!');
     } else if (feedback === 2) {
-      console.log('Unesite validan datum!');
+      this.toastr.warning('Odaberite validan datum!');
     }
   }
 
-  checkAndSetExpiryDate(): number {
+  checkPurchaseDate(): number {
     if (!this.purchaseDate) {
       return 1;
     }
-    if (this.purchaseDate.getTime() < Date.now()) {
+    if (this.purchaseDate.getTime() < (Date.now() - 86400000)) {
       return 2;
     }
     return 0;
   }
 
   reserve(): void {
-    this.reservationService.create<Reservation>(this.reservation, 'reserve').subscribe(
+    this.reservationService.create<Reservation>(this.reservation, 'reserve').subscribe (
       result => {
-        console.log('Jeeeee');
+        this.toastr.success('Rezervacija je uspesno izvrsena');
+        this.router.navigate(['/welcome']);
       }
     );
   }

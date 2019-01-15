@@ -19,6 +19,7 @@ import { RegUserListComponent } from '../user/reg-user-list/reg-user-list.compon
 import { IsAuthenticatedGuard } from './is-authenticated.guard';
 import { IsOperaterGuard } from './is-operater.guard';
 import { IsValidatorGuard } from './is-validator.guard';
+import { NewsAdministrationComponent } from '../components/news-administration/news-administration.component';
 import { OperatorListComponent } from '../user/operator-list/operator-list.component';
 import { ScheduleUpdateComponent } from '../schedule/schedule-update/schedule-update.component';
 
@@ -34,6 +35,7 @@ import { ScheduleUpdateComponent } from '../schedule/schedule-update/schedule-up
     RouterModule.forRoot([
       { path: 'tickets', component: TicketsComponent, canActivate: [IsAuthenticatedGuard]},
       { path: 'map', component: MapComponent},
+      { path: 'newsAdministration', component: NewsAdministrationComponent },
       { path: 'reports', component: ReportComponent, canActivate: [IsAuthenticatedGuard]},
       { path: 'vehicles', component: VehicleComponent, canActivate: [IsOperaterGuard]},
       { path: 'zones', component: ZoneComponent, canActivate: [IsOperaterGuard]},

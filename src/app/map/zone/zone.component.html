@@ -34,7 +34,7 @@
 </div>
 
 <ng-template #content let-modal>
-  <div class="modal-header">
+  <div class="modal-header text-white bg-primary">
     <h4 class="modal-title" id="modal-basic-title">{{headerName}}</h4>
     <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
       <span aria-hidden="true">&times;</span>
@@ -43,35 +43,33 @@
   <div class="modal-body">
     <form [formGroup]="formGroup">
       <div class="form-group">
-        <label for="name">Name</label>
-        <input type="text" placeholder="south block" formControlName="name" /> <br />
+        <label for="name">Name:</label>
+        <input type="text" placeholder="Downtown" class="form-control" formControlName="name" />
         <div *ngIf="name.errors && isValidFormSubmitted != null && !isValidFormSubmitted">
-          <span *ngIf="name.errors.minlength">
+          <span *ngIf="name.errors.minlength" class="text-danger">
             Zone name must be at least 1 characters long!
           </span>
-          <span *ngIf="name.errors.maxlength">
+          <span *ngIf="name.errors.maxlength" class="text-danger">
             Zone name must be maximum 30 characters long!
           </span>
-          <span *ngIf="name.errors.required">
+          <span *ngIf="name.errors.required" class="text-danger">
             Zone name is required!
           </span>
         </div>
-        <div class="line-editor" style="width:100%;height:100%;
-      margin-right:10px;
-      float:left;">
+        <br/>
+        <div class="line-editor" style="width:100%;height:100%;margin-right:10px;float:left;">
           <div class="line-slot" style="float:left;margin-right:15px;width: 49%">
-
-            <div class="card text-white bg-primary">
+            <div class="card text-white bg-secondary">
               <div class="card-body">
                 <h4 class="card-title">Available Zones</h4>
-                <cdk-virtual-scroll-viewport itemSize="50" style=" height: 200px;width: 100%;
-                  border: 1px solid black;">
+                <cdk-virtual-scroll-viewport itemSize="50" class="rounded" style=" height: 200px;width: 100%;
+                  border: 3px solid black;">
                   <div *cdkVirtualFor="let line of availableLines; templateCacheSize: 0" style="height: 50px;">
-                    <table>
+                    <table class="table-borderless">
                       <tbody>
                         <tr>
-                          <td> {{line.name}}</td>
-                          <td> <button type="button" class="btn btn-success" (click)="addLine(line.id, content)">Add</button></td>
+                          <td style="width: 240px"> {{line.name}}</td>
+                          <td > <button type="button" class="btn btn-success ml-2" (click)="addLine(line.id, content)">Add</button></td>
                         </tr>
                       </tbody>
                     </table>
@@ -82,19 +80,19 @@
               </div>
             </div>
           </div>
-
+        
           <div class="line-slot" style="float:left; width: 49%">
-            <div class="card text-white bg-primary">
+            <div class="card text-white bg-info">
               <div class="card-body">
                 <h4 class="card-title">Target Zone</h4>
-                <cdk-virtual-scroll-viewport itemSize="50" style=" height: 200px;width: 100%;
-                  border: 1px solid black;">
+                <cdk-virtual-scroll-viewport itemSize="50" class="rounded" style=" height: 200px;width: 100%;
+                  border: 3px solid black;">
                   <div *cdkVirtualFor="let line of selectedZoneLines; templateCacheSize: 0" style="height: 50px;">
-                    <table>
+                    <table class="table-borderless">
                       <tbody>
                         <tr>
-                          <td> {{line.name}}</td>
-                          <td> <button type="button" class="btn btn-danger" (click)="removeLine(line.id, content)">Remove</button></td>
+                          <td class="w-75"> {{line.name}}</td>
+                          <td class="w-25"> <button type="button" class="btn btn-danger ml-2" (click)="removeLine(line.id, content)">Remove</button></td>
                         </tr>
                       </tbody>
                     </table>
@@ -108,6 +106,6 @@
     </form>
   </div>
   <div class="modal-footer">
-    <button type="submit" class="btn btn-outline-dark" (click)="onFormSubmit()">Save</button>
+    <button type="submit" class="btn btn-success" (click)="onFormSubmit()">Save</button>
   </div>
 </ng-template>

@@ -10,6 +10,6 @@ export interface Zone {
 export interface ZoneTransportLine {
     id: number;
     name: string;
-    vehicleType: VehicleType;
+    type: VehicleType;
     active: boolean;
 }
