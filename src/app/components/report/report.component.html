@@ -1,48 +1,56 @@
-<div style="margin-left: 20px" >
+<div class="wrapper">
+    <app-nav-bar></app-nav-bar>
+    <div id="content">
 
-    <div class = "mainDiv">
+        <div style="margin-left: 20px" >
 
-        <h1>Ticket earnings report</h1> 
+            <div class = "mainDiv">
 
-        <p *ngIf="totalTicketsSold != -1" ><b>Number of ticekts sold: {{totalTicketsSold}}</b></p>
+                <h1>Ticket earnings report</h1> 
 
-        <h3>Earnings between {{startDate| date: 'dd.MM.yyyy.'}}
-             and {{endDate | date: 'dd.MM.yyyy.'}}</h3>
+                <p *ngIf="totalTicketsSold != -1" ><b>Number of ticekts sold: {{totalTicketsSold}}</b></p>
 
-        <div id = "datePickerDiv">
-            <div class="form-group" style="display: inline-block; margin-left: 20px">
-                    <label style="display: block">Select first day</label>
-                    <input type="date" [ngModel]="startDate | date:'yyyy-MM-dd'" 
-                    class="form-control" style="width: 200px;" (ngModelChange)="startDate = $event"/>
-                </div>
-                    
+                <h3>Earnings between {{startDate| date: 'dd.MM.yyyy.'}}
+                    and {{endDate | date: 'dd.MM.yyyy.'}}</h3>
+
+                <div id = "datePickerDiv">
+                    <div class="form-group" style="display: inline-block; margin-left: 20px">
+                            <label style="display: block">Select first day</label>
+                            <input type="date" [ngModel]="startDate | date:'yyyy-MM-dd'" 
+                            class="form-control" style="width: 200px;"
+                             (ngModelChange)="startDate = $event"/>
+                        </div>
+                            
+                        <div class="form-group" style="display: inline-block; margin-left: 20px">
+                            <label style="display: block">Select last day</label>
+                            <input type="date" [ngModel]="endDate | date:'yyyy-MM-dd'" 
+                            class="form-control"
+                            style="width: 200px;" (ngModelChange)="endDate = $event"/>
+                        </div>
                 
-                <div class="form-group" style="display: inline-block; margin-left: 20px">
-                    <label style="display: block">Select last day</label>
-                    <input type="date" [ngModel]="endDate | date:'yyyy-MM-dd'" class="form-control"
-                    style="width: 200px;" (ngModelChange)="endDate = $event"/>
+                        <button id = "getReportButton" (click)="getPricePerPeriod()"
+                        mat-raised-button color= "success" >Show price report</button>
                 </div>
-        
-                <button id = "getReportButton" (click)="getPricePerPeriod()"
-                mat-raised-button color= "success" >Show price report</button>
-        </div>
-       
-        <div class = "noChart" [hidden]="monthlyData.length != 0">
-            <h3>There are no tickets sold in the period you chose</h3>
+            
+                <div class = "noChart" [hidden]="monthlyData.length != 0">
+                    <h3>There are no tickets sold in the period you chose</h3>
+                </div>
+
+                <div class="chartDiv" [hidden]= "weeklyData.length == 0">
+
+                    <div id="weeklyChartContainer" ></div>
+            
+                </div>
+            
+                <div class="chartDiv" [hidden]="monthlyData.length == 0">
+                    
+                    <div id="monthlyChartContainer" ></div>
+                    
+                </div>
+                
+            </div>
+            
         </div>
 
-        <div class="chartDiv" [hidden]= "weeklyData.length == 0">
-
-            <div id="weeklyChartContainer" ></div>
-    
-        </div>
-    
-        <div class="chartDiv" [hidden]="monthlyData.length == 0">
-            
-            <div id="monthlyChartContainer" ></div>
-            
-        </div>
-        
     </div>
-    
 </div>
