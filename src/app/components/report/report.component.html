@@ -6,7 +6,8 @@
 
         <p *ngIf="totalTicketsSold != -1" ><b>Number of ticekts sold: {{totalTicketsSold}}</b></p>
 
-        <h3>Earnings between {{startDate}} and {{endDate}}</h3>
+        <h3>Earnings between {{startDate| date: 'dd.MM.yyyy.'}}
+             and {{endDate | date: 'dd.MM.yyyy.'}}</h3>
 
         <div id = "datePickerDiv">
             <div class="form-group" style="display: inline-block; margin-left: 20px">
@@ -22,7 +23,8 @@
                     style="width: 200px;" (ngModelChange)="endDate = $event"/>
                 </div>
         
-                <button id = "getReportButton" (click)="getPricePerPeriod()">Show price report</button>
+                <button id = "getReportButton" (click)="getPricePerPeriod()"
+                mat-raised-button color= "success" >Show price report</button>
         </div>
        
         <div class = "noChart" [hidden]="monthlyData.length != 0">

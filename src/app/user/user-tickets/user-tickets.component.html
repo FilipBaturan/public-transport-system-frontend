@@ -27,7 +27,7 @@
         <ng-container matColumnDef="deny">
           <th mat-header-cell *matHeaderCellDef> Deny </th>
           <td mat-cell *matCellDef="let element" (click)="$event.stopPropagation()">
-            <button (click)="denyTicket(element)">Deny ticket</button>
+            <button mat-raised-button color="success" (click)="denyTicket(element)">Deny ticket</button>
           </td>
         </ng-container>
 

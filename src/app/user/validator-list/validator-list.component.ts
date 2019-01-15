@@ -23,6 +23,7 @@ export class ValidatorListComponent implements OnInit {
   newUser: User;
 
   formShowed: boolean;
+  addName: boolean;
 
   @ViewChild(MatTable) table: MatTable<any>;
 
@@ -36,6 +37,7 @@ export class ValidatorListComponent implements OnInit {
      "new Email",  true, "123123");
 
     this.formShowed = false;
+    this.addName = true;
 
     this.userService.getValidators().subscribe(
       response => {this.validators = response; }
@@ -117,6 +119,7 @@ export class ValidatorListComponent implements OnInit {
       )
       this.formShowed = false;
     }
+    this.addName = true;
   }
 
   showForm()
@@ -124,9 +127,15 @@ export class ValidatorListComponent implements OnInit {
     this.formShowed = true;
   }
 
+  cancelForm(){
+    this.formShowed = false;
+    this.addName = true;
+  }
+
   showChangeForm(user: User)
   {
     this.newUser = user;
     this.formShowed = true;
+    this.addName = false;
   }
 }
