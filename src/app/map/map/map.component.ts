@@ -11,6 +11,7 @@ import { StationService } from 'src/app/core/services/station.service';
 import { TransportLineService } from 'src/app/core/services/transport-line.service';
 import { UserService } from 'src/app/core/services/user.service';
 import { MapService } from 'src/app/core/services/map.service';
+import { TrackerService } from 'src/app/core/services/tracker.service';
 
 declare var MapBBCode: any;
 declare var L: any;
@@ -72,7 +73,8 @@ export class MapComponent implements OnInit, OnDestroy {
     private transportLineService: TransportLineService,
     private toastrService: ToastrService,
     private modalService: NgbModal,
-    private mapService: MapService) {
+    private mapService: MapService,
+    private trackerService: TrackerService) {
     // map init
     this.bbCode = '[map][/map]';
     this.imagePath = 'assets/lib/dist/lib/images/';
@@ -184,18 +186,18 @@ export class MapComponent implements OnInit, OnDestroy {
       }
     }, err => this.toastrService.error(err));
 
-    this.mapService.connect(this.vehicles, this.mapViewer, this.busIcon, this.metroIcon, this.tramIcon);
+    this.trackerService.connect(this.vehicles, this.mapViewer, this.busIcon, this.metroIcon, this.tramIcon);
   }
 
   ngOnDestroy(): void {
-    this.mapService.disconnect();
+    this.trackerService.disconnect();
   }
 
   /**
    * Opens map editor and saves updates
    */
   edit(): void {
-    this.mapService.disconnect();
+    this.trackerService.disconnect();
     const _this = this; // temploral reference to this object
     const original = document.getElementById('original');
     original.style.display = 'none';
@@ -237,7 +239,7 @@ export class MapComponent implements OnInit, OnDestroy {
           }, error => _this.toastrService.error(error));
       }
     });
-    this.mapService.connect(this.vehicles, this.mapViewer, this.busIcon, this.metroIcon, this.tramIcon);
+    this.trackerService.connect(this.vehicles, this.mapViewer, this.busIcon, this.metroIcon, this.tramIcon);
   }
 
   /**
