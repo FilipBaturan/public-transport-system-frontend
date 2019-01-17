@@ -7,6 +7,7 @@ import { TransportLine } from 'src/app/model/transport-line.model';
 import { DayOfWeek } from 'src/app/model/enums/day-of-week.model';
 import { ScheduleService } from 'src/app/core/services/schedule.service';
 import { TransportLineService } from 'src/app/core/services/transport-line.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-schedule',
@@ -23,7 +24,6 @@ export class ScheduleComponent implements OnInit {
   columnsToDisplay = []
   @ViewChild(MatSort) sort: MatSort;
 
-  schedules = new Array<Schedule>();
   transportLines = new Array<TransportLine>();
 
   tableArr: any[] = [];
@@ -39,65 +39,13 @@ export class ScheduleComponent implements OnInit {
   dayOfWeekDropdownSettings = {};
 
   constructor(private scheduleService: ScheduleService,
-              private tranposrtLineService: TransportLineService) { }
+              private tranposrtLineService: TransportLineService,
+              private toastrSerivce: ToastrService) { }
 
   ngOnInit() {
-    //this.setupScheduleTable();
-    this.setupDataSource();
     this.setupTransportLineSelect();
     this.setupDayOfWeekSelect();
-  }
-
-  setupDataSource(){
-    this.scheduleService.findAll().subscribe(
-      response => {
-        this.schedules = <Array<Schedule>> response;
-        console.log(response);
-        let temp = this.tableArr.map(x => Object.assign({}, x));
-        response.forEach(element => {
-          let index = 0;
-          element.departures.forEach(departure => {
-            let key = element.transportLine.name + "-" + element.dayOfWeek;
-            console.log(key);
-            if (this.tableArr.length==0){
-              let obj = {};
-              obj[key] = departure;
-              temp.push(obj);
-            }else{
-              if (temp[index])
-                temp[index][key] = departure;
-              else{
-                let obj = this.setupObj(response);
-                obj[key] = departure;
-                temp.push(obj);
-              }
-            }index++;
-          });
-          this.tableArr = temp;
-        });
-        this.dataSource = new MatTableDataSource(this.tableArr);
-        console.log(this.tableArr);
-      },
-      (err) => console.error(err)
-    );
-  }
-
-  setupObj(schedules){
-
-    let obj = {};
-
-    schedules.forEach(element => {
-      let tl = element.transportLine.name;
-      let workday = tl + "-WORKDAY";
-      let saturday = tl + "-SATURDAY";
-      let sunday = tl + "-SUNDAY";
-
-      obj[workday] = "";
-      obj[saturday] = "";
-      obj[sunday] = "";
-    });
-    
-    return obj;
+    this.dataSource = new MatTableDataSource(this.tableArr);
   }
 
   setupTransportLineSelect(){
@@ -145,49 +93,88 @@ export class ScheduleComponent implements OnInit {
 
   }
 
-  filterSchedules(transportLine: string, dayOfWeek: DayOfWeek){
-    let dow = this.getStringFromEnum(dayOfWeek);
-    let bla = String(transportLine+"-"+dow);
-    this.columnsToDisplay.push(bla);
-    console.log(transportLine+"-"+dow);
-    console.log(this.tableArr[0]["R1-WORKDAY"]);
-    /*this.schedules.forEach(element => {
-      if (element.transportLine.name == transportLine && element.dayOfWeek.toString() == dow){
-        this.columnsToDisplay.push(element.transportLine.name);
-        console.log(dow, element.dayOfWeek, element.transportLine.name, element)
-      }
-        
-    });*/
-  }
-
   onItemSelect(item){
-    if(this.selectedItem.length){
-      //this.columnsToDisplay.push(item.itemName);
-      let dow = this.getDayOfWeekEnum(this.selectedItem[0].itemName);
-      this.filterSchedules(item.itemName, dow);
-    } else{
+    if (this.selectedItem.length){
+      let dow = this.selectedItem[0].itemName;
+      this.scheduleService.findScheduleByTrLineIdAndDayOfWeek(item.id,dow).subscribe(
+        response => {
+          let key = response.transportLine.name + "-" + response.dayOfWeek;
+          this.columnsToDisplay.push(key);
+          let index = 0;
+          response.departures.forEach(departure=>{
+            if (this.tableArr[index]){
+              this.tableArr[index][key] = departure;
+            } else {
+              let obj = {};
+              obj[key] = departure;
+              this.tableArr.push(obj);
+            }
+            index++;
+          });
+          console.log(this.tableArr);
+          this.dataSource._updateChangeSubscription();
+        }, err =>{
+          let index = this.selectedItems.findIndex(i => i.id == item.id);
+          console.log(this.selectedItems[0]);
+          console.log(item.id);
+          console.log(index);
+          this.selectedItems.splice(index,1);
+        });
+    } 
+    else {
+      this.toastrSerivce.info("Select the day of week first!");
       this.selectedItems = [];
     }
   }
 
   onItemDeSelect(item:any){
-      let index = this.columnsToDisplay.findIndex(d => d === item.itemName);
-      this.columnsToDisplay.splice(index, 1);
-      //this.transportLineDropdownSettings["disabled"] = true;
-      console.log(this.transportLineDropdownSettings);
+    let upper = this.selectedItem[0].itemName.toUpperCase();
+    let keyword = item.itemName + '-' + upper;
+    let index = this.columnsToDisplay.findIndex(d => d == keyword);
+    if (index == -1) return;
+    this.columnsToDisplay.splice(index, 1);
+    this.updateTableColumns(keyword);
   }
 
   onDayOfWeekSelect(item){
     let dow = this.getDayOfWeekEnum(item.itemName);
     this.columnsToDisplay = [];
     this.selectedItems = [];
-    //this.transportLineDropdownSettings["disabled"] = false;
-    console.log(this.transportLineDropdownSettings);
+    this.tableArr.splice(0,this.tableArr.length);
+    this.dataSource._updateChangeSubscription();
   }
 
   onDayOfWeekDeSelect(item:any){
     this.columnsToDisplay = [];
     this.selectedItems = [];
+    this.tableArr.splice(0,this.tableArr.length);
+    this.dataSource._updateChangeSubscription();
+  }
+
+  updateTableColumns(key: string){
+    console.log(this.tableArr);
+    let idx = 0;
+    let del = -1;
+    this.tableArr.forEach(obj => {
+      delete obj[key];
+      if(this.isEmpty(obj)){
+        del = idx;
+        this.tableArr.splice(del, 1);
+      }
+      idx++;
+    });
+    //this.tableArr = this.tableArr.filter(obj => !this.isEmpty(obj));
+
+    this.dataSource._updateChangeSubscription();
+    console.log(this.tableArr);
+  }
+
+  isEmpty(obj): boolean {
+    for(var prop in obj) {
+        if(obj.hasOwnProperty(prop))
+            return false;
+    }
+    return true;
   }
 
   getDayOfWeekEnum (dow: string): DayOfWeek{
@@ -205,5 +192,4 @@ export class ScheduleComponent implements OnInit {
       case 2: return "SUNDAY";
     }
   }
-
 }

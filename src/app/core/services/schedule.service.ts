@@ -18,13 +18,24 @@ export class ScheduleService extends RestService<Schedule> {
     super(http, ['/api/schedule'], toastr);
   }
 
-  findScheduleByTransportLine(id: number, dayOfWeek: DayOfWeek): Observable<Schedule>{
-    console.log(this.url() + 'findByTransportLine');
+  findScheduleByTrLineIdAndDayOfWeek(id: number, dayOfWeek: string): Observable<Schedule>{
+    console.log(this.url() + 'findByTrLineIdAndDayOfWeek');
 
-    return this.http.get<Schedule>(
-      this.url() + 'findByTransportLine/' + id,  { params: { 'dayOfWeek': String(dayOfWeek) } }
+    return this.http.get<any>(
+      this.url() + 'findByTrLineIdAndDayOfWeek/' + id,
+        { params: { 'dayOfWeek': String(dayOfWeek).toUpperCase() } }
     ).pipe(
-      catchError(this.handleError<Schedule>())
+      catchError(this.handleError<any>())
+      );
+  }
+
+  findScheduleByTransportLineId(id: number): Observable<Schedule[]>{
+    console.log(this.url() + 'findByTransportLineId');
+
+    return this.http.get<Schedule[]>(
+      this.url() + 'findByTransportLineId/' + id
+    ).pipe(
+      catchError(this.handleError<Schedule[]>())
       );
   }
 

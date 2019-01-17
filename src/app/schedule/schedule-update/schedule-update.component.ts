@@ -42,50 +42,21 @@ export class ScheduleUpdateComponent implements OnInit {
               private toastSerivce: ToastrService) { }
 
   ngOnInit() {
-    //this.setupScheduleTable();
-    this.setupDataSource();
+    this.setupSchedules();
     this.setupTransportLineSelect();
+    this.dataSource = new MatTableDataSource(this.tableArr);
   }
 
-  setupDataSource(){
+  setupSchedules(){
     this.scheduleService.findAll().subscribe(
       response => {
-        let obje = this.setupObj(response);
-        console.log(obje);
         this.schedules = <Array<Schedule>> response;
-        let temp = this.tableArr.map(x => Object.assign({}, x));
-        response.forEach(element => {
-          let index = 0;
-          element.departures.forEach(departure => {
-            let key = element.transportLine.name + "-" + element.dayOfWeek;
-            console.log(key);
-            if (this.tableArr.length==0){
-              let obj = {};
-              obj[key] = departure;
-              temp.push(obj);
-            }else{
-              if (temp[index])
-                temp[index][key] = departure;
-              else{
-                let obj = this.setupObj(response);
-                obj[key] = departure;
-                temp.push(obj);
-              }
-            }index++;
-          });
-          console.log("temp");
-          console.log(temp);
-          this.tableArr = temp;
-        });
-        this.dataSource = new MatTableDataSource(this.tableArr);
-        console.log(this.tableArr);
       },
       (err) => console.error(err)
     );
   }
 
   setupObj(schedules){
-
     let obj = {};
 
     schedules.forEach(element => {
@@ -130,19 +101,30 @@ export class ScheduleUpdateComponent implements OnInit {
     );
   }
 
-  filterSchedules(transportLine: string, dayOfWeek: DayOfWeek){
-    let dow = this.getStringFromEnum(dayOfWeek);
-    let bla = String(transportLine+"-"+dow);
-    this.columnsToDisplay.push(bla);
-  }
-
   onItemSelect(item){
     this.columnsToDisplay=[];
-      this.filterSchedules(item.itemName, DayOfWeek.WORKDAY);
-      this.filterSchedules(item.itemName, DayOfWeek.SATURDAY);
-      this.filterSchedules(item.itemName, DayOfWeek.SUNDAY);
-      console.log(this.dataSource);
-      //this.selectedItems = [];
+    this.tableArr.splice(0,this.tableArr.length);
+
+    this.scheduleService.findScheduleByTransportLineId(item.id).subscribe(
+      response => {
+        response.forEach(element=> {
+          let key = element.transportLine.name + "-" + element.dayOfWeek;
+          this.columnsToDisplay.push(key);
+          let index = 0;
+          element.departures.forEach(departure=>{
+            if (this.tableArr[index]){
+              this.tableArr[index][key] = departure;
+            } else {
+              let obj = this.setupObj(response);
+              obj[key] = departure;
+              this.tableArr.push(obj);
+            }
+            index++;
+          });
+        });
+        this.dataSource._updateChangeSubscription();
+        }
+      );
   }
 
   onItemDeSelect(item:any){
@@ -191,19 +173,19 @@ export class ScheduleUpdateComponent implements OnInit {
         if (String(schedule.dayOfWeek) == "WORKDAY"){
           schedule.departures = workdayDepartures;
           this.scheduleService.updateSchedule(schedule).subscribe(
-            response=> console.log(response)
+            response => console.log(response)
           );
         }
         else if (String(schedule.dayOfWeek) == "SATURDAY"){
           schedule.departures = saturdayDepartures;
           this.scheduleService.updateSchedule(schedule).subscribe(
-            response=> console.log(response)
-          );;
+            response => console.log(response)
+          );
         }
         else if (String(schedule.dayOfWeek) == "SUNDAY"){
           schedule.departures = sundayDepartures;
           this.scheduleService.updateSchedule(schedule).subscribe(
-            response=> console.log(response)
+            response => console.log(response)
           );
         }
       }
@@ -214,22 +196,25 @@ export class ScheduleUpdateComponent implements OnInit {
     this.focusedDeparture = departure;
   }
 
-  checkDeparture(event, departure: string, element, column){
-    if (departure == "") return;
+  checkDeparture(departure: string, element, column){
+    if (departure == "") return true;
 
     if (departure.length!=5 || !departure.includes(":")){
       this.toastSerivce.warning("Wrong departure format. The correct format is HH:MM.")
       element[column] = this.focusedDeparture;
-      return;
+      return false;
     }
+
     let hhMM = departure.split(":");
     let hh = parseInt(hhMM[0]);
     let mm = parseInt(hhMM[1]);
-
     if (hh<0 || hh>23 || mm<0 || mm>59){
       this.toastSerivce.warning("Hours range from 0 to 23, minutes from 0 to 59!");
       element[column] = this.focusedDeparture;
+      return false;
     }
+
+    return true;
   }
 
   getDayOfWeekEnum (dow: string): DayOfWeek{
@@ -247,5 +232,4 @@ export class ScheduleUpdateComponent implements OnInit {
       case 2: return "SUNDAY";
     }
   }
-
 }

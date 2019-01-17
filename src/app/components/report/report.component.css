@@ -13,6 +13,11 @@
 
 }
 
+.mat-success {
+  background-color: rgb(35, 140, 189);
+  color: #fff;
+}
+
 .mainDiv h1, p{
     margin: 20px;
 }
