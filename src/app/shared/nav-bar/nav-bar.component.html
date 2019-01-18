@@ -60,9 +60,6 @@
     </ul>
 
     <ul class="list-unstyled CTAs">
-        <li *ngIf="!userService.isAuthenticated()">
-            <a [routerLink]="" class="singIn">Sign In</a>
-        </li>
         <li *ngIf="userService.isAuthenticated()">
             <a [routerLink]="" class="logout" (click)="logout()">Log Out</a>
         </li>
