@@ -181,7 +181,11 @@ describe('MapComponent', () => {
         }
       },
       create() {
-        return of(newTransportLine, asyncScheduler);
+        if (serverError) {
+          return throwError({ status: 503 }, asyncScheduler);
+        } else {
+          return of(newTransportLine, asyncScheduler);
+        }
       }
     };
     mockToastrService = jasmine.createSpyObj(['success', 'error']);
@@ -234,6 +238,10 @@ describe('MapComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(MapComponent);
     component = fixture.componentInstance;
+  });
+
+  afterAll(() => {
+    TestBed.resetTestingModule();
   });
 
   it('should create', fakeAsync(() => {
@@ -437,6 +445,27 @@ describe('MapComponent', () => {
 
     expect(mockTransportLineService.create).toHaveBeenCalledTimes(0);
     expect(mockToastrService.success).toHaveBeenCalledTimes(0);
+  }));
+
+  it('should not update transport line name because of name is not unique', fakeAsync(() => {
+    fixture.detectChanges();
+    tick(5000);
+    fixture.detectChanges();
+    const countBefore = fixture.debugElement.queryAll(By.css('button.view')).length;
+    expect(countBefore).toBe(dbTransportLines.length);
+
+    component.editRoute(dbTransportLines[0].id, component.modalFormElement);
+
+    component.formGroup.get('name').setValue(dbTransportLines[2].name);
+    component.formGroup.get('type').setValue(newTransportLine.type);
+    serverError = true;
+    component.onFormSubmit();
+
+    tick(5000);
+    fixture.detectChanges();
+
+    expect(mockTransportLineService.create).toHaveBeenCalledTimes(1);
+    expect(mockToastrService.error).toHaveBeenCalledTimes(1);
   }));
 
 });

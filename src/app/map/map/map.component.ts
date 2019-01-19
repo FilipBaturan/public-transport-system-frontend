@@ -12,6 +12,7 @@ import { TransportLineService } from 'src/app/core/services/transport-line.servi
 import { UserService } from 'src/app/core/services/user.service';
 import { MapService } from 'src/app/core/services/map.service';
 import { TrackerService } from 'src/app/core/services/tracker.service';
+import { a } from '@angular/core/src/render3';
 
 declare var MapBBCode: any;
 declare var L: any;
@@ -230,13 +231,20 @@ export class MapComponent implements OnInit, OnDestroy {
               }
 
             }, error => _this.toastrService.error(error));
+            const temp: Station[] = [];
+            _this.stations.forEach(s => temp.push({id: s.id, name: s.name, type: s.type, active: s.active,
+              position: {id: s.position.id, latitude: s.position.latitude, longitude: s.position.longitude, active: s.position.active} }));
         _this.stationCounter = _this.mapService.placeStations(_this.mapViewer,
           _this.mapViewStations, _this.mapEditorStations, _this.stations, _this.stationCounter);
         _this.stationService.replaceStations({stations: _this.stations}).subscribe(
           stations => {
             _this.stations = stations;
             _this.drawStations();
-          }, error => _this.toastrService.error(error));
+          }, error => {
+            _this.toastrService.error(error);
+            _this.stations = temp;
+            _this.drawStations();
+          });
       }
     });
     this.trackerService.connect(this.vehicles, this.mapViewer, this.busIcon, this.metroIcon, this.tramIcon);
@@ -282,7 +290,7 @@ export class MapComponent implements OnInit, OnDestroy {
       this.mapViewer.updateBBCode(this.bbCode);
       this.toastrService.success('Transport line successfully saved!');
       this.formGroup.reset();
-    });
+    }, error => this.toastrService.error(error));
   }
 
   /**
