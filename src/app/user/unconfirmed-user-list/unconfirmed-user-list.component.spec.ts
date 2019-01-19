@@ -138,6 +138,7 @@ describe('UnconfirmedUserListComponent', () => {
 
     expect(mockUserService.getUnconfirmedUsers).toHaveBeenCalled();
     expect(mockUserService.denyUser).toHaveBeenCalled();
+    expect(mockToastrService.info).toHaveBeenCalled();
 
   }));
 
@@ -184,6 +185,7 @@ describe('UnconfirmedUserListComponent', () => {
 
     expect(mockUserService.getUnconfirmedUsers).toHaveBeenCalled();
     expect(mockUserService.acceptUser).toHaveBeenCalled();
+    expect(mockToastrService.info).toHaveBeenCalled();
 
   }));
 

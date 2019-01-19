@@ -124,6 +124,8 @@ export class ValidatorListComponent implements OnInit {
 
   showForm()
   {
+    this.newUser = new User(null, "new User Name", "new Pass", "new Name", "new Last Name",
+    "new Email",  true, "123123");
     this.formShowed = true;
   }
 

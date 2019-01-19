@@ -22,13 +22,15 @@ import { IsValidatorGuard } from './is-validator.guard';
 import { NewsAdministrationComponent } from '../components/news-administration/news-administration.component';
 import { OperatorListComponent } from '../user/operator-list/operator-list.component';
 import { ScheduleUpdateComponent } from '../schedule/schedule-update/schedule-update.component';
+import { IsAdminGuard } from './is-admin.guard';
 
 @NgModule({
   declarations: [],
   providers: [
     IsAuthenticatedGuard,
     IsOperaterGuard,
-    IsValidatorGuard
+    IsValidatorGuard,
+    IsAdminGuard
   ],
   imports: [
     CommonModule,
@@ -36,7 +38,7 @@ import { ScheduleUpdateComponent } from '../schedule/schedule-update/schedule-up
       { path: 'tickets', component: TicketsComponent, canActivate: [IsAuthenticatedGuard]},
       { path: 'map', component: MapComponent},
       { path: 'newsAdministration', component: NewsAdministrationComponent },
-      { path: 'reports', component: ReportComponent, canActivate: [IsAuthenticatedGuard]},
+      { path: 'reports', component: ReportComponent, canActivate: [IsAdminGuard]},
       { path: 'vehicles', component: VehicleComponent, canActivate: [IsOperaterGuard]},
       { path: 'zones', component: ZoneComponent, canActivate: [IsOperaterGuard]},
       { path: 'schedule', component: ScheduleComponent},
@@ -44,11 +46,11 @@ import { ScheduleUpdateComponent } from '../schedule/schedule-update/schedule-up
       { path: 'userTickets/:id', component: UserTicketsComponent, canActivate: [IsAuthenticatedGuard]},
       { path: 'signin', component: AuthComponent},
       { path: 'signup', component: SignupComponent},
-      { path: 'unconfirmedUsers', component: UnconfirmedUserListComponent, canActivate: [IsValidatorGuard]},
-      { path: 'userProfile', component: UserProfileComponent, canActivate: [IsAuthenticatedGuard]},
-      { path: 'validators', component: ValidatorListComponent, canActivate: [IsAuthenticatedGuard]},
+      { path: 'unconfirmedUsers', component: UnconfirmedUserListComponent, canActivate: [IsAdminGuard]},
+      { path: 'userProfile', component: UserProfileComponent, canActivate: [IsAuthenticatedGuard, IsAdminGuard]},
+      { path: 'validators', component: ValidatorListComponent, canActivate: [IsAdminGuard]},
       { path: 'operators', component: OperatorListComponent, canActivate: [IsOperaterGuard]},
-      { path: 'registeredUsers', component: RegUserListComponent, canActivate: [IsAuthenticatedGuard]},
+      { path: 'registeredUsers', component: RegUserListComponent, canActivate: [IsAdminGuard]},
       { path: '', redirectTo: '/welcome', pathMatch: 'full' },
       { path: '**', component: WelcomeComponent, pathMatch : 'full'}
     ])
