@@ -14,6 +14,7 @@ import { throwError, asyncScheduler, of, observable } from 'rxjs';
 import { VehicleType } from 'src/app/model/enums/vehicle-type.model';
 import { TransportLine } from 'src/app/model/transport-line.model';
 import { By } from '@angular/platform-browser';
+import { TrackerService } from 'src/app/core/services/tracker.service';
 
 
 @Component({
@@ -39,6 +40,7 @@ describe('MapComponent', () => {
   let mockTransportLineService: any;
   let mockToastrService: any;
   let mockMapService: any;
+  let mockTrackerService: any;
 
   let serverError: boolean;
   let empty: boolean;
@@ -179,14 +181,16 @@ describe('MapComponent', () => {
         }
       },
       create() {
-        return of(newTransportLine, asyncScheduler);
+        if (serverError) {
+          return throwError({ status: 503 }, asyncScheduler);
+        } else {
+          return of(newTransportLine, asyncScheduler);
+        }
       }
     };
     mockToastrService = jasmine.createSpyObj(['success', 'error']);
-
+    mockTrackerService = jasmine.createSpyObj(['connect', 'disconnect']);
     mockMapService = {
-      connect() { },
-      disconnect() { },
       deepCopyStations() { return {}; },
       applyTransportRoutesChanges(code: string , _: TransportLine[],
         __: TransportLine[]) {
@@ -203,7 +207,6 @@ describe('MapComponent', () => {
     spyOn(mockTransportLineService, 'findAll').and.callThrough();
     spyOn(mockTransportLineService, 'replaceTransportLines').and.callThrough();
     spyOn(mockTransportLineService, 'create').and.callThrough();
-    spyOn(mockMapService, 'connect').and.callThrough();
     spyOn(mockMapService, 'deepCopyStations').and.callThrough();
     spyOn(mockMapService, 'applyTransportRoutesChanges').and.callThrough();
     spyOn(mockMapService, 'placeStations').and.callThrough();
@@ -225,7 +228,8 @@ describe('MapComponent', () => {
         { provide: StationService, useValue: mockStationService },
         { provide: TransportLineService, useValue: mockTransportLineService },
         { provide: ToastrService, useValue: mockToastrService },
-        { provide: MapService, useValue: mockMapService }
+        { provide: MapService, useValue: mockMapService },
+        { provide: TrackerService, useValue: mockTrackerService }
       ]
 
     });
@@ -236,13 +240,17 @@ describe('MapComponent', () => {
     component = fixture.componentInstance;
   });
 
+  afterAll(() => {
+    TestBed.resetTestingModule();
+  });
+
   it('should create', fakeAsync(() => {
     fixture.detectChanges();
     tick(3000);
     expect(component).toBeTruthy();
     expect(mockStationService.findAll).toHaveBeenCalled();
     expect(mockTransportLineService.findAll).toHaveBeenCalled();
-    expect(mockMapService.connect).toHaveBeenCalled();
+    expect(mockTrackerService.connect).toHaveBeenCalled();
   }));
 
   it('should show all available transport lines', fakeAsync(() => {
@@ -259,7 +267,7 @@ describe('MapComponent', () => {
 
     expect(mockStationService.findAll).toHaveBeenCalled();
     expect(mockTransportLineService.findAll).toHaveBeenCalled();
-    expect(mockMapService.connect).toHaveBeenCalled();
+    expect(mockTrackerService.connect).toHaveBeenCalled();
   }));
 
   it('should not show all transport lines because of server error', fakeAsync(() => {
@@ -272,7 +280,7 @@ describe('MapComponent', () => {
 
     expect(mockStationService.findAll).toHaveBeenCalled();
     expect(mockTransportLineService.findAll).toHaveBeenCalled();
-    expect(mockMapService.connect).toHaveBeenCalled();
+    expect(mockTrackerService.connect).toHaveBeenCalled();
     expect(mockToastrService.error).toHaveBeenCalled();
   }));
 
@@ -437,6 +445,27 @@ describe('MapComponent', () => {
 
     expect(mockTransportLineService.create).toHaveBeenCalledTimes(0);
     expect(mockToastrService.success).toHaveBeenCalledTimes(0);
+  }));
+
+  it('should not update transport line name because of name is not unique', fakeAsync(() => {
+    fixture.detectChanges();
+    tick(5000);
+    fixture.detectChanges();
+    const countBefore = fixture.debugElement.queryAll(By.css('button.view')).length;
+    expect(countBefore).toBe(dbTransportLines.length);
+
+    component.editRoute(dbTransportLines[0].id, component.modalFormElement);
+
+    component.formGroup.get('name').setValue(dbTransportLines[2].name);
+    component.formGroup.get('type').setValue(newTransportLine.type);
+    serverError = true;
+    component.onFormSubmit();
+
+    tick(5000);
+    fixture.detectChanges();
+
+    expect(mockTransportLineService.create).toHaveBeenCalledTimes(1);
+    expect(mockToastrService.error).toHaveBeenCalledTimes(1);
   }));
 
 });

@@ -33,10 +33,12 @@
                     },
                     "configurations": {
                         "production": {
-                            "fileReplacements": [{
-                                "replace": "src/environments/environment.ts",
-                                "with": "src/environments/environment.prod.ts"
-                            }],
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/environments/environment.ts",
+                                    "with": "src/environments/environment.prod.ts"
+                                }
+                            ],
                             "optimization": true,
                             "outputHashing": "all",
                             "sourceMap": false,
@@ -80,6 +82,10 @@
                         "assets": [
                             "src/favicon.ico",
                             "src/assets"
+                        ],
+                        "codeCoverageExclude": [
+                            "src/app/core/services/tracker.service.ts",
+                            "src/app/core/services/rest.service.ts"
                         ]
                     }
                 },
