@@ -50,7 +50,7 @@ export class TicketsComponent implements OnInit {
     this.monthlySelected = false;
     this.annualSelected = false;
     this.pricelistitemId = 0;
-    this.reservation = new Reservation(0, [], 0);
+    this.reservation = {id: 0, tickets: [], owner: 0};
     this.price = 0;
     this.transportType = 'BUS';
     this.ageType = 'REGULAR';

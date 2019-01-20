@@ -1,6 +1,6 @@
-import { Item } from "./item.model";
+import { Item } from './item.model';
 
-export class PricelistItem{
+export interface PricelistItem {
     id: number;
     item: Item;
 }

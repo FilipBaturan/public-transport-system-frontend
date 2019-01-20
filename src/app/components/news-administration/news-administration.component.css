@@ -1,3 +1,13 @@
+.allNews {
+    height: 300px;
+    overflow-y: scroll;
+    width: 40rem;
+    padding: 5px;
+}
+
+.card {
+    padding: 5px;
+}
 
 
 /* ---------------------------------------------------
@@ -8,109 +18,111 @@
     display: flex;
     width: 100%;
     align-items: stretch;
-  }
-  
-  #sidebar {
+}
+
+#sidebar {
     min-width: 250px;
     max-width: 250px;
     background: #7386D5;
     color: #fff;
     transition: all 0.3s;
-  }
-  
-  #sidebar.active {
+}
+
+#sidebar.active {
     margin-left: -250px;
-  }
-  
-  #sidebar .sidebar-header {
+}
+
+#sidebar .sidebar-header {
     padding: 20px;
     background: #6d7fcc;
-  }
-  
-  #sidebar ul.components {
+}
+
+#sidebar ul.components {
     padding: 20px 0;
     border-bottom: 1px solid #47748b;
-  }
-  
-  #sidebar ul p {
+}
+
+#sidebar ul p {
     color: #fff;
     padding: 10px;
-  }
-  
-  #sidebar ul li a {
+}
+
+#sidebar ul li a {
     padding: 10px;
     font-size: 1.1em;
     display: block;
-  }
-  
-  #sidebar ul li a:hover {
+}
+
+#sidebar ul li a:hover {
     color: #7386D5;
     background: #fff;
-  }
-  
-  #sidebar ul li.active>a,
-  a[aria-expanded="true"] {
+}
+
+#sidebar ul li.active>a,
+a[aria-expanded="true"] {
     color: #fff;
     background: #6d7fcc;
-  }
-  
-  a[data-toggle="collapse"] {
+}
+
+a[data-toggle="collapse"] {
     position: relative;
-  }
-  
-  .dropdown-toggle::after {
+}
+
+.dropdown-toggle::after {
     display: block;
     position: absolute;
     top: 50%;
     right: 20px;
     transform: translateY(-50%);
-  }
-  
-  ul ul a {
+}
+
+ul ul a {
     font-size: 0.9em !important;
     padding-left: 30px !important;
     background: #6d7fcc;
-  }
-  
-  ul.CTAs {
+}
+
+ul.CTAs {
     padding: 20px;
-  }
-  
-  ul.CTAs a {
+}
+
+ul.CTAs a {
     text-align: center;
     font-size: 0.9em !important;
     display: block;
     border-radius: 5px;
     margin-bottom: 5px;
-  }
-  
-  a.download {
+}
+
+a.download {
     background: #fff;
     color: #7386D5;
-  }
-  
-  a.article,
-  a.article:hover {
+}
+
+a.article,
+a.article:hover {
     background: #6d7fcc !important;
     color: #fff !important;
-  }
-  
-  /* ---------------------------------------------------
+}
+
+
+/* ---------------------------------------------------
     CONTENT STYLE
   ----------------------------------------------------- */
-  
-  #content {
+
+#content {
     width: 100%;
     padding: 20px;
     min-height: 100vh;
     transition: all 0.3s;
-  }
-  
-  /* ---------------------------------------------------
+}
+
+
+/* ---------------------------------------------------
     MEDIAQUERIES
   ----------------------------------------------------- */
-  
-  @media (max-width: 768px) {
+
+@media (max-width: 768px) {
     #sidebar {
         margin-left: -250px;
     }
@@ -120,5 +132,4 @@
     #sidebarCollapse span {
         display: none;
     }
-  }
-  
+}

@@ -1,11 +1,6 @@
-export class LogIn {
-    
-    username : String;
-    password : String;
+export interface LogIn {
 
-    constructor(username : String, password : String){
-        this.username = username;
-        this.password = password;
-    }
+    username: String;
+    password: String;
 
 }
