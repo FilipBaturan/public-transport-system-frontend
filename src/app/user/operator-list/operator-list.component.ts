@@ -23,6 +23,7 @@ export class OperatorListComponent implements OnInit {
   newUser: User;
 
   formShowed: boolean;
+  addName: boolean;
 
   @ViewChild(MatTable) table: MatTable<any>;
 
@@ -36,6 +37,7 @@ export class OperatorListComponent implements OnInit {
                     true, "123123");
 
     this.formShowed = false;
+    this.addName = true;
 
     this.userService.getOperators().subscribe(
       response => {
@@ -44,18 +46,6 @@ export class OperatorListComponent implements OnInit {
         this.checkUsersLength();
       }
     )
-  }
-
-  showForm()
-  {
-    this.formShowed = true;
-  }
-
-  showChangeForm(user: User)
-  {
-    console.log(user);
-    this.newUser = user;
-    this.showForm();
   }
 
   blockOperator(user:User)
@@ -68,7 +58,7 @@ export class OperatorListComponent implements OnInit {
       this.userService.updateOperator(user).subscribe(
         response => {
           if (response == false)
-            this.toastr.info("There was a problem with blocking the operator!");
+            this.toastr.info("A problem occured when blocking the operator!");
           else
           {
             var index = this.operators.indexOf(user);
@@ -96,7 +86,7 @@ export class OperatorListComponent implements OnInit {
       this.userService.updateOperator(this.newUser).subscribe(
         response => {
           if (response == false)
-            this.toastr.error("There was a problem with updating the operator");
+            this.toastr.error("A problem occured when updating the operator.");
           else
           {
             this.toastr.info("Operator succesfully updated!");
@@ -113,7 +103,7 @@ export class OperatorListComponent implements OnInit {
       this.userService.addOperator(this.newUser).subscribe(
         response => {
           if (response == false)
-            this.toastr.info("There was a problem with adding the operator");
+            this.toastr.info("A problem occured when adding the operator.");
           else
           {
             this.userService.getByUsername(this.newUser.username).subscribe(
@@ -138,15 +128,31 @@ export class OperatorListComponent implements OnInit {
   
       this.formShowed = false;
     }
-
+    this.addName = true;
   }
 
+  cancelForm(){
+    this.formShowed = false;
+    this.addName = true;
+  }
 
   checkUsersLength(){
     if (this.operators.length == 0)
       this.noUsers = true;
     else
       this.noUsers = false;
+  }
+
+  showForm()
+  {
+    this.formShowed = true;
+  }
+
+  showChangeForm(user: User)
+  {
+    this.newUser = user;
+    this.formShowed = true;
+    this.addName = false;
   }
 
 }

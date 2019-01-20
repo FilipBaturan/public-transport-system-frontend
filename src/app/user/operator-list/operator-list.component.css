@@ -1,13 +1,22 @@
 .example-container {
-    margin-left: auto;
-    margin-right: auto;
-    width: 70%;
+    margin: auto;
+    width: 80%;
     display: flex;
     justify-content: center;
   }
 
 .mat-table{
     align-self: center;
+}
+
+.mat-success {
+  background-color: rgb(35, 140, 189);
+  color: #fff;
+}
+
+.mat-add {
+  background-color: rgb(252, 8, 8);
+  color: #fff;
 }
 
 .mat-table__wrapper .mat-table {
@@ -62,9 +71,10 @@
 
 #mainDiv{
   text-align: center;
+  margin-top: 40px;
 }
 
-#addButton{
+#addOperatorButton{
   margin: 20px;
 }
  
@@ -76,6 +86,14 @@
   margin: 0 auto; 
   width: 500px;
   margin-top: 100px;  
+}
+
+#formAddButton{
+  margin-right: 20px;
+}
+
+h1{
+  margin-bottom: 40px;
 }
 
 /* ---------------------------------------------------
@@ -182,6 +200,7 @@
     padding: 20px;
     min-height: 100vh;
     transition: all 0.3s;
+    text-align: center;
   }
   
   /* ---------------------------------------------------
