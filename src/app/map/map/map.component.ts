@@ -11,6 +11,8 @@ import { StationService } from 'src/app/core/services/station.service';
 import { TransportLineService } from 'src/app/core/services/transport-line.service';
 import { UserService } from 'src/app/core/services/user.service';
 import { MapService } from 'src/app/core/services/map.service';
+import { TrackerService } from 'src/app/core/services/tracker.service';
+import { a } from '@angular/core/src/render3';
 
 declare var MapBBCode: any;
 declare var L: any;
@@ -72,7 +74,8 @@ export class MapComponent implements OnInit, OnDestroy {
     private transportLineService: TransportLineService,
     private toastrService: ToastrService,
     private modalService: NgbModal,
-    private mapService: MapService) {
+    private mapService: MapService,
+    private trackerService: TrackerService) {
     // map init
     this.bbCode = '[map][/map]';
     this.imagePath = 'assets/lib/dist/lib/images/';
@@ -184,18 +187,18 @@ export class MapComponent implements OnInit, OnDestroy {
       }
     }, err => this.toastrService.error(err));
 
-    this.mapService.connect(this.vehicles, this.mapViewer, this.busIcon, this.metroIcon, this.tramIcon);
+    this.trackerService.connect(this.vehicles, this.mapViewer, this.busIcon, this.metroIcon, this.tramIcon);
   }
 
   ngOnDestroy(): void {
-    this.mapService.disconnect();
+    this.trackerService.disconnect();
   }
 
   /**
    * Opens map editor and saves updates
    */
   edit(): void {
-    this.mapService.disconnect();
+    this.trackerService.disconnect();
     const _this = this; // temploral reference to this object
     const original = document.getElementById('original');
     original.style.display = 'none';
@@ -228,16 +231,23 @@ export class MapComponent implements OnInit, OnDestroy {
               }
 
             }, error => _this.toastrService.error(error));
+            const temp: Station[] = [];
+            _this.stations.forEach(s => temp.push({id: s.id, name: s.name, type: s.type, active: s.active,
+              position: {id: s.position.id, latitude: s.position.latitude, longitude: s.position.longitude, active: s.position.active} }));
         _this.stationCounter = _this.mapService.placeStations(_this.mapViewer,
           _this.mapViewStations, _this.mapEditorStations, _this.stations, _this.stationCounter);
         _this.stationService.replaceStations({stations: _this.stations}).subscribe(
           stations => {
             _this.stations = stations;
             _this.drawStations();
-          }, error => _this.toastrService.error(error));
+          }, error => {
+            _this.toastrService.error(error);
+            _this.stations = temp;
+            _this.drawStations();
+          });
       }
     });
-    this.mapService.connect(this.vehicles, this.mapViewer, this.busIcon, this.metroIcon, this.tramIcon);
+    this.trackerService.connect(this.vehicles, this.mapViewer, this.busIcon, this.metroIcon, this.tramIcon);
   }
 
   /**
@@ -280,7 +290,7 @@ export class MapComponent implements OnInit, OnDestroy {
       this.mapViewer.updateBBCode(this.bbCode);
       this.toastrService.success('Transport line successfully saved!');
       this.formGroup.reset();
-    });
+    }, error => this.toastrService.error(error));
   }
 
   /**

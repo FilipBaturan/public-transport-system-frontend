@@ -115,9 +115,6 @@ export class ScheduleComponent implements OnInit {
           this.dataSource._updateChangeSubscription();
         }, err =>{
           let index = this.selectedItems.findIndex(i => i.id == item.id);
-          console.log(this.selectedItems[0]);
-          console.log(item.id);
-          console.log(index);
           this.selectedItems.splice(index,1);
         });
     } 

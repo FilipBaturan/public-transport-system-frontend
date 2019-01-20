@@ -1,12 +1,13 @@
 
 .example-container {
-    margin-top: 25px;
+    margin: auto;
+    width: 90%;
     display: flex;
     justify-content: center;
-  }
+}
 
-.mat-table{
-    align-self: center;
+h1{
+  margin-bottom: 40px;
 }
 
 .mat-table__wrapper .mat-table {
@@ -64,7 +65,10 @@
     text-align: center;
 }
 
-
+.mat-success {
+  background-color: rgb(35, 140, 189);
+  color: #fff;
+}
 
 /* ---------------------------------------------------
     SIDEBAR STYLE
@@ -170,6 +174,7 @@
     padding: 20px;
     min-height: 100vh;
     transition: all 0.3s;
+    text-align: center;
   }
   
   /* ---------------------------------------------------

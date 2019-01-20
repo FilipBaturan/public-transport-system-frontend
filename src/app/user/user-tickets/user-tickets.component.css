@@ -1,14 +1,25 @@
 
 .example-container {
-    margin-top: 25px;
+    margin: auto;
+    width: 80%;
     display: flex;
     justify-content: center !important;
-    width: 50% !important;
   }
 
 .mat-table{
     align-self: center;
+    min-width: 800px !important;
 }
+
+h1{
+  margin-bottom: 40px;
+}
+
+.mat-success {
+  background-color: rgb(35, 140, 189);
+  color: #fff;
+}
+
 
 .mat-table__wrapper .mat-table {
     min-width: auto;
@@ -18,6 +29,11 @@
 .mat-header-row {
     width: 100%;
 }
+
+.mat-header-row th{
+  text-align: center;
+}
+
 
 .mat-row {
     width: 100%;
