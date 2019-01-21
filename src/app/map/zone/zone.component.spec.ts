@@ -44,12 +44,14 @@ describe('ZoneComponent', () => {
   let minimum: boolean;
   let maximum: boolean;
   let serverError: boolean;
+  let unauthorized: boolean;
 
   beforeEach(async(() => {
     create = true;
     minimum = false;
     maximum = false;
     serverError = false;
+    unauthorized = false;
     index = 1;
 
     dbZones = [
@@ -110,7 +112,14 @@ describe('ZoneComponent', () => {
         }
       },
       remove() {
-        dbZones.splice(index, 1);
+        if (serverError) {
+          return throwError({ status: 503 }, asyncScheduler);
+        } else if (unauthorized) {
+          return throwError({ status: 401 }, asyncScheduler);
+        } else {
+          dbZones.splice(index, 1);
+          return of(dbZones, asyncScheduler);
+        }
       }
     };
 
@@ -478,6 +487,60 @@ describe('ZoneComponent', () => {
 
     dP = fixture.debugElement.queryAll(By.css('div.card-body p.text-center'));
     expect(dP.length).toBe(beforeCountP - 1);
+    expect(dP[index].nativeElement.textContent).toContain(dbZones[index].lines.length);
+
+    expect(mockZoneService.remove).toHaveBeenCalled();
+  }));
+
+  it('should not remove zone if user does not has authority', fakeAsync(() => {
+    index = 1;
+    fixture.detectChanges();
+    tick();
+    fixture.detectChanges();
+    let dH4 = fixture.debugElement.queryAll(By.css('h4.card-title.text-center'));
+    const beforeCountH4 = dH4.length; // 5 zone cards and one for add zone card
+    let dP = fixture.debugElement.queryAll(By.css('div.card-body p.text-center'));
+    const beforeCountP = dP.length;
+
+    unauthorized = true;
+    component.deleteZone(dbZones[index].id);
+
+    tick();
+    fixture.detectChanges();
+
+    dH4 = fixture.debugElement.queryAll(By.css('h4.card-title.text-center'));
+    expect(dH4.length).toBe(beforeCountH4);
+    expect(dH4[index].nativeElement.textContent).toContain(dbZones[index].name);
+
+    dP = fixture.debugElement.queryAll(By.css('div.card-body p.text-center'));
+    expect(dP.length).toBe(beforeCountP);
+    expect(dP[index].nativeElement.textContent).toContain(dbZones[index].lines.length);
+
+    expect(mockZoneService.remove).toHaveBeenCalled();
+  }));
+
+  it('should not remove zone if server is down', fakeAsync(() => {
+    index = 1;
+    fixture.detectChanges();
+    tick();
+    fixture.detectChanges();
+    let dH4 = fixture.debugElement.queryAll(By.css('h4.card-title.text-center'));
+    const beforeCountH4 = dH4.length; // 5 zone cards and one for add zone card
+    let dP = fixture.debugElement.queryAll(By.css('div.card-body p.text-center'));
+    const beforeCountP = dP.length;
+
+    serverError = true;
+    component.deleteZone(dbZones[index].id);
+
+    tick();
+    fixture.detectChanges();
+
+    dH4 = fixture.debugElement.queryAll(By.css('h4.card-title.text-center'));
+    expect(dH4.length).toBe(beforeCountH4);
+    expect(dH4[index].nativeElement.textContent).toContain(dbZones[index].name);
+
+    dP = fixture.debugElement.queryAll(By.css('div.card-body p.text-center'));
+    expect(dP.length).toBe(beforeCountP);
     expect(dP[index].nativeElement.textContent).toContain(dbZones[index].lines.length);
 
     expect(mockZoneService.remove).toHaveBeenCalled();

@@ -95,7 +95,19 @@ export class ZoneComponent implements OnInit {
    * @param number id target zone id
    */
   deleteZone(id: number): void {
-    this.zoneService.remove(id, this.zones);
+    this.zoneService.remove(id).subscribe(() => {
+      let temp: Zone[];
+      this.zoneService.findAll().subscribe(result => {
+        temp = result;
+        for (let index = 0; index < temp.length; index++) {
+          const zone = temp[index];
+          this.zones[index] = zone;
+        }
+        this.zones.length = temp.length;
+        this.toastrService.success('Zone successfuly deleted!');
+      });
+    }, err =>
+    err.status === 401 ? this.toastrService.error('Forbidden!') : this.toastrService.error(err.error));
   }
 
   /**

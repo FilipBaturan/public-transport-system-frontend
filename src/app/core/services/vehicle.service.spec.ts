@@ -124,53 +124,32 @@ describe('VehicleService', () => {
   }));
 
   it('should delete vehicle', fakeAsync(() => {
-    const length = dbVehicles.length;
-    const v = dbVehicles[1];
-
-    service.remove(1, 0, dbVehicles);
+    service.remove(1).subscribe(result => expect(result).toBe('Vehicle successfully removed!'));
 
     const req = mockHttp.expectOne(url + '/' + 1);
     expect(req.request.method).toBe('DELETE');
     req.flush('Vehicle successfully removed!');
     expect(req.request.responseType).toBe('text');
-
-    expect(dbVehicles.length).toBe(length - 1);
-    expect(dbVehicles[0]).toEqual(v);
-    expect(mockToastrService.success).toHaveBeenCalled();
   }));
 
   it('should receive forbidden error for unauthorized deletion', fakeAsync(() => {
-    const length = dbVehicles.length;
-    const v = dbVehicles[0];
-
-    service.remove(1, 0, dbVehicles);
+    service.remove(1).subscribe(() => {}, error => expect(error.status).toBe(401));
 
     const req = mockHttp.expectOne(url + '/' + 1);
     expect(req.request.method).toBe('DELETE');
     req.flush({ message: 'Forbidden!' },
       { status: 401, statusText: 'Unauthorazied' });
     expect(req.request.responseType).toBe('text');
-
-    expect(dbVehicles.length).toBe(length);
-    expect(dbVehicles[0]).toEqual(v);
-    expect(mockToastrService.error).toHaveBeenCalled();
   }));
 
   it('should receive vehicle does not exist error', fakeAsync(() => {
-    const length = dbVehicles.length;
-    const v = dbVehicles[0];
-
-    service.remove(1, 0, dbVehicles);
+    service.remove(1).subscribe(() => {}, error => expect(error.status).toBe(400));
 
     const req = mockHttp.expectOne(url + '/' + 1);
     expect(req.request.method).toBe('DELETE');
     req.flush({ message: 'Vehicle does not exist!' },
       { status: 400, statusText: 'Bad Request' });
     expect(req.request.responseType).toBe('text');
-
-    expect(dbVehicles.length).toBe(length);
-    expect(dbVehicles[0]).toEqual(v);
-    expect(mockToastrService.error).toHaveBeenCalled();
   }));
 
 });
