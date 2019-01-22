@@ -10,8 +10,42 @@ table {
     
   }
   
-  
-  
+  .mat-delete {
+    background-color: rgb(252, 8, 8);
+    color: #fff;
+  }
+
+  .mat-add {
+    background-color: rgb(55, 150, 70);
+    color: #fff;
+  }
+
+  .mat-save {
+    background-color: rgb(35, 140, 189);
+    color: #fff;
+}
+
+  .schedule-btns {
+    margin: 10px;
+    padding: 1px 1px 1px 1px;
+  }
+
+  .schedule-btns-lower {
+    margin-top: 50px;
+    margin-bottom: 50px;
+    margin-left: 20px;
+    margin-right: 20px;
+    padding: 1px 1px 1px 1px;
+  }
+
+  .footer-btns {
+    text-align: center;
+  }
+
+  .cells {
+    text-align: center;
+  }
+ 
   /* ---------------------------------------------------
       SIDEBAR STYLE
   ----------------------------------------------------- */

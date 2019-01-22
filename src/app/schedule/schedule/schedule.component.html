@@ -8,7 +8,7 @@
 
         <angular2-multiselect [data]="transportLineDropdown" [(ngModel)]="selectedItems" [settings]="transportLineDropdownSettings"
             (onSelect)="onItemSelect($event)" (onDeSelect)="onItemDeSelect($event)"
-            ></angular2-multiselect>>
+            ></angular2-multiselect>
 
         <table *ngIf="selectedItems.length!=0" mat-table [dataSource]="dataSource" matSort>
 

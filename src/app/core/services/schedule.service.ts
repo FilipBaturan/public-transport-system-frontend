@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 
 import { RestService } from './rest.service';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Schedule } from 'src/app/model/schedule.model';
 import { DayOfWeek } from 'src/app/model/enums/day-of-week.model';
@@ -39,9 +39,10 @@ export class ScheduleService extends RestService<Schedule> {
       );
   }
 
-  updateSchedule(schedule: Schedule){
-    return this.http.put<any>(this.url(['updateSchedule']), schedule).pipe(
-      catchError(this.handleError<boolean>())
+  updateSchedule(schedule: Schedule[]){
+    return this.http.put<any>(this.url(['updateSchedule']), schedule
+    ).pipe(
+      catchError(this.handleError<boolean>())//this.handleError<boolean>())
     );
   }
 }

@@ -1,8 +1,11 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
-import { User } from '../../model/users/user.model';
-import { ToastrService } from 'ngx-toastr';
-import { UserService } from 'src/app/core/services/user.service';
+import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
 import { MatTable } from '@angular/material';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { ToastrService } from 'ngx-toastr';
+
+import { User } from '../../model/users/user.model';
+import { UserService } from 'src/app/core/services/user.service';
+
 
 
 @Component({
@@ -24,6 +27,8 @@ export class OperatorListComponent implements OnInit {
 
   formShowed: boolean;
   addName: boolean;
+
+  private modalForm: NgbModalRef;
 
   @ViewChild(MatTable) table: MatTable<any>;
 

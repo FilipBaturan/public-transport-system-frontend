@@ -8,13 +8,19 @@
 
           <!-- Position Column -->
           <ng-container matColumnDef="{{column}}" *ngFor="let column of displayedColumns">
-              <mat-header-cell *matHeaderCellDef mat-sort-header> {{column}} </mat-header-cell>
-              <mat-cell *matCellDef="let element">
-                  <mat-form-field floatLabel="never">
-                      <input matInput placeholder="Departure" (focus) ="memorizeFocusedDeparture($event, element[column])"
-                       (focusout)="checkDeparture(element[column], element, column)" [value]="element[column]" [(ngModel)]="element[column]">
+              <mat-header-cell *matHeaderCellDef> {{column}}
+                   <button class="schedule-btns" *ngIf="!checkIfScheduleExists(column)" mat-raised-button color="add"
+                   (click)="addSchedule(column)" [disabled]="refreshing">Add</button>
+                   <button class="schedule-btns" *ngIf="checkIfScheduleExists(column)" mat-raised-button color="delete"
+                   (click)="removeSchedule(column)" [disabled]="refreshing">Delete</button>
+                 </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-form-field class = "cells" *ngIf="checkIfScheduleExists(column)" floatLabel="never">
+                        <input matInput placeholder="Departure" (focus) ="memorizeFocusedDeparture($event, element[column])"
+                        (focusout)="checkDeparture(element[column], element, column)"
+                            [value]="element[column]" [(ngModel)]="element[column]">
                     </mat-form-field>
-                 </mat-cell>
+                </mat-cell>
           </ng-container>
 
           <mat-header-row *matHeaderRowDef="columnsToDisplay"></mat-header-row>
@@ -22,10 +28,16 @@
         
         </table>
 
-      <!--<i class="fa fa-plus-square"></i> <i class="fa fa-minus-square"></i>-->
-      <div    *ngIf="selectedItems.length==0">Select a Day of week and Transport lines!</div>
-      <button *ngIf="selectedItems.length!=0" (click) = "addNewRow()">Add</button>
-      <button *ngIf="selectedItems.length!=0" (click) = "removeRow()">Remove</button>
-      <button *ngIf="selectedItems.length!=0" (click) = "updateSchedule()">Save</button>
-  </div>
+      <div *ngIf="selectedItems.length==0">Select a Transport line!</div>
+      <div class = "footer-btns">
+        <button class="schedule-btns-lower" mat-raised-button color="add"     *ngIf="selectedItems.length!=0"
+        [disabled]="refreshing" (click)  = "addNewRow()">Add Row</button>
+
+        <button class="schedule-btns-lower" mat-raised-button color="delete"  *ngIf="selectedItems.length!=0"
+        [disabled]="refreshing" (click) = "removeRow()">Remove Row</button>
+
+        <button class="schedule-btns-lower" mat-raised-button color="save"    *ngIf="selectedItems.length!=0"
+        [disabled]="refreshing" (click) = "updateSchedule()">Save Schedule</button>
+      </div>
+    </div>
 </div>
