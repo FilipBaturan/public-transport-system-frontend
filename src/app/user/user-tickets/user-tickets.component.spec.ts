@@ -10,7 +10,7 @@ import { ToastrService } from 'ngx-toastr';
 import {HttpClientModule, HttpClient} from '@angular/common/http';
 import {RouterTestingModule} from '@angular/router/testing';
 
-
+/*
 @Component({
   selector: 'app-nav-bar',
   template: '<div></div>',
@@ -153,3 +153,4 @@ describe('UserTicketsComponent', () => {
 
 
 });
+*/
