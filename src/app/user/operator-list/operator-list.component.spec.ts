@@ -121,7 +121,7 @@ describe('OperatorListComponent', () => {
         MatSelectModule,
         MatSortModule,
         MatTableModule,
-        BrowserAnimationsModule,
+        BrowserAnimationsModule
         //HttpClientModule,
       ],
       providers: [
@@ -301,7 +301,7 @@ describe('OperatorListComponent', () => {
 
   }));
 
-  it('should NOT update operator -> non existing id', fakeAsync(() => {
+  it('should NOT update operator -> non-existing id', fakeAsync(() => {
     updateError = 404;
     fixture.detectChanges();
     tick();

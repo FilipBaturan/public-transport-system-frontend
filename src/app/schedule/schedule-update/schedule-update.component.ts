@@ -23,7 +23,6 @@ export class ScheduleUpdateComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
 
   schedules = new Array<Schedule>();
-  //displayedSchedules = new Array<Schedule>();
   transportLines = new Array<TransportLine>();
 
   tableArr: any[] = [];
@@ -119,7 +118,7 @@ export class ScheduleUpdateComponent implements OnInit {
     response.forEach(element=> {
       let key = element.transportLine.name + "-" + element.dayOfWeek;
       let idx = this.displayedSchedules.indexOf(key);
-        if (idx==-1){
+      if (idx==-1){
           this.displayedSchedules.push(key);
         }
       //this.columnsToDisplay.push(key);
@@ -174,13 +173,10 @@ export class ScheduleUpdateComponent implements OnInit {
       if (element[sunday])   sundayDepartures.push(element[sunday].trim());
     });
 
-    console.log(workdayDepartures);
-    console.log(saturdayDepartures);
-    console.log(sundayDepartures);
-
     let schedulesToUpdate = [] as Schedule[];
 
     this.schedules.forEach(schedule =>{
+      console.log(schedule.dayOfWeek);
       if (schedule.transportLine.name == tl){
         if (String(schedule.dayOfWeek) == "WORKDAY"){
           schedule.departures = workdayDepartures;
@@ -205,7 +201,7 @@ export class ScheduleUpdateComponent implements OnInit {
       },
       (error)=>{
         this.refreshing = false;
-        this.toastSerivce.warning("Can't create a schedule with a unknown transport line!");
+        this.toastSerivce.warning("Can't update a schedule with a unknown transport line!");
       }
     );
 
@@ -232,6 +228,7 @@ export class ScheduleUpdateComponent implements OnInit {
     }
     schedule.departures=[];
     schedule.active=true;
+    
     this.scheduleService.create(schedule).subscribe(
       response=>{
         this.schedules.push(response as Schedule);
@@ -349,14 +346,6 @@ export class ScheduleUpdateComponent implements OnInit {
       case "WORKDAY": return DayOfWeek.WORKDAY;
       case "SATURDAY": return DayOfWeek.SATURDAY;
       case "SUNDAY": return DayOfWeek.SUNDAY;
-    }
-  }
-
-  getStringFromEnum(dow: number){
-    switch(dow){
-      case 0: return "WORKDAY";
-      case 1: return "SATURDAY";
-      case 2: return "SUNDAY";
     }
   }
 }

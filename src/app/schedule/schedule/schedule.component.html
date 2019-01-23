@@ -10,11 +10,11 @@
             (onSelect)="onItemSelect($event)" (onDeSelect)="onItemDeSelect($event)"
             ></angular2-multiselect>
 
-        <table *ngIf="selectedItems.length!=0" mat-table [dataSource]="dataSource" matSort>
+        <table *ngIf="selectedItems.length!=0" mat-table [dataSource]="dataSource">
 
             <!-- Position Column -->
             <ng-container matColumnDef="{{column}}" *ngFor="let column of displayedColumns">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> {{column}} </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef> {{column}} </mat-header-cell>
                 
                 <mat-cell *matCellDef="let element"> {{element[column]}} </mat-cell>
             </ng-container>
