@@ -65,42 +65,43 @@
         
           <form id = "addForm" class="my-form">
             <mat-card-content>
-              <form class="my-form">
-                  <mat-form-field class="full-width">
-                        <mat-label>First Name</mat-label>
-                        <input  matInput  placeholder="First name"  name="fname"
-                        [(ngModel)]="newUser.name" required>
-                      </mat-form-field>
-                      <mat-form-field class="full-width">
-                        <mat-label>Last Name</mat-label>
-                        <input  matInput  placeholder="Last Name" name="lname" 
-                        [(ngModel)]="newUser.lastName"  required>
-                      </mat-form-field>
-                      <mat-form-field class="full-width">
-                        <mat-label>Username</mat-label>
-                        <input  matInput  placeholder="Username" name="username"
-                        [(ngModel)]="newUser.username"  required>
-                      </mat-form-field>
-                      <mat-form-field class="full-width">
-                        <mat-label>Email</mat-label>
-                        <input  matInput  placeholder="Email" name="email" [(ngModel)]="newUser.email">
-                      </mat-form-field>
-                      <mat-form-field class="full-width">
-                        <mat-label>Telephone</mat-label>
-                        <input  matInput  placeholder="Telephone" name = "telephone"
-                        [(ngModel)]="newUser.telephone">
-                      </mat-form-field>
-                      <mat-card-actions>
-                          <button id = "formAddButton" mat-raised-button (click)="addValidator()" 
-                          color="primary">
-                          {{addName ==true ? "Add validator" : 'Change validator'}}
-                          </button>
+              <form class="my-form" [formGroup]="formGroup">
+                <mat-form-field class="full-width">
+                  <mat-label>First Name</mat-label>
+                  <input  matInput  placeholder="First name"  name="fname"
+                  [(ngModel)]="newUser.name" formControlName = "fname">
+                </mat-form-field>
+                <mat-form-field class="full-width">
+                  <mat-label>Last Name</mat-label>
+                  <input  matInput  placeholder="Last Name" name="lname" 
+                  [(ngModel)]="newUser.lastName"  formControlName = "lname">
+                </mat-form-field>
+                <mat-form-field class="full-width">
+                  <mat-label>Username</mat-label>
+                  <input  matInput  placeholder="Username" name="username"
+                  [(ngModel)]="newUser.username"  formControlName = "username">
+                </mat-form-field>
+                <mat-form-field class="full-width">
+                  <mat-label>Email</mat-label>
+                  <input  matInput  placeholder="Email" name="email" 
+                  [(ngModel)]="newUser.email" formControlName = "email">
+                </mat-form-field>
+                <mat-form-field class="full-width">
+                  <mat-label>Telephone</mat-label>
+                  <input  matInput  placeholder="Telephone" name = "telephone"
+                  [(ngModel)]="newUser.telephone" formControlName = "telephone">
+                </mat-form-field>
+                <mat-card-actions>
+                    <button id = "formAddButton" mat-raised-button (click)="addValidator()" 
+                    color="primary">
+                    {{addName ==true ? "Add validator" : 'Change validator'}}
+                    </button>
 
-                          <button mat-raised-button (click)="cancelForm()" 
-                          color="primary">
-                          Cancel
-                          </button>
-                      </mat-card-actions>
+                    <button mat-raised-button (click)="cancelForm()" 
+                    color="primary">
+                    Cancel
+                    </button>
+                </mat-card-actions>
               </form>
             </mat-card-content>
           </form>
