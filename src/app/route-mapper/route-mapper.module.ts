@@ -23,6 +23,7 @@ import { NewsAdministrationComponent } from '../components/news-administration/n
 import { OperatorListComponent } from '../user/operator-list/operator-list.component';
 import { ScheduleUpdateComponent } from '../schedule/schedule-update/schedule-update.component';
 import { IsAdminGuard } from './is-admin.guard';
+import { PricelistComponent } from '../components/pricelist/pricelist.component';
 
 @NgModule({
   declarations: [],
@@ -51,6 +52,7 @@ import { IsAdminGuard } from './is-admin.guard';
       { path: 'validators', component: ValidatorListComponent, canActivate: [IsAdminGuard]},
       { path: 'operators', component: OperatorListComponent, canActivate: [IsOperaterGuard]},
       { path: 'registeredUsers', component: RegUserListComponent, canActivate: [IsAdminGuard]},
+      { path: 'pricelist', component: PricelistComponent},
       { path: '', redirectTo: '/welcome', pathMatch: 'full' },
       { path: '**', component: WelcomeComponent, pathMatch : 'full'}
     ])

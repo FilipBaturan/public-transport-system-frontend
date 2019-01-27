@@ -134,9 +134,9 @@ export class TicketsComponent implements OnInit {
       this.reservation.tickets.push(t);
       this.toastr.success('Uspesno ste dodali kartu u rezervaciju');
     } else if (feedback === 1) {
-      this.toastr.warning('Odaberite datum!');
+      this.toastr.warning('Choose date!');
     } else if (feedback === 2) {
-      this.toastr.warning('Odaberite validan datum!');
+      this.toastr.warning('Choose valid date!');
     }
   }
 

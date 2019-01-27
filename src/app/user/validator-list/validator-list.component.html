@@ -11,7 +11,7 @@
       
           <ng-container matColumnDef="firstName">
             <th mat-header-cell *matHeaderCellDef>First Name </th>
-            <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+            <td mat-cell *matCellDef="let element"> {{element.firstName}} </td>
           </ng-container>
       
           
@@ -69,7 +69,7 @@
                 <mat-form-field class="full-width">
                   <mat-label>First Name</mat-label>
                   <input  matInput  placeholder="First name"  name="fname"
-                  [(ngModel)]="newUser.name" formControlName = "fname">
+                  [(ngModel)]="newUser.firstName" formControlName = "fname">
                 </mat-form-field>
                 <mat-form-field class="full-width">
                   <mat-label>Last Name</mat-label>
