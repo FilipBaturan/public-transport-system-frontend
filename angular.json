@@ -85,7 +85,8 @@
                         ],
                         "codeCoverageExclude": [
                             "src/app/core/services/tracker.service.ts",
-                            "src/app/core/services/rest.service.ts"
+                            "src/app/core/services/rest.service.ts",
+                            "src/app/core/util/token-utils.service.ts"
                         ]
                     }
                 },
