@@ -17,6 +17,7 @@ import { CoreModule } from './core/core.module';
 import { RouteMapperModule } from './route-mapper/route-mapper.module';
 import { HttpClientModule } from '@angular/common/http';
 import { NewsAdministrationComponent } from './components/news-administration/news-administration.component';
+import { PricelistComponent } from './components/pricelist/pricelist.component';
 
 
 @NgModule({
@@ -26,7 +27,8 @@ import { NewsAdministrationComponent } from './components/news-administration/ne
     WelcomeComponent,
     ReportComponent,
     TicketsComponent,
-    NewsAdministrationComponent
+    NewsAdministrationComponent,
+    PricelistComponent
   ],
   imports: [
     HttpClientModule,

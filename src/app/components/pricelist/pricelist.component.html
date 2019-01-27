@@ -1,0 +1,69 @@
+<div>
+    <h4 class="display-4" align="center">Pricelist administration</h4>
+    <div *ngIf="choice" id="choiceContainer" class="container">
+        <div class="card">
+            <button id="cardCreate" class="btn btn-success" (click)="create()">Add new price list</button>
+        </div>
+        <div id="cardModify" class="card">
+            <button class="btn btn-info" (click)="modify()">Modify active price list</button>
+        </div>
+    </div>
+    <div *ngIf="creating">
+        <div class="container">
+            <div class="row">
+                <mat-form-field>
+                    <input matInput [matDatepicker]="picker1" [(ngModel)]="startDate" placeholder="From">
+                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                    <mat-datepicker #picker1></mat-datepicker>
+                </mat-form-field>
+                <mat-form-field>
+                    <input matInput [matDatepicker]="picker2" [(ngModel)]="endDate" placeholder="To">
+                    <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                    <mat-datepicker #picker2></mat-datepicker>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="container">
+                <div *ngFor="let zoneItems of itemsToFill">
+                    <table class="table">
+                        <tr>
+                            <td>Transport Type</td>
+                            <td>Duration</td>
+                            <td>Age</td>
+                            <td>Cost</td>
+                        </tr>
+                        <tr *ngFor="let item of zoneItems">
+                            <td>{{item.vehicleType}}</td>
+                            <td>{{item.type}}</td>
+                            <td>{{item.age}}</td>
+                            <td><input [(ngModel)]="item.cost"></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-success" (click)="saveCreated()">Save</button>
+    </div>
+    <div *ngIf="modifying">
+        <div class="container">
+            <div *ngFor="let zoneItems of itemsToFill">
+                <table class="table">
+                    <tr>
+                        <td>Transport Type</td>
+                        <td>Duration</td>
+                        <td>Age</td>
+                        <td>Cost</td>
+                    </tr>
+                    <tr *ngFor="let item of zoneItems">
+                        <td>{{item.vehicleType}}</td>
+                        <td>{{item.type}}</td>
+                        <td>{{item.age}}</td>
+                        <td><input [(ngModel)]="item.cost"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <button class="btn btn-info" (click)="saveModified()">Save</button>
+    </div>
+</div>
