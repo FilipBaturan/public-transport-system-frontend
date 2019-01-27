@@ -8,14 +8,14 @@ import { Pricelist } from 'src/app/model/pricelist.model';
 @Injectable({
   providedIn: 'root'
 })
-export class PricelistService extends RestService<Pricelist>{
+export class PricelistService extends RestService<Pricelist> {
 
   constructor(http: HttpClient, toastr: ToastrService) {
     super(http, ['/api/pricelist'], toastr);
   }
 
-  getActivePricelist(){
-    return this.http.get<Pricelist>(this.url(["findActive"])).pipe(
+  getActivePricelist() {
+    return this.http.get<Pricelist>(this.url(['findActive'])).pipe(
       catchError(this.handleError<any>())
     );
   }

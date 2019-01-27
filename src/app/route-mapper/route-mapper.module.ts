@@ -22,6 +22,7 @@ import { IsValidatorGuard } from './is-validator.guard';
 import { NewsAdministrationComponent } from '../components/news-administration/news-administration.component';
 import { OperatorListComponent } from '../user/operator-list/operator-list.component';
 import { ScheduleUpdateComponent } from '../schedule/schedule-update/schedule-update.component';
+import { PricelistComponent } from '../components/pricelist/pricelist.component';
 
 @NgModule({
   declarations: [],
@@ -49,6 +50,7 @@ import { ScheduleUpdateComponent } from '../schedule/schedule-update/schedule-up
       { path: 'validators', component: ValidatorListComponent, canActivate: [IsAuthenticatedGuard]},
       { path: 'operators', component: OperatorListComponent, canActivate: [IsOperaterGuard]},
       { path: 'registeredUsers', component: RegUserListComponent, canActivate: [IsAuthenticatedGuard]},
+      { path: 'pricelist', component: PricelistComponent},
       { path: '', redirectTo: '/welcome', pathMatch: 'full' },
       { path: '**', component: WelcomeComponent, pathMatch : 'full'}
     ])
