@@ -20,7 +20,7 @@
         <!-- Name Column -->
         <ng-container matColumnDef="lastName">
           <th mat-header-cell *matHeaderCellDef> Last Name </th>
-          <td mat-cell *matCellDef="let element"> {{element.last}} </td>
+          <td mat-cell *matCellDef="let element"> {{element.lastName}} </td>
         </ng-container>
 
         <!-- Weight Column -->
@@ -38,7 +38,7 @@
         <ng-container matColumnDef="docs">
           <th mat-header-cell *matHeaderCellDef> Validate </th>
           <td mat-cell *matCellDef="let element" (click)="$event.stopPropagation()">
-            <a [routerLink]="['/userProfile']">Check documents</a>
+            <a [routerLink]="['/userProfile']" (click) = "sendUsername(element)">Check documents</a>
           </td>
         </ng-container>
 

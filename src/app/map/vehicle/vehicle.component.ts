@@ -88,7 +88,12 @@ export class VehicleComponent implements OnInit {
     for (let index = 0; index < this.vehicles.length; index++) {
       const vehicle = this.vehicles[index];
       if (vehicle.id === id) {
-        this.vehicleService.remove(id, index, this.vehicles);
+        this.vehicleService.remove(id).subscribe(msg => {
+          // remove vehicle from collection
+          this.vehicles.splice(index, 1);
+          this.toastrService.success(msg as string);
+        }, err =>
+            err.status === 401 ? this.toastrService.error('Forbidden!') : this.toastrService.error(err.error));
         return;
       }
     }

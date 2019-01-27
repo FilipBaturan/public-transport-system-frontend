@@ -140,52 +140,32 @@ describe('ZoneService', () => {
   }));
 
   it('should delete zone', fakeAsync(() => {
+    service.remove(1).subscribe(result => expect(result).toBe('Zone successfully removed!'));
 
-    service.remove(1, dbZones);
-
-    const req1 = mockHttp.expectOne(url + '/' + 1);
-    expect(req1.request.method).toBe('DELETE');
-    req1.flush('Zone successfully removed!');
-    expect(req1.request.responseType).toBe('text');
-
-    const req2 = mockHttp.expectOne(url);
-    expect(req2.request.method).toBe('GET');
-    req2.flush(dbZones.splice(0, 1));
-    expect(mockToastrService.success).toHaveBeenCalled();
+    const req = mockHttp.expectOne(url + '/' + 1);
+    expect(req.request.method).toBe('DELETE');
+    req.flush('Zone successfully removed!');
+    expect(req.request.responseType).toBe('text');
   }));
 
   it('should receive forbidden error for unauthorized deletion', fakeAsync(() => {
-    const length = dbZones.length;
-    const z = dbZones[0];
-
-    service.remove(1, dbZones);
+    service.remove(1).subscribe(() => {}, error => expect(error.status).toBe(401));
 
     const req = mockHttp.expectOne(url + '/' + 1);
     expect(req.request.method).toBe('DELETE');
     req.flush({ message: 'Forbidden!' },
       { status: 401, statusText: 'Unauthorazied' });
     expect(req.request.responseType).toBe('text');
-
-    expect(dbZones.length).toBe(length);
-    expect(dbZones[0]).toEqual(z);
-    expect(mockToastrService.error).toHaveBeenCalled();
   }));
 
   it('should receive zone does not exist error', fakeAsync(() => {
-    const length = dbZones.length;
-    const z = dbZones[0];
-
-    service.remove(1, dbZones);
+    service.remove(1).subscribe(() => {}, error => expect(error.status).toBe(400));
 
     const req = mockHttp.expectOne(url + '/' + 1);
     expect(req.request.method).toBe('DELETE');
     req.flush({ message: 'Zone does not exist!' },
       { status: 400, statusText: 'Bad Request' });
     expect(req.request.responseType).toBe('text');
-
-    expect(dbZones.length).toBe(length);
-    expect(dbZones[0]).toEqual(z);
-    expect(mockToastrService.error).toHaveBeenCalled();
   }));
 
 });

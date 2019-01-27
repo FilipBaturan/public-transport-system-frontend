@@ -41,11 +41,11 @@ describe('UserTicketsComponent', () => {
     errorDeny = false;
 
     dbTickets = [
-      new Ticket(1, true, "2018-01-01", "2018-12-12"),
-      new Ticket(1, true, "2018-02-04", "2018-06-30"),
-      new Ticket(1, true, "2018-07-13", "2018-07-15"),
-      new Ticket(1, true, "2018-10-21", "2018-11-06"),
-    ];
+      {id: 1, active: true, purchaseDate: "2018-01-01", expiryDate: "2018-12-12"},
+      {id: 2, active: true, purchaseDate: "2018-02-04", expiryDate: "2018-06-30"},
+      {id: 3, active: true, purchaseDate: "2018-07-13", expiryDate: "2018-07-15"},
+      {id: 4, active: true, purchaseDate: "2018-10-21", expiryDate: "2018-11-06"},
+    ]
 
     mockTicketService = {
       getTicketsForUser() {

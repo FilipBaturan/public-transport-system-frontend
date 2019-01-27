@@ -12,7 +12,6 @@ import { TransportLineService } from 'src/app/core/services/transport-line.servi
 import { UserService } from 'src/app/core/services/user.service';
 import { MapService } from 'src/app/core/services/map.service';
 import { TrackerService } from 'src/app/core/services/tracker.service';
-import { a } from '@angular/core/src/render3';
 
 declare var MapBBCode: any;
 declare var L: any;

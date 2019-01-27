@@ -32,7 +32,7 @@ export class WelcomeComponent implements OnInit {
    }
 
   ngOnInit() {
-    this.login = new LogIn('', '');
+    this.login = {username: '', password: ''};
   }
 
     tryLogin(): void {

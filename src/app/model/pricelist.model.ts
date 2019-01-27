@@ -1,6 +1,6 @@
-import { PricelistItem } from "./pricelistItem.model";
+import { PricelistItem } from './pricelistItem.model';
 
-export class Pricelist{
+export interface Pricelist {
     id: number;
     startDate: Date;
     endDate: Date;

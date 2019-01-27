@@ -1,9 +1,54 @@
-<div>
-    <p>Adding news</p>
-    <br>
-    <p>Title</p>
-    <input [value]="title" (input)="title=$event.target.value">
-    <p>Content</p>
-    <input [value]="content" (input)="content=$event.target.value">
-    <button (click)="addNews()">Save</button>
+<div class="container">
+    <h2 class="display-2">News administration</h2>
+    <div class="row">
+        <div *ngIf="!modification" class="col-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Adding news</h5><br>
+                    <h6 class="card-subtitle mb-2 text-dark">Title</h6>
+                    <input [value]="title" (input)="title=$event.target.value"><br><br>
+                    <h6 class="card-subtitle mb-2 text-dark">Content</h6>
+                    <textarea [value]="content" (input)="content=$event.target.value"></textarea><br>
+                    <button class="btn btn-info" (click)="addNews()">Save</button>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="modification" class="col-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Modify news</h5><br>
+                    <h6 class="card-subtitle mb-2 text-dark">Title</h6>
+                    <input [value]="modifyTitle" (input)="modifyTitle=$event.target.value"><br><br>
+                    <h6 class="card-subtitle mb-2 text-dark">Content</h6>
+                    <textarea [value]="modifyContent" (input)="modifyContent=$event.target.value"></textarea><br>
+                    <button class="btn btn-info" (click)="saveChanges()">Save</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card allNews">
+                <div *ngFor="let news of allNews">
+                    <div class="card">
+                        <h6 class="card-subtitle mb-2 text-dark">{{news.title}}</h6>
+                        <h6 class="card-text">{{news.content}}</h6><br>
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-6">
+                                    <button class="btn btn-info" (click)="deleteNews(news.id)">Delete</button>
+                                </div>
+                                <div class="col-6">
+                                    <button class="btn btn-success" (click)="modifyNews(news.id)">Modify</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div align="left" class="col-6">
+            <button class="btn btn-info" (click)="goHome()">Home</button>
+        </div>
+    </div>
 </div>

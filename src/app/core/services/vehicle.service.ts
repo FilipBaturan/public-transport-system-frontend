@@ -54,14 +54,8 @@ export class VehicleService {
    * @param number index index in vehicle collection
    * @param Vehicle[] vehicles
    */
-  remove(id: number, index: number, vehicles: Vehicle[]): void {
-    this.http.delete(this.url + '/' + id, { responseType: 'text' as 'text' }).
-      subscribe(msg => {
-        // remove vehicle from collection
-        vehicles.splice(index, 1);
-        this.toastrService.success(msg);
-      }, err =>
-          err.status === 401 ? this.toastrService.error('Forbidden!') : this.toastrService.error(err.error));
+  remove(id: number): Observable<{}> {
+    return this.http.delete(this.url + '/' + id, { responseType: 'text' as 'text' });
   }
 
   /**

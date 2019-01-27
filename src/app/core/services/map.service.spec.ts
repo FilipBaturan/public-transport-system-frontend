@@ -1,14 +1,12 @@
-import { TestBed, fakeAsync, ComponentFixture, tick } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 
 import { MapService } from './map.service';
 import { Station } from 'src/app/model/station.model';
 import { VehicleType } from 'src/app/model/enums/vehicle-type.model';
 import { TransportLine } from 'src/app/model/transport-line.model';
-import { of, asyncScheduler } from 'rxjs';
 import { TrackedVehicle } from 'src/app/model/vehicle.model';
 import { Component } from '@angular/core';
 
-declare var MapBBCode: any;
 declare var L: any;
 
 @Component({

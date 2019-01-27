@@ -1,12 +1,8 @@
-import { User } from "./users/user.model";
+import { User } from './users/user.model';
 
-export class Authentication {
+export interface Authentication {
 
     user: User;
     token: string;
 
-    constructor(user: User, token: string){
-        this.user = user;
-        this.token = token;
-    }
 }

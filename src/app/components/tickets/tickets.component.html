@@ -1,76 +1,88 @@
-<div>
-    <button (click)="chooseType('DAILY')">Daily tickets</button>
-    <button (click)="chooseType('MONTHLY')">Monthly tickets</button>
-    <button (click)="chooseType('ANNUAL')">Annual tickets</button><br>
-    <p>Reservation of {{durationType}} ticket.</p>
-    <div class="dailyReservation" *ngIf="dailySelected">
-        <p>Transport type</p>
-        <select [(ngModel)]="transportType">
+<div class="container">
+    <div class="row">
+        <div class="col-8">
+            <button (click)="chooseType('DAILY')">Daily tickets</button>
+            <button (click)="chooseType('MONTHLY')">Monthly tickets</button>
+            <button (click)="chooseType('ANNUAL')">Annual tickets</button><br>
+            <p>Reservation of {{durationType}} ticket.</p>
+            <div class="dailyReservation" *ngIf="dailySelected">
+                <p>Transport type</p>
+                <select [(ngModel)]="transportType">
                 <option>BUS</option>
                 <option>METRO</option>
                 <option>TRAM</option>
             </select>
-        <p>Zones</p>
-        <select (change)="zoneChange($event.target.value)">
+                <p>Zones</p>
+                <select (change)="zoneChange($event.target.value)">
             <option *ngFor="let zone of zones" [ngValue]="zone">{{zone.name}}</option>
         </select>
-        <p>Duration</p>
-        <select [(ngModel)]="durationType">
+                <p>Duration</p>
+                <select [(ngModel)]="durationType">
             <option>ONETIME</option>
             <option>DAILY</option>
         </select>
 
-        <div *ngIf="transportLineType === 'One line'">
-            <p>Line</p>
-            <select (change)="lineChange($event.target.value)">
+                <div *ngIf="transportLineType === 'One line'">
+                    <p>Line</p>
+                    <select (change)="lineChange($event.target.value)">
                     <option *ngFor="let line of lines">{{line.name}}</option>
                 </select>
-        </div>
-        <br>
-        <div>
-            <mat-form-field>
-                <input matInput [matDatepicker]="picker" [(ngModel)]="purchaseDate" placeholder="Od">
-                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                <mat-datepicker #picker></mat-datepicker>
-            </mat-form-field>
-        </div>
-    </div>
-    <div class="monthly" *ngIf="monthlySelected">
-        <p>Transport type</p>
-        <select [(ngModel)]="transportType">
+                </div>
+                <br>
+                <div>
+                    <mat-form-field>
+                        <input matInput [matDatepicker]="picker" [(ngModel)]="purchaseDate" placeholder="Od">
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="monthly" *ngIf="monthlySelected">
+                <p>Transport type</p>
+                <select [(ngModel)]="transportType">
                 <option>BUS</option>
                 <option>METRO</option>
                 <option>TRAM</option>
             </select>
-        <p>Zones</p>
-        <select (change)="zoneChange($event.target.value)">
+                <p>Zones</p>
+                <select (change)="zoneChange($event.target.value)">
             <option *ngFor="let zone of zones" [ngValue]="zone">{{zone.name}}</option>
         </select>
-        <div *ngIf="transportLineType === 'One line'">
-            <p>Line</p>
-            <select (change)="lineChange($event.target.value)">
+                <div *ngIf="transportLineType === 'One line'">
+                    <p>Line</p>
+                    <select (change)="lineChange($event.target.value)">
                     <option *ngFor="let line of lines">{{line.name}}</option>
                 </select>
-        </div>
-    </div>
-    <div class="annual" *ngIf="annualSelected">
-        <p>Transport type</p>
-        <select [(ngModel)]="transportType">
+                </div>
+            </div>
+            <div class="annual" *ngIf="annualSelected">
+                <p>Transport type</p>
+                <select [(ngModel)]="transportType">
                 <option>BUS</option>
                 <option>METRO</option>
                 <option>TRAM</option>
             </select>
-        <p>Zones</p>
-        <select (change)="zoneChange($event.target.value)">
+                <p>Zones</p>
+                <select (change)="zoneChange($event.target.value)">
             <option *ngFor="let zone of zones" [ngValue]="zone">{{zone.name}}</option>
         </select>
-        <div *ngIf="transportLineType === 'One line'">
-            <p>Line</p>
-            <select (change)="lineChange($event.target.value)">
+                <div *ngIf="transportLineType === 'One line'">
+                    <p>Line</p>
+                    <select (change)="lineChange($event.target.value)">
                     <option *ngFor="let line of lines">{{line.name}}</option>
                 </select>
+                </div>
+            </div>
+            <button [hidden]="this.reservation.tickets.length > 0 && (annualSelected || monthlySelected)" (click)="check()">Reserve</button>
+            <button (click)="reserve()">Finish</button>
+        </div>
+        <div class="col-4">
+            <div *ngFor="let ticket of reservation.tickets" class="card text-white bg-primary mb-3" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ticket.ticketType}}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ticket.purchaseDate}}</h6>
+                </div>
+            </div>
         </div>
     </div>
-    <button [hidden]="this.reservation.tickets.length > 0 && (annualSelected || monthlySelected)" (click)="check()">Reserve</button>
-    <button (click)="reserve()">Finish</button>
 </div>

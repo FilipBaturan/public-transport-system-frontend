@@ -17,10 +17,11 @@ export class UserProfileComponent implements OnInit {
   constructor(private userService: UserService, private toastr: ToastrService) { }
 
   ngOnInit() {
-    this.userService.getCurrentUser().subscribe(
+    this.userService.getUser().subscribe(
       response => {
         this.user = response;
-      }
+      },
+      err => this.toastr.error("There was an error in showing this profile")
     );
   }
 

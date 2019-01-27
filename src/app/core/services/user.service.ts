@@ -9,13 +9,14 @@ import { Authentication } from 'src/app/model/authentication.model';
 import { LogIn } from 'src/app/model/login.model';
 import { TokenUtilsService } from '../util/token-utils.service';
 
-
 const authenticatedUser = 'authenticatedUser';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService extends RestService<User> {
+
+  userName: string = "";
 
   constructor(http: HttpClient, toastr: ToastrService, private tokenUtils: TokenUtilsService) {
     super(http, ['/api/user'], toastr);
@@ -47,6 +48,26 @@ export class UserService extends RestService<User> {
     localStorage.removeItem(authenticatedUser);
   }
 
+  setUsername(username: string): void{
+    this.userName = username;
+  }
+
+  getUser():Observable<User>{
+    if (this.userName == "")
+      return this.getCurrentUser();
+    else{
+      return this.getRegByUsername(this.userName);
+    }
+  }
+
+  getByUsername(username: String) {
+    return this.http.get<User>(this.url(['getByUsername/' + username]));
+  }
+
+  getRegByUsername(username: String) {
+    return this.http.get<User>(this.url(['getRegByUsername/' + username]));
+  }
+
   usernameTaken(username: string): Observable<boolean> {
     return this.http.get<boolean>(this.url(), { params: { 'username': username } }).pipe(
       catchError(this.handleError<boolean>())
@@ -54,9 +75,7 @@ export class UserService extends RestService<User> {
   }
 
   getCurrentUser() {
-    return this.http.get<User>(this.url(['currentUser'])).pipe(
-      catchError(this.handleError<User>())
-    );
+    return this.http.get<User>(this.url(['currentUser']));
   }
 
   getAuthenticatedUser() {
@@ -147,12 +166,6 @@ export class UserService extends RestService<User> {
 
   getRegUsers() {
     return this.http.get<any>(this.url(['registeredUsers'])).pipe(
-      catchError(this.handleException)
-    );
-  }
-
-  getByUsername(username: String) {
-    return this.http.get<any>(this.url(['getByUsername/' + username])).pipe(
       catchError(this.handleException)
     );
   }

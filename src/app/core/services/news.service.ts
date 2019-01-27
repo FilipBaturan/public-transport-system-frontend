@@ -11,15 +11,23 @@ import { catchError } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
-export class NewsService extends RestService<News>{
+export class NewsService extends RestService<News> {
+
+  private _url: string;
 
   constructor(http: HttpClient, toastr: ToastrService, private tokenUtils: TokenUtilsService) {
-    super(http, ['/api/news'], toastr); }
+    super(http, ['/api/news'], toastr);
+    this._url = '/api/news';
+  }
 
-    saveNews(news: NewsToAdd): Observable<NewsToAdd>{
+    saveNews(news: NewsToAdd): Observable<NewsToAdd> {
       return this.http.post<NewsToAdd>(this.url(), news).pipe(
         catchError(this.handleError<any>())
       );
+    }
+
+    remove(id: number): Observable<{}> {
+      return this.http.delete(this._url + '/' + id, { responseType: 'text' as 'text' });
     }
 
 }

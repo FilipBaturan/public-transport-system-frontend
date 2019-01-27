@@ -20,10 +20,10 @@
                 <li>
                     <a [routerLink]="['/vehicles']">Vehicles</a>
                 </li>
-                <li>
-                    <a [routerLink]="['/newsAdministration']">News</a>
-                </li>
             </ul>
+        </li>
+        <li>
+            <a [routerLink]="['/newsAdministration']">News</a>
         </li>
         <li>
             <a [routerLink]="['/tickets']">Tickets</a>
@@ -41,7 +41,7 @@
             <a [routerLink]="" id="usersField" (click)="accCollapsed = !accCollapsed" [attr.aria-expanded]="!accCollapsed" aria-controls="pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Account</a>
             <ul class="collapse list-unstyled" id="pageSubmenu" [ngbCollapse]="accCollapsed">
                 <li>
-                    <a [routerLink]="['/userProfile']">Profile</a>
+                    <a [routerLink]="['/userProfile']" (click) = "sendUsername('')" >Profile</a>
                 </li>
                 <li>
                     <a id="unconfirmedUsersLink" [routerLink]="['/unconfirmedUsers']">Unconfirmed Users</a>

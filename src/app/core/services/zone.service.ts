@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
-import { ToastrService } from 'ngx-toastr';
 import { Zone } from 'src/app/model/zone.model';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -23,7 +22,7 @@ export class ZoneService {
    * @param HttpClient http HTTP REST service
    * @param ToastrService toastrService user notification service
    */
-  constructor(private http: HttpClient, private toastrService: ToastrService) {
+  constructor(private http: HttpClient) {
   }
 
   /**
@@ -51,21 +50,8 @@ export class ZoneService {
    * @param number id target zone id
    * @param Zone[] zones all available zones
    */
-  remove(id: number, zones: Zone[]): void {
-    this.http.delete(this.url + '/' + id, { responseType: 'text' as 'text' }).
-      subscribe(() => {
-        let temp: Zone[];
-        this.findAll().subscribe(result => {
-          temp = result;
-          for (let index = 0; index < temp.length; index++) {
-            const zone = temp[index];
-            zones[index] = zone;
-          }
-          zones.length = temp.length;
-          this.toastrService.success('Zone successfuly deleted!');
-        });
-      }, err =>
-      err.status === 401 ? this.toastrService.error('Forbidden!') : this.toastrService.error(err.error));
+  remove(id: number): Observable<{}> {
+    return this.http.delete(this.url + '/' + id, { responseType: 'text' as 'text' });
   }
 
   /**

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Schedule } from 'src/app/model/schedule.model';
 
-import { MatTableDataSource, MatSort } from '@angular/material';
+import { MatTableDataSource } from '@angular/material';
 import { DataSource } from '@angular/cdk/table';
 import { TransportLine } from 'src/app/model/transport-line.model';
 import { DayOfWeek } from 'src/app/model/enums/day-of-week.model';
@@ -22,7 +22,6 @@ export class ScheduleComponent implements OnInit {
   dataSource: any;
   displayedColumns = [];
   columnsToDisplay = []
-  @ViewChild(MatSort) sort: MatSort;
 
   transportLines = new Array<TransportLine>();
 
@@ -62,15 +61,13 @@ export class ScheduleComponent implements OnInit {
     this.tranposrtLineService.findAll().subscribe(
       response => {
         this.transportLines = <Array<TransportLine>> response;
-        
         this.transportLines.forEach(element => {
           this.daysOfWeekArray.forEach(dow=>{
             this.displayedColumns.push(element.name+"-"+dow);
           });
           this.transportLineDropdown.push({"id": element.id, "itemName": element.name});
         });
-        console.log(this.transportLineDropdown);
-        console.log(this.displayedColumns);
+        console.log("TRANSPORT LINES   " + this.displayedColumns);
       },
       (err) => console.error(err)
     );
@@ -111,13 +108,9 @@ export class ScheduleComponent implements OnInit {
             }
             index++;
           });
-          console.log(this.tableArr);
           this.dataSource._updateChangeSubscription();
         }, err =>{
           let index = this.selectedItems.findIndex(i => i.id == item.id);
-          console.log(this.selectedItems[0]);
-          console.log(item.id);
-          console.log(index);
           this.selectedItems.splice(index,1);
         });
     } 
@@ -135,6 +128,24 @@ export class ScheduleComponent implements OnInit {
     this.columnsToDisplay.splice(index, 1);
     this.updateTableColumns(keyword);
   }
+  
+
+  updateTableColumns(key: string){
+    console.log(this.tableArr);
+    let idx = 0;
+    let del = -1;
+    this.tableArr.forEach(obj => {
+      delete obj[key];
+      if(this.isEmpty(obj)){
+        del = idx;
+        this.tableArr.splice(del, 1);
+      }
+      idx++;
+    });
+
+    this.dataSource._updateChangeSubscription();
+  }
+
 
   onDayOfWeekSelect(item){
     let dow = this.getDayOfWeekEnum(item.itemName);
@@ -151,24 +162,6 @@ export class ScheduleComponent implements OnInit {
     this.dataSource._updateChangeSubscription();
   }
 
-  updateTableColumns(key: string){
-    console.log(this.tableArr);
-    let idx = 0;
-    let del = -1;
-    this.tableArr.forEach(obj => {
-      delete obj[key];
-      if(this.isEmpty(obj)){
-        del = idx;
-        this.tableArr.splice(del, 1);
-      }
-      idx++;
-    });
-    //this.tableArr = this.tableArr.filter(obj => !this.isEmpty(obj));
-
-    this.dataSource._updateChangeSubscription();
-    console.log(this.tableArr);
-  }
-
   isEmpty(obj): boolean {
     for(var prop in obj) {
         if(obj.hasOwnProperty(prop))
@@ -182,14 +175,6 @@ export class ScheduleComponent implements OnInit {
       case "WORKDAY": return DayOfWeek.WORKDAY;
       case "SATURDAY": return DayOfWeek.SATURDAY;
       case "SUNDAY": return DayOfWeek.SUNDAY;
-    }
-  }
-
-  getStringFromEnum(dow: number){
-    switch(dow){
-      case 0: return "WORKDAY";
-      case 1: return "SATURDAY";
-      case 2: return "SUNDAY";
     }
   }
 }

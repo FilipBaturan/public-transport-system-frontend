@@ -47,7 +47,7 @@ import { IsAdminGuard } from './is-admin.guard';
       { path: 'signin', component: AuthComponent},
       { path: 'signup', component: SignupComponent},
       { path: 'unconfirmedUsers', component: UnconfirmedUserListComponent, canActivate: [IsAdminGuard]},
-      { path: 'userProfile', component: UserProfileComponent, canActivate: [IsAuthenticatedGuard, IsAdminGuard]},
+      { path: 'userProfile', component: UserProfileComponent, canActivate: [IsAuthenticatedGuard]},
       { path: 'validators', component: ValidatorListComponent, canActivate: [IsAdminGuard]},
       { path: 'operators', component: OperatorListComponent, canActivate: [IsOperaterGuard]},
       { path: 'registeredUsers', component: RegUserListComponent, canActivate: [IsAdminGuard]},
