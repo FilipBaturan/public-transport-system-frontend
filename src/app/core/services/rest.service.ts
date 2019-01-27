@@ -84,7 +84,8 @@ export abstract class RestService<T> {
   protected handleError<E>(operation = 'operation', result?: E) {
     return (response: any): Observable<E> => {
       //console.log(response);
-      // Get error object from response and its error message
+      // Get error object from response and its error message      
+
       if (response.error) {
         if(response.error.message){
           this.toastr.error(response.error.message);

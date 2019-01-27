@@ -1,8 +1,11 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
-import { User } from '../../model/users/user.model';
-import { ToastrService } from 'ngx-toastr';
-import { UserService } from 'src/app/core/services/user.service';
+import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
 import { MatTable } from '@angular/material';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { ToastrService } from 'ngx-toastr';
+
+import { User } from '../../model/users/user.model';
+import { UserService } from 'src/app/core/services/user.service';
+
 
 
 @Component({
@@ -24,6 +27,8 @@ export class OperatorListComponent implements OnInit {
 
   formShowed: boolean;
   addName: boolean;
+
+  private modalForm: NgbModalRef;
 
   @ViewChild(MatTable) table: MatTable<any>;
 
@@ -71,6 +76,12 @@ export class OperatorListComponent implements OnInit {
           
           this.checkUsersLength();
             
+        },
+        err => {
+          if (err.status != 409)
+            this.toastr.error("There was a problem when blocking the operator");
+          else
+            this.toastr.error("Operator with given id does not exist"); 
         }
       )
       this.changeDetectorRefs.detectChanges();
@@ -85,15 +96,16 @@ export class OperatorListComponent implements OnInit {
     {
       this.userService.updateOperator(this.newUser).subscribe(
         response => {
-          if (response == false)
-            this.toastr.error("A problem occured when updating the operator.");
-          else
-          {
             this.toastr.info("Operator succesfully updated!");
             this.formShowed = false;
             this.newUser = new User(null, "new User Name", "new Pass", "new Name", "new Last Name",
             "new Email",  true, "123123");
-          }
+        },
+        err => {
+          if (err.status != 409)
+            this.toastr.error("There was a problem with adding the operator");
+          else
+            this.toastr.error("Operator with given id does not exist"); 
         }
       )
     }
@@ -102,27 +114,26 @@ export class OperatorListComponent implements OnInit {
     {
       this.userService.addOperator(this.newUser).subscribe(
         response => {
-          if (response == false)
-            this.toastr.info("A problem occured when adding the operator.");
-          else
-          {
-            this.userService.getByUsername(this.newUser.username).subscribe(
-              response => {
-                if (response != null)
-                {
-                  this.newUser = response;
-                  this.operators.push(this.newUser);
-                  this.newUser = new User(null, "new User Name", "new Pass", "new Name", "new Last Name",
-                  "new Email",  true, "123123");
-                  this.table.renderRows();
-                  this.toastr.info("Operator succesfully added!")
-                }
-              })
-            
-           
-          }
-          
+          this.userService.getByUsername(this.newUser.username).subscribe(
+            response => {
+                this.newUser = response;
+                this.operators.push(this.newUser);
+                this.newUser = new User(null, "new User Name", "new Pass", "new Name", "new Last Name",
+                "new Email",  true, "123123");
+                this.table.renderRows();
+                this.toastr.info("Operator succesfully added!")
+            },
+              err => {
+                this.toastr.error("There was a problem with adding the validator");
+               }
+            )
           this.checkUsersLength();
+        },
+        err => {
+          if (err.status != 409)
+            this.toastr.error("There was a problem when adding the operator");
+          else
+            this.toastr.error("Operator with given id does not exist"); 
         }
       )
   

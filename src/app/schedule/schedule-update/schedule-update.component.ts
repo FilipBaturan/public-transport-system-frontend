@@ -1,13 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource, MatSort } from '@angular/material';
-import { DataSource } from '@angular/cdk/table';
+import { ToastrService } from 'ngx-toastr';
 
 import { Schedule } from 'src/app/model/schedule.model';
 import { TransportLine } from 'src/app/model/transport-line.model';
 import { DayOfWeek } from 'src/app/model/enums/day-of-week.model';
 import { ScheduleService } from 'src/app/core/services/schedule.service';
 import { TransportLineService } from 'src/app/core/services/transport-line.service';
-import { ToastrService } from 'ngx-toastr';
 
 
 @Component({
@@ -16,12 +15,11 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./schedule-update.component.css']
 })
 export class ScheduleUpdateComponent implements OnInit {
-  //schedule: Schedule;
   title = "";
 
   dataSource: any;
   displayedColumns = [];
-  columnsToDisplay = []
+  columnsToDisplay = [];
   @ViewChild(MatSort) sort: MatSort;
 
   schedules = new Array<Schedule>();
@@ -30,12 +28,14 @@ export class ScheduleUpdateComponent implements OnInit {
   tableArr: any[] = [];
 
   daysOfWeekArray = ["WORKDAY", "SATURDAY", "SUNDAY"];
+  displayedSchedules = [];
 
   transportLineDropdown = [];
   selectedItems = [];
   transportLineDropdownSettings = {};
 
   focusedDeparture: string = "";
+  refreshing: boolean = false;
 
   constructor(private scheduleService: ScheduleService,
               private tranposrtLineService: TransportLineService,
@@ -50,6 +50,7 @@ export class ScheduleUpdateComponent implements OnInit {
   setupSchedules(){
     this.scheduleService.findAll().subscribe(
       response => {
+        console.log(response);
         this.schedules = <Array<Schedule>> response;
       },
       (err) => console.error(err)
@@ -87,15 +88,12 @@ export class ScheduleUpdateComponent implements OnInit {
     this.tranposrtLineService.findAll().subscribe(
       response => {
         this.transportLines = <Array<TransportLine>> response;
-        
         this.transportLines.forEach(element => {
           this.daysOfWeekArray.forEach(dow=>{
             this.displayedColumns.push(element.name+"-"+dow);
           });
           this.transportLineDropdown.push({"id": element.id, "itemName": element.name});
         });
-        console.log(this.transportLineDropdown);
-        console.log(this.displayedColumns);
       },
       (err) => console.error(err)
     );
@@ -107,28 +105,38 @@ export class ScheduleUpdateComponent implements OnInit {
 
     this.scheduleService.findScheduleByTransportLineId(item.id).subscribe(
       response => {
-        response.forEach(element=> {
-          let key = element.transportLine.name + "-" + element.dayOfWeek;
-          this.columnsToDisplay.push(key);
-          let index = 0;
-          element.departures.forEach(departure=>{
-            if (this.tableArr[index]){
-              this.tableArr[index][key] = departure;
-            } else {
-              let obj = this.setupObj(response);
-              obj[key] = departure;
-              this.tableArr.push(obj);
-            }
-            index++;
-          });
-        });
+        this.refreshDeparturesView(response);
+        this.columnsToDisplay.push(item.itemName+"-WORKDAY");
+        this.columnsToDisplay.push(item.itemName+"-SATURDAY");
+        this.columnsToDisplay.push(item.itemName+"-SUNDAY");
         this.dataSource._updateChangeSubscription();
         }
       );
   }
 
+  refreshDeparturesView(response){
+    response.forEach(element=> {
+      let key = element.transportLine.name + "-" + element.dayOfWeek;
+      let idx = this.displayedSchedules.indexOf(key);
+      if (idx==-1){
+          this.displayedSchedules.push(key);
+        }
+      //this.columnsToDisplay.push(key);
+      let index = 0;
+      element.departures.forEach(departure=>{
+        if (this.tableArr[index]){
+          this.tableArr[index][key] = departure;
+        } else {
+          let obj = this.setupObj(response);
+          obj[key] = departure;
+          this.tableArr.push(obj);
+        }
+        index++;
+      });
+    });
+  }
+
   onItemDeSelect(item:any){
-    console.log(this.tableArr);
     this.columnsToDisplay = [];
   }
 
@@ -148,6 +156,7 @@ export class ScheduleUpdateComponent implements OnInit {
   }
 
   updateSchedule(){
+    this.refreshing = true;
     let tl = this.selectedItems[0].itemName;
 
     let workdayDepartures = [];
@@ -164,32 +173,148 @@ export class ScheduleUpdateComponent implements OnInit {
       if (element[sunday])   sundayDepartures.push(element[sunday].trim());
     });
 
-    console.log(workdayDepartures);
-    console.log(saturdayDepartures);
-    console.log(sundayDepartures);
+    let schedulesToUpdate = [] as Schedule[];
 
     this.schedules.forEach(schedule =>{
+      console.log(schedule.dayOfWeek);
       if (schedule.transportLine.name == tl){
         if (String(schedule.dayOfWeek) == "WORKDAY"){
           schedule.departures = workdayDepartures;
-          this.scheduleService.updateSchedule(schedule).subscribe(
-            response => console.log(response)
-          );
+          schedulesToUpdate.push(schedule);
+          
         }
         else if (String(schedule.dayOfWeek) == "SATURDAY"){
           schedule.departures = saturdayDepartures;
-          this.scheduleService.updateSchedule(schedule).subscribe(
-            response => console.log(response)
-          );
+          schedulesToUpdate.push(schedule);
         }
         else if (String(schedule.dayOfWeek) == "SUNDAY"){
           schedule.departures = sundayDepartures;
-          this.scheduleService.updateSchedule(schedule).subscribe(
-            response => console.log(response)
-          );
+          schedulesToUpdate.push(schedule);
         }
       }
-    });      
+    });
+    this.scheduleService.updateSchedule(schedulesToUpdate).subscribe(
+      response => {
+        console.log(response);
+        this.refreshing = false;
+        this.toastSerivce.success("Schedules successfully updated!");
+      },
+      (error)=>{
+        this.refreshing = false;
+        this.toastSerivce.warning("Can't update a schedule with a unknown transport line!");
+      }
+    );
+
+  }
+
+  addSchedule(column){
+    let tlName = column.split("-")[0];
+    let dow = column.split("-")[1];
+    this.refreshing = true;
+    let tl = this.findTransportLine(tlName);
+    if (tl == null){
+      this.toastSerivce.warning("Transport line doesn't exist!");
+      this.refreshing = false;
+      return;
+    }
+    let schedule = this.findSchedule(column);
+    if (schedule == null){
+      schedule = {
+        departures: [],
+        transportLine: tl,
+        dayOfWeek: this.getDayOfWeekEnum(dow.toUpperCase()),
+        active: true
+      } as Schedule;
+    }
+    schedule.departures=[];
+    schedule.active=true;
+    
+    this.scheduleService.create(schedule).subscribe(
+      response=>{
+        this.schedules.push(response as Schedule);
+        this.refreshDeparturesView([response as Schedule]);
+        this.refreshing = false;
+        this.toastSerivce.success("Schedule successfully created.");
+      },
+      (error)=>{
+        this.refreshing = false;
+        this.toastSerivce.warning("Schedule already exists!");
+      });
+  }
+
+  removeSchedule(column){
+    this.refreshing = true;
+    let schedule = this.findSchedule(column);
+    if (schedule != null){
+      schedule.departures=[];
+      schedule.active = false;
+      this.scheduleService.updateSchedule([schedule] as Schedule[]).subscribe(
+        (response) => {
+          this.toastSerivce.success("Schedule successfully removed.");
+          let idx = this.displayedSchedules.indexOf(column);
+          if (idx!=-1)
+            this.displayedSchedules.splice(idx,1);
+          this.deleteFromTable(column);
+          this.refreshing = false;
+        },
+        (error)=>{
+          this.refreshing = false;
+          this.toastSerivce.warning("Schedule already exists!");
+        });
+    } else {
+      this.refreshing = false;
+      this.toastSerivce.warning("Schedule doesn't exist!");
+    }
+  }
+
+  deleteFromTable(column){
+    this.tableArr.forEach(obj=>{
+      if (obj[column])
+        obj[column] = "";
+    });
+    this.dataSource._updateChangeSubscription();
+  }
+
+  checkIfScheduleExists(header: string){
+    if (this.displayedSchedules.indexOf(header)!=-1){
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  findTransportLine(tlName){
+    let found = false;
+    let transportLine = {} as TransportLine;
+    this.transportLines.forEach(tl => {
+      if(tl.name == String(tlName)){
+        found = true;
+        transportLine = tl; 
+      }
+    });
+    if (found)
+      return transportLine;
+    else
+      return null;
+  }
+
+  findSchedule(column){
+    let tlName = column.split("-")[0];
+    let dow = column.split("-")[1];
+    let found = false;
+    let schedule = {} as Schedule;
+
+    this.schedules.forEach(s => {
+      if(s.transportLine.name == String(tlName) &&
+         String(s.dayOfWeek) == dow.toUpperCase()){
+          found = true;
+          schedule = s;
+      }  
+    });
+    if (found)
+      return schedule;
+    else
+      return null;
   }
 
   memorizeFocusedDeparture(event, departure: string){
@@ -213,7 +338,6 @@ export class ScheduleUpdateComponent implements OnInit {
       element[column] = this.focusedDeparture;
       return false;
     }
-
     return true;
   }
 
@@ -222,14 +346,6 @@ export class ScheduleUpdateComponent implements OnInit {
       case "WORKDAY": return DayOfWeek.WORKDAY;
       case "SATURDAY": return DayOfWeek.SATURDAY;
       case "SUNDAY": return DayOfWeek.SUNDAY;
-    }
-  }
-
-  getStringFromEnum(dow: number){
-    switch(dow){
-      case 0: return "WORKDAY";
-      case 1: return "SATURDAY";
-      case 2: return "SUNDAY";
     }
   }
 }

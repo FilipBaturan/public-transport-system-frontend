@@ -1,7 +1,9 @@
 <div class="wrapper">
   <app-nav-bar></app-nav-bar>
   <div id="content">
-    <h3 *ngIf="operators.length == 0">There are no unconfirmed users</h3>
+      <h1>Operators</h1>
+    <h3 *ngIf="operators.length == 0">There are no operators in your system.
+       You can add them by pressing the button below.</h3>
 
     <div class="example-container mat-elevation-z8">
 
@@ -61,7 +63,7 @@
         <span>New Operator</span>
       </mat-toolbar>
        
-        <form class="my-form">
+        <form id = "addOperatorForm" class="my-form">
           <mat-card-content>
             <form class="my-form">
                 <mat-form-field class="full-width">

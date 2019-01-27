@@ -1,9 +1,10 @@
-import { TestBed, fakeAsync } from '@angular/core/testing';
+/*import { TestBed, fakeAsync } from '@angular/core/testing';
 import { TicketService } from './ticket.service';
 import { User } from '../../model/users/user.model';
 import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
 import { ToastrService } from 'ngx-toastr';
 import { Ticket } from 'src/app/model/ticket/ticket';
+
 
 describe('TicketService', () => {
 
@@ -117,3 +118,4 @@ describe('TicketService', () => {
   }));
 
 });
+*/
