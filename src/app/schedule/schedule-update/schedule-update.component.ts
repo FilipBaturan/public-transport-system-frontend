@@ -8,7 +8,6 @@ import { DayOfWeek } from 'src/app/model/enums/day-of-week.model';
 import { ScheduleService } from 'src/app/core/services/schedule.service';
 import { TransportLineService } from 'src/app/core/services/transport-line.service';
 
-
 @Component({
   selector: 'app-schedule-update',
   templateUrl: './schedule-update.component.html',

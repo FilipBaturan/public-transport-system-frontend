@@ -200,7 +200,7 @@ describe('ScheduleService', () => {
           expect(schedule.id).toEqual(dbSchedules[0].id);
         });
         
-        const req = mockHttp.expectOne(url+"findByTrLineIdAndDayOfWeek/" + transportLine1.id+"?dayOfWeek=" + DayOfWeek.WORKDAY.toString());
+        const req = mockHttp.expectOne(url+"findByTrLineIdAndDayOfWeek/" + transportLine1.id+"/" + DayOfWeek.WORKDAY.toString().toUpperCase());
         expect(req.request.method).toBe('GET');
         req.flush(dbSchedules[0]);
       }));

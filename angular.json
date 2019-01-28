@@ -29,7 +29,7 @@
                             "node_modules/angular2-multiselect-dropdown/themes/default.theme.css",
                             "node_modules/bootstrap/dist/css/bootstrap.min.css"
                         ],
-                        "scripts": []
+                        "scripts": ["node_modules/jspdf/dist/jspdf.min.js"]
                     },
                     "configurations": {
                         "production": {
@@ -78,7 +78,7 @@
                         "styles": [
                             "src/styles.css"
                         ],
-                        "scripts": [],
+                        "scripts": ["node_modules/jspdf/dist/jspdf.min.js"],
                         "assets": [
                             "src/favicon.ico",
                             "src/assets"

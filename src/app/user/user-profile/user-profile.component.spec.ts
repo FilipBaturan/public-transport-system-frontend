@@ -89,7 +89,7 @@ describe('UserProfileComponent', () => {
     fixture = TestBed.createComponent(UserProfileComponent);
     component = fixture.componentInstance;
     component.user = {
-      id: null, firstName: 'null', lastName: 'null', email: 'null',
+      id: null, name: 'null', lastName: 'null', email: 'null',
       username: 'null', password: 'null', telephone: 'null', active: true
     };
   });

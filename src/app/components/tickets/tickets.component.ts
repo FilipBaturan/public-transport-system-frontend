@@ -14,11 +14,14 @@ import { Router } from '@angular/router';
 import { Image } from 'src/app/model/util.model';
 import { UploadService } from 'src/app/core/services/upload.service';
 
+import * as jsPDF from 'jspdf';
+
 @Component({
   selector: 'app-tickets',
   templateUrl: './tickets.component.html',
   styleUrls: ['./tickets.component.css']
 })
+
 export class TicketsComponent implements OnInit {
 
   ageType: string;
@@ -163,6 +166,20 @@ export class TicketsComponent implements OnInit {
   reserve(): void {
     this.reservationService.create<Reservation>(this.reservation, 'reserve').subscribe (
       result => {
+        this.reservation.tickets.forEach(t=>{
+          let doc = new jsPDF();
+
+          let day = t.purchaseDate.getDate();
+          let monthIndex = t.purchaseDate.getMonth();
+          let year = t.purchaseDate.getFullYear();
+
+          let date = day + '.' + monthIndex+1 + '.' + year;
+
+          doc.text(20, 20,"Transport line: " + t.line);
+          doc.text(20, 30,"Purchased on: " + date);
+          doc.text(20, 40,"Ticket type: " + t.ticketType);
+          doc.save('ticket.pdf');
+        })
         this.toastr.success('Successfully reserved!');
         this.router.navigate(['/welcome']);
       }
@@ -170,20 +187,45 @@ export class TicketsComponent implements OnInit {
   }
 
   reserveTicket(): void {
-    console.log(this.imagePath);
     if (this.checkIfDocumentIsChoosen()) {
       this.checkPrice();
       const t = new Ticket(this.purchaseDate, this.line, this.pricelistitemId, this.durationType);
       this.reservation.tickets.push(t);
-      console.log(this.reservation);
       this.reservationService.create<Reservation>(this.reservation, 'reserve').subscribe (
         result => {
           if (this.ageType === 'REGULAR') {
+            let doc = new jsPDF();
+
+            let day = t.purchaseDate.getDate();
+            let monthIndex = t.purchaseDate.getMonth();
+            let year = t.purchaseDate.getFullYear();
+
+            let date = day + '.' + monthIndex+1 + '.' + year;
+            
+            
+            doc.text(20, 20,"Transport line: " + t.line);
+            doc.text(20, 30,"Purchased on: " + date);
+            doc.text(20, 40,"Ticket type: " + t.ticketType);
+            doc.save('ticket.pdf');
+
             this.toastr.success('Successfully reserved!');
             this.router.navigate(['/welcome']);
           } else {
             this.authService.setImageToUser({id: this.user.id, image: this.imagePath}).subscribe(
               response => {
+                let doc = new jsPDF();
+
+                let day = t.purchaseDate.getDate();
+                let monthIndex = t.purchaseDate.getMonth();
+                let year = t.purchaseDate.getFullYear();
+
+                let date = day + '.' + monthIndex+1 + '.' + year;
+
+                doc.text(20, 20,"Transport line: " + t.line);
+                doc.text(20, 30,"Purchased on: " + date);
+                doc.text(20, 40,"Ticket type: " + t.ticketType);
+                doc.save('ticket.pdf');
+                          
                 this.toastr.success('Successfully reserved!');
                 this.router.navigate(['/welcome']);
               }

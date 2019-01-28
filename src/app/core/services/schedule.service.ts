@@ -18,8 +18,7 @@ export class ScheduleService extends RestService<Schedule> {
 
   findScheduleByTrLineIdAndDayOfWeek(id: number, dayOfWeek: string): Observable<Schedule>{
     return this.http.get<any>(
-      this.url() + 'findByTrLineIdAndDayOfWeek/' + id,
-        { params: { 'dayOfWeek': String(dayOfWeek).toUpperCase() } }
+      this.url() + 'findByTrLineIdAndDayOfWeek/' + id + '/' + dayOfWeek.toUpperCase(),
     ).pipe(
       catchError(this.handleError<any>())
       );
