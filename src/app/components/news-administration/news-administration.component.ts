@@ -3,6 +3,7 @@ import { NewsService } from 'src/app/core/services/news.service';
 import { News, NewsToAdd } from 'src/app/model/news.model';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
   selector: 'app-news-administration',
@@ -19,9 +20,10 @@ export class NewsAdministrationComponent implements OnInit {
   changeNews: News;
   modifyTitle: string;
   modifyContent: string;
+  operator: number;
 
   constructor(private newsService: NewsService, private toastr: ToastrService,
-              private router: Router) { }
+              private router: Router, private userService: AuthService) { }
 
   ngOnInit() {
     this.modification = false;
@@ -30,13 +32,18 @@ export class NewsAdministrationComponent implements OnInit {
     this.newsService.findAll().subscribe(
       response => {
         this.allNews = response;
+        this.userService.getCurrentUser().subscribe(
+          user => {
+            this.operator = user.id;
+          }
+        );
       },
       err => {this.toastr.error('Something went wrong...'); }
     );
   }
 
   addNews(): void {
-    this.news = {title: this.title, content: this.content, operator: 1};
+    this.news = {title: this.title, content: this.content, operator: this.operator};
     this.newsService.saveNews(this.news).subscribe(
       result => {
         this.title = '';

@@ -16,7 +16,7 @@ describe('NavBarComponent', () => {
   beforeEach(async(() => {
 
     mockRouterService = jasmine.createSpyObj(['navigateByUrl']);
-    mockUserService = jasmine.createSpyObj(['logout', 'isAuthenticated']);
+    mockUserService = jasmine.createSpyObj(['logout', 'isAuthenticated', 'setUsername']);
 
 
     TestBed.configureTestingModule({
@@ -45,5 +45,10 @@ describe('NavBarComponent', () => {
     component.logout();
     expect(mockUserService.logout).toHaveBeenCalled();
     expect(mockRouterService.navigateByUrl).toHaveBeenCalled();
+  });
+
+  it('should send username', () => {
+    component.sendUsername('null');
+    expect(mockUserService.setUsername).toHaveBeenCalled();
   });
 });

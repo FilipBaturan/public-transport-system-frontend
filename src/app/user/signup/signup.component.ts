@@ -12,14 +12,14 @@ import { UserService } from 'src/app/core/services/user.service';
 export class SignupComponent implements OnInit {
 
   user: User;
-  nameInvalid : boolean;
-  lastNameInvalid : boolean;
-  usernameInvalid : boolean;
-  passwordInvalid : boolean;
-  emailInvalid : boolean;
-  phoneInvalid : boolean;
-  dataFlag : boolean;
-  
+  nameInvalid: boolean;
+  lastNameInvalid: boolean;
+  usernameInvalid: boolean;
+  passwordInvalid: boolean;
+  emailInvalid: boolean;
+  phoneInvalid: boolean;
+  dataFlag: boolean;
+
   constructor(private router: Router,
               private userService: UserService) { }
 
@@ -31,35 +31,35 @@ export class SignupComponent implements OnInit {
 
   tryRegister(): void {
     this.resetFlags();
-    if(this.user.firstName == ""){
+    if (this.user.name === '') {
       this.nameInvalid = true;
       this.dataFlag = true;
     }
-    if(this.user.lastName == ""){
+    if (this.user.lastName === '') {
       this.lastNameInvalid = true;
       this.dataFlag = true;
     }
-    if(this.user.username == ""){
+    if (this.user.username === '') {
       this.usernameInvalid = true;
       this.dataFlag = true;
     }
-    if(this.user.password == ""){
+    if (this.user.password === '') {
       this.passwordInvalid = true;
       this.dataFlag = true;
     }
-    if(this.user.email == ""){
+    if (this.user.email === '') {
       this.emailInvalid = true;
       this.dataFlag = true;
     }
-    if(this.user.telephone == ""){
+    if (this.user.telephone === '') {
       this.phoneInvalid = true;
       this.dataFlag = true;
     }
 
     this.user.active = true;
-    
-    if(!this.dataFlag){
-      this.userService.create(this.user, "add").subscribe(
+
+    if (!this.dataFlag) {
+      this.userService.create(this.user, 'add').subscribe(
         response => {
           this.router.navigate(['/welcome']);
         }
@@ -67,7 +67,7 @@ export class SignupComponent implements OnInit {
     }
   }
 
-  resetFlags(): void{
+  resetFlags(): void {
     this.nameInvalid = false;
     this.lastNameInvalid = false;
     this.usernameInvalid = false;
