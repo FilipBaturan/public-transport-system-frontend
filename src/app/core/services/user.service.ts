@@ -8,6 +8,7 @@ import { User } from 'src/app/model/users/user.model';
 import { Authentication } from 'src/app/model/authentication.model';
 import { LogIn } from 'src/app/model/login.model';
 import { TokenUtilsService } from '../util/token-utils.service';
+import { ImageUploadDTO } from 'src/app/model/dto/image-upload-dto.model';
 
 const authenticatedUser = 'authenticatedUser';
 
@@ -16,7 +17,7 @@ const authenticatedUser = 'authenticatedUser';
 })
 export class UserService extends RestService<User> {
 
-  userName: string = "";
+  userName: string = '';
 
   constructor(http: HttpClient, toastr: ToastrService, private tokenUtils: TokenUtilsService) {
     super(http, ['/api/user'], toastr);
@@ -48,14 +49,14 @@ export class UserService extends RestService<User> {
     localStorage.removeItem(authenticatedUser);
   }
 
-  setUsername(username: string): void{
+  setUsername(username: string): void {
     this.userName = username;
   }
 
-  getUser():Observable<User>{
-    if (this.userName == "")
+  getUser(): Observable<User> {
+    if (this.userName === '') {
       return this.getCurrentUser();
-    else{
+    } else {
       return this.getRegByUsername(this.userName);
     }
   }
@@ -170,6 +171,12 @@ export class UserService extends RestService<User> {
     );
   }
 
+  getImageFromUser(id: number): Observable<ImageUploadDTO> {
+    return this.http.get<ImageUploadDTO>(this.url(['getImage/' + id])).pipe(
+      catchError(this.handleException)
+    );
+  }
+
   private handleException(response: HttpErrorResponse): Observable<never> {
     if (response.error) {
       if (response.error.message) {
@@ -184,5 +191,7 @@ export class UserService extends RestService<User> {
       return throwError('Client side error!');
     }
   }
+
+
 
 }

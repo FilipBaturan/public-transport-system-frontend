@@ -21,14 +21,8 @@ export class WelcomeComponent implements OnInit {
   passwordInvalid: boolean;
   dataFlag: boolean;
 
-  private selectedFile: File;
-  private imagePath: string;
-  private image: Image;
-
-  constructor(private http: HttpClient, private uploadService: UploadService,
-    private userService: UserService, private newsService: NewsService) {
-    this.selectedFile = null;
-    this.image = {content: '', format: ''};
+  constructor(private http: HttpClient, private userService: UserService,
+              private newsService: NewsService) {
    }
 
   ngOnInit() {
@@ -56,24 +50,5 @@ export class WelcomeComponent implements OnInit {
     this.usernameInvalid = false;
     this.passwordInvalid = false;
     this.dataFlag = false;
-  }
-
-  onFileSelected(event: { target: { files: File[]; }; }) {
-    this.selectedFile = event.target.files[0] as File;
-  }
-
-  onUpload() {
-    const uploadData: FormData = new FormData();
-    uploadData.append('image', this.selectedFile, this.selectedFile.name);
-    this.uploadService.uploadImage(uploadData).subscribe(
-      res => { this.imagePath = res; console.log(res); },
-      error => { console.log(error); });
-  }
-
-  onLoad() {
-    this.uploadService.getImage(this.imagePath).subscribe(
-      res => { this.image = res; },
-      error => { console.log(error); }
-    );
   }
 }

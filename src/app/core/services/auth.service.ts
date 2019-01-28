@@ -7,8 +7,9 @@ import { ToastrService } from 'ngx-toastr';
 import { User } from 'src/app/model/users/user.model';
 import { Authentication } from 'src/app/model/authentication.model';
 import { TokenUtilsService } from '../util/token-utils.service';
+import { ImageUploadDTO } from 'src/app/model/dto/image-upload-dto.model';
 
-const authenticatedUser = "authenticatedUser";
+const authenticatedUser = 'authenticatedUser';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,7 @@ export class AuthService extends RestService<User> {
   }
 
   authenticate(body: User): Observable<Authentication> {
-    return this.http.post<Authentication>(this.url(["auth"]), body).pipe(
+    return this.http.post<Authentication>(this.url(['auth']), body).pipe(
       tap(res => {
         localStorage.setItem(authenticatedUser, JSON.stringify({
           user: res.user,
@@ -60,5 +61,11 @@ export class AuthService extends RestService<User> {
     const authenticatedUser = this.getAuthenticatedUser();
     const token = authenticatedUser && authenticatedUser.token;
     return token ? token : '';
+  }
+
+  setImageToUser(body: ImageUploadDTO): Observable<{}> {
+    return this.http.put(this.url(['addImage']), body).pipe(
+      catchError(this.handleError<boolean>())
+    );
   }
 }
