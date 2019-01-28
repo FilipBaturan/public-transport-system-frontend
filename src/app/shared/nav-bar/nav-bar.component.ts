@@ -20,8 +20,7 @@ export class NavBarComponent {
     this.router.navigateByUrl('welcome');
   }
 
-  sendUsername(username: string)
-  {
+  sendUsername(username: string) {
     this.userService.setUsername(username);
   }
 
