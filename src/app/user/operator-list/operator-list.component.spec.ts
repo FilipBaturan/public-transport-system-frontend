@@ -1,8 +1,10 @@
 import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { Component, NO_ERRORS_SCHEMA } from '@angular/core';
-import { MatCheckboxModule, MatCardModule, MatDatepickerModule, MatNativeDateModule, MatProgressSpinnerModule, MatMenuModule,
-   MatIconModule, MatToolbarModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule,
-    MatSortModule, MatTableModule } from '@angular/material';
+import {
+  MatCheckboxModule, MatCardModule, MatDatepickerModule, MatNativeDateModule, MatProgressSpinnerModule, MatMenuModule,
+  MatIconModule, MatToolbarModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule,
+  MatSortModule, MatTableModule
+} from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { of, asyncScheduler, throwError } from 'rxjs';
@@ -34,13 +36,13 @@ describe('OperatorListComponent', () => {
   let mockToastrService: any;
   let tableMockComponent: any;
 
-  let dbOperators : User[];
+  let dbOperators: User[];
   let emptyUserList: boolean;
 
-  let updateError : number;
-  let addError : number;
+  let updateError: number;
+  let addError: number;
 
-  let newOperator : User;
+  let newOperator: User;
   let existingUser: User;
 
 
@@ -51,7 +53,7 @@ describe('OperatorListComponent', () => {
     addError = 200;
 
     newOperator = new User(null, "operator", "123", "Opera", "Tor",
-     "opera@tor@gmail.com",  true, "123123");
+      "opera@tor@gmail.com", true, "123123");
 
     existingUser = new User(2, "un2", "222", "Name2", "Lastname2", "email2", true, "2222");
 
@@ -64,7 +66,7 @@ describe('OperatorListComponent', () => {
     ];
 
     tableMockComponent = {
-      renderRows(){
+      renderRows() {
         return "";
       }
     }
@@ -73,27 +75,27 @@ describe('OperatorListComponent', () => {
       getOperators() {
         if (emptyUserList) {
           return of([], asyncScheduler);
-        }else {
+        } else {
           return of(dbOperators, asyncScheduler);
         }
       },
-      updateOperator(){
+      updateOperator() {
         if (updateError == 200) {
-          return of({status: 200}, asyncScheduler);
-        }else 
-          return throwError({status: updateError}, asyncScheduler);
+          return of({ status: 200 }, asyncScheduler);
+        } else
+          return throwError({ status: updateError }, asyncScheduler);
       },
-      addOperator(){
+      addOperator() {
         if (addError != 200) {
-          return throwError({status: addError}, asyncScheduler);
-        }else {
-          return of({status: 200}, asyncScheduler);
+          return throwError({ status: addError }, asyncScheduler);
+        } else {
+          return of({ status: 200 }, asyncScheduler);
         }
       },
-      getByUsername(){
+      getByUsername() {
         if (newOperator.username == "nonExistentUsername") {
-          return throwError({status: 404}, asyncScheduler);
-        }else {
+          return throwError({ status: 404 }, asyncScheduler);
+        } else {
           return of(newOperator, asyncScheduler);
         }
       }
@@ -125,13 +127,13 @@ describe('OperatorListComponent', () => {
         //HttpClientModule,
       ],
       providers: [
-          { provide: UserService, useValue: mockUserService },
-          { provide: ToastrService, useValue: mockToastrService }
+        { provide: UserService, useValue: mockUserService },
+        { provide: ToastrService, useValue: mockToastrService }
       ],
-      declarations: [ OperatorListComponent, FakeNavBarComponent ],
-      schemas: [ NO_ERRORS_SCHEMA]
+      declarations: [OperatorListComponent, FakeNavBarComponent],
+      schemas: [NO_ERRORS_SCHEMA]
     })
-    .compileComponents();
+      .compileComponents();
 
     // fixture.detectChanges();
   });
