@@ -64,7 +64,7 @@ describe('ScheduleService', () => {
             }
         ];
 
-        mockToastrService = jasmine.createSpyObj(['success', 'error']);
+        mockToastrService = jasmine.createSpyObj(['success', 'error', 'info']);
         
         TestBed.configureTestingModule({
             imports: [
