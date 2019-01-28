@@ -38,7 +38,7 @@ import { PricelistComponent } from '../components/pricelist/pricelist.component'
     RouterModule.forRoot([
       { path: 'tickets', component: TicketsComponent, canActivate: [IsAuthenticatedGuard]},
       { path: 'map', component: MapComponent},
-      { path: 'newsAdministration', component: NewsAdministrationComponent },
+      { path: 'newsAdministration', component: NewsAdministrationComponent, canActivate: [IsOperaterGuard] },
       { path: 'reports', component: ReportComponent, canActivate: [IsAdminGuard]},
       { path: 'vehicles', component: VehicleComponent, canActivate: [IsOperaterGuard]},
       { path: 'zones', component: ZoneComponent, canActivate: [IsOperaterGuard]},
@@ -52,7 +52,7 @@ import { PricelistComponent } from '../components/pricelist/pricelist.component'
       { path: 'validators', component: ValidatorListComponent, canActivate: [IsAdminGuard]},
       { path: 'operators', component: OperatorListComponent, canActivate: [IsOperaterGuard]},
       { path: 'registeredUsers', component: RegUserListComponent, canActivate: [IsAdminGuard]},
-      { path: 'pricelist', component: PricelistComponent},
+      { path: 'pricelist', component: PricelistComponent, canActivate: [IsAdminGuard]},
       { path: '', redirectTo: '/welcome', pathMatch: 'full' },
       { path: '**', component: WelcomeComponent, pathMatch : 'full'}
     ])
