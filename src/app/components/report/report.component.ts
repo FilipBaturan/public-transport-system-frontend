@@ -13,6 +13,7 @@ declare var CanvasJS: any;
 export class ReportComponent implements OnInit {
 
   totalTicketsSold: number = -1;
+  totalEarnings = null;
   startDate: string = "2018-01-01";
   endDate: string = "2018-12-12";
   visitsPerWeek: any[];
@@ -89,7 +90,10 @@ export class ReportComponent implements OnInit {
       else
       {
         this.reportService.getReport(this.startDate, this.endDate).subscribe(
-          () => {
+          response => {
+
+            this.totalEarnings = response;
+
             this.reportService.getVisitsPerWeek(this.startDate, this.endDate).subscribe(
               response => {
                 
@@ -114,10 +118,11 @@ export class ReportComponent implements OnInit {
                   }
                 );
               },
-              err => { this.toastrService.error("Invalid date format!"); }
+              err => { this.toastrService.error("Invalid date format!");
+                      this.totalEarnings = null;}
             )
           },
-          err => { this.toastrService.error("Invalid date format!"); }
+          err => { this.toastrService.error("Invalid date format!");  this.totalEarnings = null;}
         )
       }
     };

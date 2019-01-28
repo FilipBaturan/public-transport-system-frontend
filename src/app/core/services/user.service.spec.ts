@@ -237,7 +237,7 @@ describe('UserService', () => {
   it('should get a user with given username', fakeAsync(() => {
     service.getByUsername(randomUser.username).subscribe(user => {
       expect(user.username).toBe(randomUser.username);
-      expect(user.name).toBe(randomUser.name);
+      expect(user.firstName).toBe(randomUser.firstName);
       expect(user.lastName).toBe(randomUser.lastName);
       expect(user.email).toBe(randomUser.email);
     });

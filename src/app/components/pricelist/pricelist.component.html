@@ -12,12 +12,12 @@
         <div class="container">
             <div class="row">
                 <mat-form-field>
-                    <input matInput [matDatepicker]="picker1" [(ngModel)]="startDate" placeholder="From">
+                    <input matInput [matDatepicker]="picker1" [(ngModel)]="startDate" placeholder="Start date">
                     <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
                     <mat-datepicker #picker1></mat-datepicker>
                 </mat-form-field>
                 <mat-form-field>
-                    <input matInput [matDatepicker]="picker2" [(ngModel)]="endDate" placeholder="To">
+                    <input matInput [matDatepicker]="picker2" [(ngModel)]="endDate" placeholder="End date">
                     <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
                     <mat-datepicker #picker2></mat-datepicker>
                 </mat-form-field>
@@ -26,6 +26,7 @@
         <div class="row">
             <div class="container">
                 <div *ngFor="let zoneItems of itemsToFill">
+                    <h5 class="display-4" align="center">{{zoneItems.zone}}</h5>
                     <table class="table">
                         <tr>
                             <td>Transport Type</td>
@@ -33,7 +34,7 @@
                             <td>Age</td>
                             <td>Cost</td>
                         </tr>
-                        <tr *ngFor="let item of zoneItems">
+                        <tr *ngFor="let item of zoneItems.items">
                             <td>{{item.vehicleType}}</td>
                             <td>{{item.type}}</td>
                             <td>{{item.age}}</td>
@@ -43,11 +44,12 @@
                 </div>
             </div>
         </div>
-        <button class="btn btn-success" (click)="saveCreated()">Save</button>
+        <button id="add" class="btn btn-success" (click)="saveCreated()">Save</button>
     </div>
     <div *ngIf="modifying">
         <div class="container">
             <div *ngFor="let zoneItems of itemsToFill">
+                <h5 class="display-4" align="center">{{zoneItems.zone}}</h5>
                 <table class="table">
                     <tr>
                         <td>Transport Type</td>
@@ -55,7 +57,7 @@
                         <td>Age</td>
                         <td>Cost</td>
                     </tr>
-                    <tr *ngFor="let item of zoneItems">
+                    <tr *ngFor="let item of zoneItems.items">
                         <td>{{item.vehicleType}}</td>
                         <td>{{item.type}}</td>
                         <td>{{item.age}}</td>
@@ -64,6 +66,6 @@
                 </table>
             </div>
         </div>
-        <button class="btn btn-info" (click)="saveModified()">Save</button>
+        <button id="save" class="btn btn-info" (click)="saveModified()">Save</button>
     </div>
 </div>

@@ -3,7 +3,7 @@ export class User {
     id: number;
     username: string;
     password: string;
-    name: string;
+    firstName: string;
     lastName: string;
     email: string;
     active: boolean;
@@ -14,7 +14,7 @@ export class User {
             this.id = id;
             this.username = username;
             this.password = password;
-            this.name = name;
+            this.firstName = name;
             this.lastName = lastName;
             this.email = email;
             this.active = isActive;

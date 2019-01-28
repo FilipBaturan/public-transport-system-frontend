@@ -62,5 +62,10 @@ export class UnconfirmedUserListComponent implements OnInit {
     )
   }
 
+  sendUsername(user:User)
+  {
+    this.userService.setUsername(user.username);
+  }
+
 
 }

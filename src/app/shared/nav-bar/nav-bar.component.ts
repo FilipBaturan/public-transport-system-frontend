@@ -18,6 +18,11 @@ export class NavBarComponent {
   logout() {
     this.userService.logout();
     this.router.navigateByUrl('welcome');
-}
+  }
+
+  sendUsername(username: string)
+  {
+    this.userService.setUsername(username);
+  }
 
 }

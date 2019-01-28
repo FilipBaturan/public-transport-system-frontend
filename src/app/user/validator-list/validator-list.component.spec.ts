@@ -353,5 +353,17 @@ describe('ValidatorListComponent', () => {
     expect(component.formShowed).toBeTruthy();
     expect(component.newUser).toBe(dbValidators[1]);
   }));
+
+  it('should hide change form', fakeAsync(() => {
+    fixture.detectChanges();
+    tick();
+
+    component.cancelForm();
+
+    tick();
+    fixture.detectChanges();
+
+    expect(component.formShowed).toBeFalsy();
+  }));
   
 });

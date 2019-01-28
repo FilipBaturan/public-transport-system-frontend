@@ -6,6 +6,7 @@ import { Zone } from 'src/app/model/zone.model';
 import { Item } from 'src/app/model/item.model';
 import { Pricelist } from 'src/app/model/pricelist.model';
 import { PricelistItem } from 'src/app/model/pricelistItem.model';
+import { ZoneItems } from 'src/app/model/zone-items.model';
 
 @Component({
   selector: 'app-pricelist',
@@ -18,7 +19,7 @@ export class PricelistComponent implements OnInit {
   endDate: Date;
   zones: Zone[];
   items: Item[];
-  itemsToFill: Array<Array<Item>>;
+  itemsToFill: Array<ZoneItems>;
   pricelist: Pricelist;
   pricelistItems: PricelistItem[];
   modifyingPricelist: Pricelist;
@@ -99,7 +100,7 @@ export class PricelistComponent implements OnInit {
     this.itemsToFill = this.separateItemsByZones(this.items);
   }
 
-  separateItemsByZones(items: Item[]): Array<Array<Item>> {
+  separateItemsByZones(items: Item[]): Array<ZoneItems> {
     const itemsByZone = [];
     for (const zone of this.zones) {
       const oneZoneItems = [];
@@ -108,7 +109,8 @@ export class PricelistComponent implements OnInit {
           oneZoneItems.push(item);
         }
       }
-      itemsByZone.push(oneZoneItems);
+      const zoneItems = {zone: zone.name, items: oneZoneItems};
+      itemsByZone.push(zoneItems);
     }
     return itemsByZone;
   }
@@ -148,7 +150,7 @@ export class PricelistComponent implements OnInit {
 
   priceValidation(): boolean {
     for (const zoneItems of this.itemsToFill) {
-      for (const item of zoneItems) {
+      for (const item of zoneItems.items) {
         if (item.cost === undefined || item.cost.toString().length === 0 || isNaN(item.cost)) {
           return false;
         }

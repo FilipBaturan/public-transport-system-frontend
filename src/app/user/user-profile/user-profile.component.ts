@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { User } from 'src/app/model/users/user.model';
 import { UserService } from 'src/app/core/services/user.service';
 import { ToastrService } from 'ngx-toastr';
+import { Image } from 'src/app/model/util.model';
+import { UploadService } from 'src/app/core/services/upload.service';
 
 @Component({
   selector: 'app-user-profile',
@@ -13,14 +15,30 @@ export class UserProfileComponent implements OnInit {
   user: User;
   password: string;
   verify: string;
+  image: Image;
+  imagePath: string;
 
-  constructor(private userService: UserService, private toastr: ToastrService) { }
+  constructor(private userService: UserService, private toastr: ToastrService,
+              private uploadService: UploadService) {
+                this.image = {content: '', format: ''};
+               }
 
   ngOnInit() {
-    this.userService.getCurrentUser().subscribe(
+    this.userService.getUser().subscribe(
       response => {
         this.user = response;
-      }
+        this.userService.getImageFromUser(this.user.id).subscribe(
+          image => {
+            this.imagePath = image.image;
+            console.log(this.user);
+            this.uploadService.getImage(this.imagePath).subscribe(
+              res => { this.image = res; },
+              error => { console.log(error); }
+            );
+          }
+        );
+      },
+      err => this.toastr.error('There was an error in showing this profile')
     );
   }
 

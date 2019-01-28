@@ -3,6 +3,7 @@ import { User } from '../../model/users/user.model';
 import { ToastrService } from 'ngx-toastr';
 import { UserService } from 'src/app/core/services/user.service';
 import { MatTable } from '@angular/material';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 
 
@@ -13,10 +14,10 @@ import { MatTable } from '@angular/material';
 })
 export class ValidatorListComponent implements OnInit {
 
+  public formGroup: FormGroup;
+
   displayedColumns: string[] = ['firstName', 'lastName', 'userName', 'email', 'change', 'delete']
-
   dataSource : any[];
-
   validators: User[] = [];
   
   //Ruganje gore (mock up)
@@ -28,13 +29,21 @@ export class ValidatorListComponent implements OnInit {
   @ViewChild(MatTable) table: MatTable<any>;
 
   constructor(private userService: UserService, private toastr: ToastrService,
-    private changeDetectorRefs: ChangeDetectorRef) { }
+    private changeDetectorRefs: ChangeDetectorRef) {
+      this.formGroup = new FormGroup({
+        fname: new FormControl('', [Validators.required, Validators.minLength(1)]),
+        lname: new FormControl('', [Validators.required]),
+        username: new FormControl('', [Validators.required]),
+        email: new FormControl('', [Validators.required, Validators.email]),
+        telephone: new FormControl('', [Validators.required])
+      });
+     }
 
   ngOnInit() {
 
     //ruganje gore
     this.newUser = new User(null, "new User Name", "new Pass", "new Name", "new Last Name",
-     "new Email",  true, "123123");
+     "newEmail@dziMejl.com",  true, "123123");
 
     this.formShowed = false;
     this.addName = true;
@@ -82,7 +91,7 @@ export class ValidatorListComponent implements OnInit {
           this.toastr.info("Validator succesfully updated!");
           this.formShowed = false;
           this.newUser = new User(null, "new User Name", "new Pass", "new Name", "new Last Name",
-          "new Email",  true, "123123");
+          "newEmail@dziMejl.com",  true, "123123");
         },
         err => {
           if (err.status != 409)
@@ -104,7 +113,7 @@ export class ValidatorListComponent implements OnInit {
               this.validators.push(this.newUser);
               this.table.renderRows();
               this.newUser = new User(null, "new User Name", "new Pass", "new Name", "new Last Name",
-              "new Email",  true, "123123");
+              "newEmail@dziMejl.com",  true, "123123");
               this.toastr.info("Validator succesfully added!")
             },
             err => {this.toastr.error("There was a problem with adding the validator"); }
@@ -124,6 +133,8 @@ export class ValidatorListComponent implements OnInit {
 
   showForm()
   {
+    this.newUser = new User(null, "new User Name", "new Pass", "new Name", "new Last Name",
+    "newEmail@dziMejl.com",  true, "123123");
     this.formShowed = true;
   }
 
@@ -137,5 +148,25 @@ export class ValidatorListComponent implements OnInit {
     this.newUser = user;
     this.formShowed = true;
     this.addName = false;
+  }
+
+  private get fname() {
+    return this.formGroup.get('fname');
+  }
+
+  private get lname() {
+    return this.formGroup.get('lname');
+  }
+
+  private get username() {
+    return this.formGroup.get('username');
+  }
+
+  private get email() {
+    return this.formGroup.get('email');
+  }
+
+  private get telephone() {
+    return this.formGroup.get('telephone');
   }
 }

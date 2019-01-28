@@ -1,32 +1,52 @@
 <div class="container">
+    <h4 class="display-4" align="center">TICKET RESERVATION</h4>
     <div class="row">
         <div class="col-8">
-            <button (click)="chooseType('DAILY')">Daily tickets</button>
-            <button (click)="chooseType('MONTHLY')">Monthly tickets</button>
-            <button (click)="chooseType('ANNUAL')">Annual tickets</button><br>
+            <div *ngIf="choice" id="choiceContainer" class="container">
+                <div class="card">
+                    <button id="cardCreate" class="btn btn-success" (click)="chooseType('DAILY')">Buy daily tickets</button>
+                </div>
+                <div id="cardModify" class="card">
+                    <button class="btn btn-info" (click)="chooseType('MONTHLY_ANNUAL')">Buy monthly or annual ticket</button>
+                </div>
+            </div>
             <p>Reservation of {{durationType}} ticket.</p>
             <div class="dailyReservation" *ngIf="dailySelected">
-                <p>Transport type</p>
-                <select [(ngModel)]="transportType">
-                <option>BUS</option>
-                <option>METRO</option>
-                <option>TRAM</option>
-            </select>
-                <p>Zones</p>
-                <select (change)="zoneChange($event.target.value)">
-            <option *ngFor="let zone of zones" [ngValue]="zone">{{zone.name}}</option>
-        </select>
-                <p>Duration</p>
-                <select [(ngModel)]="durationType">
-            <option>ONETIME</option>
-            <option>DAILY</option>
-        </select>
-
+                <div class="form-group">
+                    <label for="sel1">Transport type:</label>
+                    <select class="form-control" id="sel1" [(ngModel)]="transportType">
+                        <option>BUS</option>
+                        <option>METRO</option>
+                        <option>TRAM</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="sel1">Zone:</label>
+                    <select class="form-control" id="sel1" (change)="zoneChange($event.target.value)">
+                        <option *ngFor="let zone of zones" [ngValue]="zone">{{zone.name}}</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="sel1">Duration:</label>
+                    <select class="form-control" id="sel1" [(ngModel)]="durationType">
+                        <option>ONETIME</option>
+                        <option>DAILY</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="sel1">All/One line:</label>
+                    <select class="form-control" id="sel1" [(ngModel)]="transportLineType">
+                        <option>One line</option>
+                        <option>All lines</option>
+                    </select>
+                </div>
                 <div *ngIf="transportLineType === 'One line'">
-                    <p>Line</p>
-                    <select (change)="lineChange($event.target.value)">
-                    <option *ngFor="let line of lines">{{line.name}}</option>
-                </select>
+                    <div class="form-group">
+                        <label for="sel1">Line:</label>
+                        <select class="form-control" id="sel1" (change)="lineChange($event.target.value)">
+                            <option *ngFor="let line of filterByTransport">{{line.name}}</option>
+                        </select>
+                    </div>
                 </div>
                 <br>
                 <div>
@@ -36,51 +56,52 @@
                         <mat-datepicker #picker></mat-datepicker>
                     </mat-form-field>
                 </div>
+                <button class="btn btn-info" (click)="check()">Reserve</button>
+                <button class="btn btn-success" (click)="reserve()">Finish</button>
             </div>
-            <div class="monthly" *ngIf="monthlySelected">
-                <p>Transport type</p>
-                <select [(ngModel)]="transportType">
-                <option>BUS</option>
-                <option>METRO</option>
-                <option>TRAM</option>
-            </select>
-                <p>Zones</p>
-                <select (change)="zoneChange($event.target.value)">
-            <option *ngFor="let zone of zones" [ngValue]="zone">{{zone.name}}</option>
-        </select>
-                <div *ngIf="transportLineType === 'One line'">
-                    <p>Line</p>
-                    <select (change)="lineChange($event.target.value)">
-                    <option *ngFor="let line of lines">{{line.name}}</option>
-                </select>
+            <div class="monthly" *ngIf="monthlyAnnualSelected">
+                <div class="form-group">
+                    <label for="sel1">Transport type:</label>
+                    <select class="form-control" id="sel1" [(ngModel)]="transportType">
+                        <option>BUS</option>
+                        <option>METRO</option>
+                        <option>TRAM</option>
+                    </select>
                 </div>
-            </div>
-            <div class="annual" *ngIf="annualSelected">
-                <p>Transport type</p>
-                <select [(ngModel)]="transportType">
-                <option>BUS</option>
-                <option>METRO</option>
-                <option>TRAM</option>
-            </select>
-                <p>Zones</p>
-                <select (change)="zoneChange($event.target.value)">
-            <option *ngFor="let zone of zones" [ngValue]="zone">{{zone.name}}</option>
-        </select>
-                <div *ngIf="transportLineType === 'One line'">
-                    <p>Line</p>
-                    <select (change)="lineChange($event.target.value)">
-                    <option *ngFor="let line of lines">{{line.name}}</option>
-                </select>
+                <div class="form-group">
+                    <label for="sel1">Age type:</label>
+                    <select class="form-control" id="sel1" [(ngModel)]="ageType">
+                        <option>REGULAR</option>
+                        <option>STUDENT</option>
+                        <option>PENSIONER</option>
+                    </select>
                 </div>
+                <div class="form-group">
+                    <label for="sel1">Duration:</label>
+                    <select class="form-control" id="sel1" [(ngModel)]="durationType">
+                        <option>MONTHLY</option>
+                        <option>ANNUAL</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="sel1">Zone:</label>
+                    <select class="form-control" id="sel1" (change)="zoneChange($event.target.value)">
+                        <option *ngFor="let zone of zones" [ngValue]="zone">{{zone.name}}</option>
+                    </select>
+                </div>
+                <div *ngIf="ageType === 'STUDENT' || ageType === 'PENSIONER'">
+                    <input id="upload" value="Upload validation file" type="file" (change)="onFileSelected($event)">
+                    <button class="btn btn-info" (click)="onUpload()">Upload</button>
+                </div>
+
+                <button class="btn btn-info" (click)="reserveTicket()">Reserve</button>
             </div>
-            <button [hidden]="this.reservation.tickets.length > 0 && (annualSelected || monthlySelected)" (click)="check()">Reserve</button>
-            <button (click)="reserve()">Finish</button>
         </div>
         <div class="col-4">
             <div *ngFor="let ticket of reservation.tickets" class="card text-white bg-primary mb-3" style="width: 18rem;">
                 <div class="card-body">
                     <h5 class="card-title">{{ticket.ticketType}}</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">{{ticket.purchaseDate}}</h6>
+                    <h6 *ngIf="dailySelected" class="card-subtitle mb-2 text-muted">{{ticket.purchaseDate|date: 'dd.MM.yyyy'}}</h6>
                 </div>
             </div>
         </div>

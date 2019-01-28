@@ -31,7 +31,7 @@ export class SignupComponent implements OnInit {
 
   tryRegister(): void {
     this.resetFlags();
-    if(this.user.name == ""){
+    if(this.user.firstName == ""){
       this.nameInvalid = true;
       this.dataFlag = true;
     }

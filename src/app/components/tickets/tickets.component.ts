@@ -11,6 +11,8 @@ import { PricelistService } from 'src/app/core/services/pricelist.service';
 import { ReservationService } from 'src/app/core/services/reservation.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
+import { Image } from 'src/app/model/util.model';
+import { UploadService } from 'src/app/core/services/upload.service';
 
 @Component({
   selector: 'app-tickets',
@@ -35,23 +37,31 @@ export class TicketsComponent implements OnInit {
   user: User;
   pricelistitemId: number;
   dailySelected: boolean;
-  monthlySelected: boolean;
-  annualSelected: boolean;
+  monthlyAnnualSelected: boolean;
+  choice: boolean;
+  selectedFile: File;
+  imagePath: string;
+  image: Image;
 
-  constructor(private authService: AuthService,
-              private zoneService: ZoneService,
-              private pricelistService: PricelistService,
-              private reservationService: ReservationService,
-              private toastr: ToastrService,
-              private router: Router) { }
+  constructor(private authService: AuthService, private zoneService: ZoneService,
+              private pricelistService: PricelistService, private reservationService: ReservationService,
+              private toastr: ToastrService, private router: Router,
+              private uploadService: UploadService) {
+                this.selectedFile = null;
+                this.image = {content: '', format: ''};
+                this.pricelistService.getActivePricelist().subscribe(
+                  pricelist => {
+                    this.pricelist = pricelist;
+                  }
+                );
+              }
 
   ngOnInit() {
-    this.dailySelected = true;
-    this.monthlySelected = false;
-    this.annualSelected = false;
+    this.choice = true;
+    this.dailySelected = false;
+    this.monthlyAnnualSelected = false;
     this.pricelistitemId = 0;
     this.reservation = {id: 0, tickets: [], owner: 0};
-    this.price = 0;
     this.transportType = 'BUS';
     this.ageType = 'REGULAR';
     this.durationType = 'ONETIME';
@@ -66,11 +76,6 @@ export class TicketsComponent implements OnInit {
             this.zone = this.zones[0];
             this.lines = this.zone.lines;
             this.line = this.lines[0].id;
-            this.pricelistService.getActivePricelist().subscribe(
-              pricelist => {
-                this.pricelist = pricelist;
-              }
-            );
           }
         );
       }
@@ -80,20 +85,15 @@ export class TicketsComponent implements OnInit {
   chooseType(type: string): void {
     if (type === 'DAILY') {
       this.dailySelected = true;
-      this.monthlySelected = false;
-      this.annualSelected = false;
+      this.monthlyAnnualSelected = false;
+      this.choice = false;
       this.durationType = 'ONETIME';
-    } else if (type === 'MONTHLY') {
+      this.ageType = 'ALL';
+    } else if (type === 'MONTHLY_ANNUAL') {
       this.dailySelected = false;
-      this.monthlySelected = true;
-      this.annualSelected = false;
+      this.monthlyAnnualSelected = true;
+      this.choice = false;
       this.durationType = 'MONTHLY';
-      this.purchaseDate = new Date(Date.now());
-    } else if (type === 'ANNUAL') {
-      this.dailySelected = false;
-      this.monthlySelected = false;
-      this.annualSelected = true;
-      this.durationType = 'ANNUAL';
       this.purchaseDate = new Date(Date.now());
     }
   }
@@ -103,6 +103,7 @@ export class TicketsComponent implements OnInit {
       if (zone.name === zoneName) {
         this.zone = zone;
         this.lines = this.zone.lines;
+        this.line = this.lines[0].id;
       }
     }
   }
@@ -116,14 +117,23 @@ export class TicketsComponent implements OnInit {
   }
 
   checkPrice(): void {
+    console.log(this.pricelist);
+    console.log(this.ageType);
+    console.log(this.durationType);
+    console.log(this.transportType);
+    console.log(this.zone);
     for (const pricelistitem of this.pricelist.items) {
       if (pricelistitem.item.type === this.durationType && pricelistitem.item.age === this.ageType
          && pricelistitem.item.vehicleType === this.transportType && pricelistitem.item.zone === this.zone.id) {
-          this.price += pricelistitem.item.cost;
+          console.log(pricelistitem);
           this.pricelistitemId = pricelistitem.id;
           return;
       }
     }
+  }
+
+  get filterByTransport() {
+    return this.zone.lines.filter( x => x.type === this.transportType);
   }
 
   check(): void {
@@ -132,7 +142,7 @@ export class TicketsComponent implements OnInit {
       this.checkPrice();
       const t = new Ticket(this.purchaseDate, this.line, this.pricelistitemId, this.durationType);
       this.reservation.tickets.push(t);
-      this.toastr.success('Uspesno ste dodali kartu u rezervaciju');
+      this.toastr.success('Successfully added ticket to reservation');
     } else if (feedback === 1) {
       this.toastr.warning('Choose date!');
     } else if (feedback === 2) {
@@ -153,9 +163,67 @@ export class TicketsComponent implements OnInit {
   reserve(): void {
     this.reservationService.create<Reservation>(this.reservation, 'reserve').subscribe (
       result => {
-        this.toastr.success('Rezervacija je uspesno izvrsena');
+        this.toastr.success('Successfully reserved!');
         this.router.navigate(['/welcome']);
       }
+    );
+  }
+
+  reserveTicket(): void {
+    console.log(this.imagePath);
+    if (this.checkIfDocumentIsChoosen()) {
+      this.checkPrice();
+      const t = new Ticket(this.purchaseDate, this.line, this.pricelistitemId, this.durationType);
+      this.reservation.tickets.push(t);
+      console.log(this.reservation);
+      this.reservationService.create<Reservation>(this.reservation, 'reserve').subscribe (
+        result => {
+          if (this.ageType === 'REGULAR') {
+            this.toastr.success('Successfully reserved!');
+            this.router.navigate(['/welcome']);
+          } else {
+            this.authService.setImageToUser({id: this.user.id, image: this.imagePath}).subscribe(
+              response => {
+                this.toastr.success('Successfully reserved!');
+                this.router.navigate(['/welcome']);
+              }
+            );
+          }
+        }
+      );
+    } else {
+      this.toastr.warning('Please, choose document for validation (click Upload if picture if choosen)!');
+    }
+  }
+
+  checkIfDocumentIsChoosen(): boolean {
+    if (this.ageType !== 'REGULAR') {
+      if (this.imagePath !== undefined) {
+        return true;
+      }
+      return false;
+    }
+    return true;
+  }
+
+  onFileSelected(event: { target: { files: File[]; }; }) {
+    this.selectedFile = event.target.files[0] as File;
+  }
+
+  onUpload() {
+    const uploadData: FormData = new FormData();
+    uploadData.append('image', this.selectedFile, this.selectedFile.name);
+    this.uploadService.uploadImage(uploadData).subscribe(
+      res => {
+        this.imagePath = res;
+      },
+      error => { console.log(error); });
+  }
+
+  onLoad() {
+    this.uploadService.getImage(this.imagePath).subscribe(
+      res => { this.image = res; },
+      error => { console.log(error); }
     );
   }
 

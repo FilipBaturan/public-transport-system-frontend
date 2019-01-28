@@ -7,7 +7,7 @@
 
     <div class="example-container mat-elevation-z8">
 
-      <table *ngIf="operators.length != 0" mat-table [dataSource]="operators">
+      <table id = "operatorsTable" *ngIf="operators.length != 0" mat-table [dataSource]="operators">
 
         <!--- Note that these columns can be defined in any order.
                   The actual rendered columns are set as a property on the row definition" -->
@@ -78,7 +78,7 @@
                     </mat-form-field>
                     <mat-form-field class="full-width">
                       <mat-label>Username</mat-label>
-                      <input  matInput  placeholder="Address" name="address"
+                      <input  matInput  placeholder="Address" name="username"
                       [(ngModel)]="newUser.username"  required>
                     </mat-form-field>
                     <mat-form-field class="full-width">
@@ -96,7 +96,7 @@
                        [(ngModel)]="newUser.telephone">
                     </mat-form-field>
                     <mat-card-actions>
-                        <button id = "formAddButton" mat-raised-button (click)="addOperator()"
+                        <button id = "formAddOperatorButton" mat-raised-button (click)="addOperator()"
                           color="primary">
                           {{addName == true ? "Add operator" : 'Change operator'}}
                         </button>

@@ -8,7 +8,7 @@ import { User } from 'src/app/model/users/user.model';
 import { Authentication } from 'src/app/model/authentication.model';
 import { LogIn } from 'src/app/model/login.model';
 import { TokenUtilsService } from '../util/token-utils.service';
-
+import { ImageUploadDTO } from 'src/app/model/dto/image-upload-dto.model';
 
 const authenticatedUser = 'authenticatedUser';
 
@@ -16,6 +16,8 @@ const authenticatedUser = 'authenticatedUser';
   providedIn: 'root'
 })
 export class UserService extends RestService<User> {
+
+  userName: string = '';
 
   constructor(http: HttpClient, toastr: ToastrService, private tokenUtils: TokenUtilsService) {
     super(http, ['/api/user'], toastr);
@@ -47,6 +49,26 @@ export class UserService extends RestService<User> {
     localStorage.removeItem(authenticatedUser);
   }
 
+  setUsername(username: string): void {
+    this.userName = username;
+  }
+
+  getUser(): Observable<User> {
+    if (this.userName === '') {
+      return this.getCurrentUser();
+    } else {
+      return this.getRegByUsername(this.userName);
+    }
+  }
+
+  getByUsername(username: String) {
+    return this.http.get<User>(this.url(['getByUsername/' + username]));
+  }
+
+  getRegByUsername(username: String) {
+    return this.http.get<User>(this.url(['getRegByUsername/' + username]));
+  }
+
   usernameTaken(username: string): Observable<boolean> {
     return this.http.get<boolean>(this.url(), { params: { 'username': username } }).pipe(
       catchError(this.handleError<boolean>())
@@ -54,9 +76,7 @@ export class UserService extends RestService<User> {
   }
 
   getCurrentUser() {
-    return this.http.get<User>(this.url(['currentUser'])).pipe(
-      catchError(this.handleError<User>())
-    );
+    return this.http.get<User>(this.url(['currentUser']));
   }
 
   getAuthenticatedUser() {
@@ -151,8 +171,8 @@ export class UserService extends RestService<User> {
     );
   }
 
-  getByUsername(username: String) {
-    return this.http.get<any>(this.url(['getByUsername/' + username])).pipe(
+  getImageFromUser(id: number): Observable<ImageUploadDTO> {
+    return this.http.get<ImageUploadDTO>(this.url(['getImage/' + id])).pipe(
       catchError(this.handleException)
     );
   }
@@ -171,5 +191,7 @@ export class UserService extends RestService<User> {
       return throwError('Client side error!');
     }
   }
+
+
 
 }
