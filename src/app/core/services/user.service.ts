@@ -65,6 +65,10 @@ export class UserService extends RestService<User> {
     return this.http.get<User>(this.url(['getByUsername/' + username]));
   }
 
+  getOpByUsername(username: String) {
+    return this.http.get<User>(this.url(['getOpByUsername/' + username]));
+  }
+
   getRegByUsername(username: String) {
     return this.http.get<User>(this.url(['getRegByUsername/' + username]));
   }

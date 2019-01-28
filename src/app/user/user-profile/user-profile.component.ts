@@ -27,6 +27,7 @@ export class UserProfileComponent implements OnInit {
     this.userService.getUser().subscribe(
       response => {
         this.user = response;
+        console.log(response);
         this.userService.getImageFromUser(this.user.id).subscribe(
           image => {
             this.imagePath = image.image;

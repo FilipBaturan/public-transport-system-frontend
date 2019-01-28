@@ -46,7 +46,6 @@ export class OperatorListComponent implements OnInit {
 
     this.userService.getOperators().subscribe(
       response => {
-        console.log(response);
         this.operators = response;
         this.checkUsersLength();
       }
@@ -114,7 +113,7 @@ export class OperatorListComponent implements OnInit {
     {
       this.userService.addOperator(this.newUser).subscribe(
         response => {
-          this.userService.getByUsername(this.newUser.username).subscribe(
+          this.userService.getOpByUsername(this.newUser.username).subscribe(
             response => {
                 this.newUser = response;
                 this.operators.push(this.newUser);
