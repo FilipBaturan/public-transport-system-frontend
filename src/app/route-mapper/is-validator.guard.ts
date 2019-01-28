@@ -14,7 +14,7 @@ export class IsValidatorGuard implements CanActivate {
       return true;
     }
 
-    this.router.navigateByUrl('signin');
+    this.router.navigateByUrl('welcome');
     return false;
   }
 }
