@@ -96,7 +96,7 @@ export abstract class RestService<T> {
           this.toastr.error('Server is down!');
         }
       } else {
-        this.toastr.error('Client side error!');
+        this.toastr.info('Schedule does not exist!');
       }
       return throwError(result as E || response.statusText);
     };
