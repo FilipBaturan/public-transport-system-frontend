@@ -92,7 +92,7 @@ describe('OperatorListComponent', () => {
           return of({ status: 200 }, asyncScheduler);
         }
       },
-      getByUsername() {
+      getOpByUsername () {
         if (newOperator.username == "nonExistentUsername") {
           return throwError({ status: 404 }, asyncScheduler);
         } else {
